@@ -1,8 +1,8 @@
 <script setup>
 import axiosAdmin from "@/composables/axios/axiosAdmin";
-import AddMembershipItem from "@/views/apps/membership/membership-item/AddMembershipItem.vue";
-import EditmembershipItem from "@/views/apps/membership/membership-item/EditmembershipItem.vue";
-import { ref } from "vue";
+import AddPublicRule from "@/views/apps/public-variable/AddPublicRule.vue";
+import EditPublicRule from "@/views/apps/public-variable/EditPublicRule.vue";
+import { onMounted, ref } from "vue";
 
 // 👉 Data Table Options
 const itemsPerPage = ref(10);
@@ -10,28 +10,27 @@ const page = ref(1);
 const sortBy = ref("id");
 const orderBy = ref("desc");
 const selectedRows = ref([]);
-const isAddMembershipItemVisible = ref(false);
-const EditmembershipItemVisible = ref(false);
-const selectedMembershipItem = ref({});
+const isAddPublicRuleVisible = ref(false);
+const EditPublicRuleVisible = ref(false);
+const selectedRole = ref({});
 const searchQuery = ref();
 
 // 👉 Users Data
-const membership_items = ref([]);
+const public_rules = ref([]);
 const total = ref(0);
 
 // 👉 Updated Headers for Membership Items Table
 const headers = [
-  { title: "Setting Name", key: "setting_name" },
-  { title: "Setting Text", key: "setting_text" }, // Foreign key reference
+  { title: "Setting Rule", key: "setting_rule" }, // Foreign key reference
   { title: "Setting Value", key: "setting_value" },
   { title: "Status", key: "status" },
   { title: "Actions", key: "actions", sortable: false },
 ];
 
 // 👉 Fetch Role
-const fetchMembershipItem = async () => {
+const fetchPublicRule = async () => {
   try {
-    const response = await axiosAdmin.get("/membership-items", {
+    const response = await axiosAdmin.get("/public-rules", {
       params: {
         page: page.value,
         itemsPerPage: itemsPerPage.value,
@@ -40,12 +39,29 @@ const fetchMembershipItem = async () => {
     });
 
 
-    membership_items.value = response.data;
+    public_rules.value = response.data;
     total.value = response.meta.total;
   } catch (error) {
     console.error("Error fetching users:", error);
   }
 };
+
+
+const fetchPublicRuleById = async (id) => {
+  try {
+    const { data } = await axiosAdmin.get(`public-rules/${id}`);
+    selectedRole.value = { // Corrected assignment syntax
+      id: data.id,
+      setting_rule: data.setting_rule,
+      setting_value: data.setting_value,
+      status: data.status
+    };
+    EditPublicRuleVisible.value=true
+  } catch (error) {
+    console.error("Error fetching public rule:", error);
+  }
+};
+
 
 // 👉 Update sorting options
 const updateOptions = (options) => {
@@ -59,10 +75,34 @@ const updateOptions = (options) => {
 };
 
 // 👉 Watch for changes that require data refresh
-watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchMembershipItem);
+watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchPublicRule);
 
 
+const AddRule = (publicRuleData) => {
+  axiosAdmin
+    .post("/public-rules", publicRuleData)
+    .then((response) => {
+      fetchPublicRule(); // Call after a successful request
+    })
+    .catch((error) => {
+      console.log("error", error);
+    });
+};
 
+const UpdateRule=(updatedData)=>{
+  axiosAdmin.patch(`/public-rules/${updatedData.public_rule.id}`,updatedData.public_rule)
+  .then((response)=>{
+    fetchPublicRule();
+  })
+  .catch((error)=>{
+    console.log(error)
+  })
+}
+
+
+onMounted(()=>{
+  fetchPublicRule();
+})
 
 </script>
 
@@ -102,9 +142,9 @@ watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchMembershipItem);
           <!-- 👉 Add user button -->
           <VBtn
             prepend-icon="tabler-plus"
-            @click="isAddMembershipItemVisible = true"
+            @click="isAddPublicRuleVisible = true"
           >
-            Add Public Variable
+            Add Rule
           </VBtn>
         </div>
       </VCardText>
@@ -116,7 +156,7 @@ watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchMembershipItem);
         v-model:items-per-page="itemsPerPage"
         v-model:model-value="selectedRows"
         v-model:page="page"
-        :items="membership_items"
+        :items="public_rules"
         item-value="id"
         :items-length="total"
         :headers="headers"
@@ -134,7 +174,7 @@ watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchMembershipItem);
               <VIcon icon="tabler-trash" />
             </IconBtn>
 
-            <IconBtn @click="fetchMembershipItemById(item.id)">
+            <IconBtn @click="fetchPublicRuleById(item.id)">
               <VIcon icon="tabler-pencil" />
             </IconBtn>
           </template>
@@ -152,16 +192,16 @@ watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchMembershipItem);
       <!-- SECTION -->
     </VCard>
     <!-- Add User Drawer -->
-    <AddMembershipItem
-      v-model:is-drawer-open="isAddMembershipItemVisible"
-      @membership-item-data="addMembershipItem"
+    <AddPublicRule
+      v-model:is-drawer-open="isAddPublicRuleVisible"
+      @public-rule-data="AddRule"
     />
 
     <!-- Add User Drawer -->
-    <EditmembershipItem
-      v-model:is-drawer-open="EditmembershipItemVisible"
-      :selected-membership-item="selectedMembershipItem"
-      @membership="updatememberShip"
+    <EditPublicRule
+      v-model:is-drawer-open="EditPublicRuleVisible"
+      :selectedRole="selectedRole"
+      @publicRuleData="UpdateRule"
     />
   </section>
 </template>

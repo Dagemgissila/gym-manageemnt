@@ -11,9 +11,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('public_variables', function (Blueprint $table) {
+        Schema::create('public_rules', function (Blueprint $table) {
             $table->id();
-            $table->string('setting_text');
+            $table->string('setting_rule');
             $table->string('setting_value');
             $table->enum('status', ActiveInactive::getValues())->default(ActiveInactive::ACTIVE);
 
@@ -36,6 +36,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('public_variables');
+        Schema::dropIfExists('public_rules');
     }
 };

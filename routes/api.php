@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\FieldValidationController;
 use App\Http\Controllers\MembershipItemController;
 use App\Http\Controllers\MembershipTypeController;
-use App\Http\Controllers\PublicVariableController;
+use App\Http\Controllers\PublicRuleController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
+use App\Models\FieldValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +26,11 @@ Route::middleware(["api.check.auth"])->group(function () {
    Route::apiResource('users', UserController::class);
    Route::apiResource('membership-types', MembershipTypeController::class);
    Route::apiResource('membership-items', MembershipItemController::class);
-   Route::apiResource('public-variables', PublicVariableController::class);
+   Route::apiResource('public-rules', PublicRuleController::class);
+   // In api.php
+   Route::patch('/field-validations/bulk-update', [FieldValidationController::class, 'bulkUpdate']);
+   Route::apiResource('field-validations', FieldValidationController::class);
+
 
 
    //role and permissions

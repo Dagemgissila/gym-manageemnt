@@ -5,12 +5,14 @@ namespace App\Models;
 use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Model;
 
-class PublicVariable extends Model
+class PublicRule extends Model
 {
     use Filterable;
 
+    protected $fillable = ["setting_rule", "setting_value", "status"];
+
     // Fields that can be searched
-    protected $searchable = ['setting_text'];
+    protected $searchable = ['setting_rule'];
 
     // Filters that can be applied
     protected $allowedFilters = [''];

@@ -5,8 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,19 +17,19 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('mobile_number')->unique();
-            $table->string('password');
-            $table->string('profile_picture')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->enum('status', UserStatus::getValues())->default(UserStatus::ACTIVE);
-            $table->enum("gender",["Male","Female"])->default("Male");
+            $table->enum("gender", ["Male", "Female"])->default("Male");
             $table->date("date_of_birth");
             $table->string("address");
             $table->string("city");
+            $table->string("hire_date")->nullable();
+            $table->decimal("salary", 10, 2)->nullable();
             $table->string("emergency_contact_name");
             $table->string("emergency_contact_phone");
-            $table->string("hire_date")->nullable();
-            $table->decimal("salary",10,2)->nullable();
             $table->string("assigned_location")->nullable();
+            $table->string('profile_picture')->nullable();
+            $table->string('password');
+            $table->enum('status', UserStatus::getValues())->default(UserStatus::ACTIVE);
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

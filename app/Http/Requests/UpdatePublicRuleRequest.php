@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\ActiveInactive;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePublicVariableRequest extends FormRequest
+class UpdatePublicRuleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +23,7 @@ class UpdatePublicVariableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "setting_text" => ["required", "string", "max:255"],
+            "setting_rule" => ["required", "string", "max:255"],
             "setting_value" => ["required", "string", "max:255"],
             "status" => ["required", "string", "in:" . implode(',', ActiveInactive::getValues())], // Fixed in rule
         ];

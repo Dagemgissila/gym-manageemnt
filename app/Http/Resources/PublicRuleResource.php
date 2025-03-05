@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PublicVariableResource extends JsonResource
+class PublicRuleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,8 +17,8 @@ class PublicVariableResource extends JsonResource
         return [
 
             "id" => $this->id,
-            "setting_text" => $this->setting_text,
-            "setting_value" => $this->setting_text,
+            "setting_rule" => $this->setting_rule,
+            "setting_value" => $this->setting_value,
             "status" => $this->status,
             "created_by" => $this->created_by,
             "updated_by" => $this->updated_by,

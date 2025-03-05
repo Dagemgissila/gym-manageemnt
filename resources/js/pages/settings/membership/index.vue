@@ -130,17 +130,17 @@ const fetchMembershipItemById = async (membership_id) => {
   }
 };
 
-const updatememberShip = async (membershipData) => {
+const AddRule = (publicRuleData) => {
   axiosAdmin
-    .patch(`/membership-items/${membershipData.membership_item.id}`, membershipData.membership_item) // Include the ID in the URL
-    .then(function (response) {
-      // Refetch Membership Types
-      fetchMembershipItem();
+    .post("/public-rules", publicRuleData)
+    .then((response) => {
+      fetchPublicRule(); // Call after a successful request
     })
-    .catch(function (error) {
-      console.error(error);
+    .catch((error) => {
+      console.log("error", error);
     });
 };
+
 </script>
 
 <template>

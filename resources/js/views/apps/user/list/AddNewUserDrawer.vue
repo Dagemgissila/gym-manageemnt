@@ -1,50 +1,46 @@
 <script setup>
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 
 const props = defineProps({
   isDrawerOpen: {
     type: Boolean,
     required: true,
   },
-})
+});
 
-const emit = defineEmits([
-  'update:isDrawerOpen',
-  'userData',
-])
+const emit = defineEmits(["update:isDrawerOpen", "userData"]);
 
-const isFormValid = ref(false)
-const refForm = ref()
-const first_name = ref('')
-const last_name = ref('')
-const email = ref('')
-const mobile_number = ref('')
-const password = ref()
-const profile_picture = ref('')
-const date_of_birth = ref()
-const address = ref()
-const emergency_contact_name = ref()
-const emergency_contact_phone = ref()
-const hire_date = ref()
-const salary = ref()
-const assigned_location = ref()
-const role = ref()
-const status=ref();
-
+const isFormValid = ref(false);
+const refForm = ref();
+const first_name = ref("");
+const last_name = ref("");
+const email = ref("");
+const mobile_number = ref("");
+const password = ref();
+const profile_picture = ref("");
+const date_of_birth = ref();
+const address = ref();
+const emergency_contact_name = ref();
+const emergency_contact_phone = ref();
+const hire_date = ref();
+const salary = ref();
+const assigned_location = ref();
+const role = ref();
+const status = ref();
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
-  emit('update:isDrawerOpen', false)
+  emit("update:isDrawerOpen", false);
   nextTick(() => {
-    refForm.value?.reset()
-    refForm.value?.resetValidation()
-  })
-}
+    refForm.value?.reset();
+    refForm.value?.resetValidation();
+  });
+};
 
 const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      emit('userData', {
+      emit("userData", {
         first_name: first_name.value,
         last_name: last_name.value,
         email: email.value,
@@ -59,26 +55,26 @@ const onSubmit = () => {
         salary: salary.value,
         assigned_location: assigned_location.value,
         role: role.value,
-      })
-      emit('update:isDrawerOpen', false)
+      });
+      emit("update:isDrawerOpen", false);
       nextTick(() => {
-        refForm.value?.reset()
-        refForm.value?.resetValidation()
-      })
+        refForm.value?.reset();
+        refForm.value?.resetValidation();
+      });
     }
-  })
-}
+  });
+};
 
-const handleDrawerModelValueUpdate = val => {
-  emit('update:isDrawerOpen', val)
-}
+const handleDrawerModelValueUpdate = (val) => {
+  emit("update:isDrawerOpen", val);
+};
 </script>
 
 <template>
   <VNavigationDrawer
     data-allow-mismatch
     temporary
-    :width="400"
+    :width="900"
     location="end"
     class="scrollable-content"
     :model-value="props.isDrawerOpen"
@@ -96,14 +92,10 @@ const handleDrawerModelValueUpdate = val => {
       <VCard flat>
         <VCardText>
           <!-- 👉 Form -->
-          <VForm
-            ref="refForm"
-            v-model="isFormValid"
-            @submit.prevent="onSubmit"
-          >
+          <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <!-- 👉 Full name -->
-              <VCol cols="12">
+              <VCol cols="6">
                 <AppTextField
                   v-model="first_name"
                   :rules="[requiredValidator]"
@@ -112,7 +104,7 @@ const handleDrawerModelValueUpdate = val => {
                 />
               </VCol>
 
-              <VCol cols="12">
+              <VCol cols="6">
                 <AppTextField
                   v-model="last_name"
                   :rules="[requiredValidator]"
@@ -121,10 +113,8 @@ const handleDrawerModelValueUpdate = val => {
                 />
               </VCol>
 
-
-
               <!-- 👉 Email -->
-              <VCol cols="12">
+              <VCol cols="6">
                 <AppTextField
                   v-model="email"
                   :rules="[requiredValidator, emailValidator]"
@@ -134,51 +124,93 @@ const handleDrawerModelValueUpdate = val => {
               </VCol>
 
               <!-- 👉 company -->
-              <VCol cols="12">
+              <VCol cols="6">
                 <AppTextField
                   v-model="mobile_number"
                   :rules="[requiredValidator]"
-               label="Contact"
+                  label="Mobile Number"
                   placeholder="+1-541-754-3010"
                 />
               </VCol>
 
-              <!-- 👉 Country -->
-              <VCol cols="12">
-                <AppSelect
-                  v-model="address"
-                  label="Address"
-                  placeholder="Select Country"
-                  :rules="[requiredValidator]"
-                  :items="['USA', 'UK', 'India', 'Australia']"
-                />
-              </VCol>
-
-              <!-- 👉 Contact -->
-              <VCol cols="12">
-                <AppTextField
-                  v-model="mobile_number"
-                  type="number"
-                  :rules="[requiredValidator]"
-                  label="Contact"
-                  placeholder="+1-541-754-3010"
-                />
+              <VCol cols="6">
+                <AppDateTimePicker
+    v-model="date"
+    label="Date of Birth"
+    placeholder="Select date"
+  />
               </VCol>
 
               <!-- 👉 Role -->
-              <VCol cols="12">
+              <VCol cols="6">
                 <AppSelect
-                  v-model="role"
-                  label="Select Role"
-                  placeholder="Select Role"
+                  v-model="gender"
+                  label="Gender"
+                  placeholder="Gender"
                   :rules="[requiredValidator]"
-                  :items="[{ title: 'Admin', value: 'admin' }, { title: 'Member', value: 'member' }, { title: 'Trainner', value: 'trainner' }]"
+                  :items="[
+                    { title: 'Male', value: 'male' },
+                    { title: 'Female', value: 'female' },
+                  ]"
+                />
+              </VCol>
 
+              <VCol cols="6">
+                <AppTextField
+                  v-model="address"
+                  :rules="[requiredValidator]"
+                  label="Address"
+                  placeholder="Address"
+                />
+              </VCol>
+
+              <VCol cols="6">
+                <AppTextField
+                  v-model="city"
+                  :rules="[requiredValidator]"
+                  label="City"
+                  placeholder="city"
+                />
+              </VCol>
+
+              <VCol cols="6">
+                <AppTextField
+                  v-model="city"
+                  :rules="[requiredValidator]"
+                  label="Assigned Location"
+                  placeholder=""
+                />
+              </VCol>
+
+              <VCol cols="6">
+                <AppTextField
+                  v-model="city"
+                  :rules="[requiredValidator]"
+                  label="Profile Picture "
+                  placeholder="city"
+                />
+              </VCol>
+
+
+              <VCol cols="6">
+                <AppDateTimePicker
+    v-model="date"
+    label="Hire Date"
+    placeholder="Select date"
+  />
+              </VCol>
+
+              <VCol cols="6">
+                <AppTextField
+                  v-model="salary"
+                  :rules="[requiredValidator]"
+                  label="Salary"
+                  placeholder="$1000"
                 />
               </VCol>
 
               <!-- 👉 Plan -->
-              <VCol cols="12">
+              <VCol cols="6">
                 <AppTextField
                   v-model="emergency_contact_name"
                   label="Emergency Contact Name"
@@ -187,7 +219,7 @@ const handleDrawerModelValueUpdate = val => {
                 />
               </VCol>
 
-              <VCol cols="12">
+              <VCol cols="6">
                 <AppTextField
                   v-model="emergency_contact_phone"
                   label="Emergency Contact Number"
@@ -196,25 +228,39 @@ const handleDrawerModelValueUpdate = val => {
                 />
               </VCol>
 
+              <!-- 👉 Role -->
+              <VCol cols="6">
+                <AppSelect
+                  v-model="role"
+                  label="Select Role"
+                  placeholder="Select Role"
+                  :rules="[requiredValidator]"
+                  :items="[
+                    { title: 'Admin', value: 'admin' },
+                    { title: 'Member', value: 'member' },
+                    { title: 'Trainner', value: 'trainner' },
+                  ]"
+                />
+              </VCol>
+
               <!-- 👉 Status -->
-              <VCol cols="12">
+              <VCol cols="6">
                 <AppSelect
                   v-model="status"
                   label="Select Status"
                   placeholder="Select Status"
                   :rules="[requiredValidator]"
-                  :items="[{ title: 'Active', value: 'active' }, { title: 'Inactive', value: 'inactive' }, { title: 'Pending', value: 'pending' }]"
+                  :items="[
+                    { title: 'Active', value: 'active' },
+                    { title: 'Inactive', value: 'inactive' },
+                    { title: 'Pending', value: 'pending' },
+                  ]"
                 />
               </VCol>
 
               <!-- 👉 Submit and Cancel -->
               <VCol cols="12">
-                <VBtn
-                  type="submit"
-                  class="me-3"
-                >
-                  Submit
-                </VBtn>
+                <VBtn type="submit" class="me-3"> Submit </VBtn>
                 <VBtn
                   type="reset"
                   variant="tonal"

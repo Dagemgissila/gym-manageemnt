@@ -20,7 +20,6 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     '$error': RouteRecordInfo<'$error', '/:error(.*)', { error: ParamValue<true> }, { error: ParamValue<false> }>,
     'apps-user-list': RouteRecordInfo<'apps-user-list', '/apps/user/list', Record<never, never>, Record<never, never>>,
-    'apps-user-list-users': RouteRecordInfo<'apps-user-list-users', '/apps/user/list/users', Record<never, never>, Record<never, never>>,
     'apps-user-role-permissions': RouteRecordInfo<'apps-user-role-permissions', '/apps/user/role-permissions', Record<never, never>, Record<never, never>>,
     'apps-user-view-id': RouteRecordInfo<'apps-user-view-id', '/apps/user/view/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'dashboards-crm': RouteRecordInfo<'dashboards-crm', '/dashboards/crm', Record<never, never>, Record<never, never>>,
@@ -38,8 +37,9 @@ declare module 'vue-router/auto-routes' {
     'pages-typography': RouteRecordInfo<'pages-typography', '/pages/typography', Record<never, never>, Record<never, never>>,
     'pages-user-profile-tab': RouteRecordInfo<'pages-user-profile-tab', '/pages/user-profile/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
     'register': RouteRecordInfo<'register', '/register', Record<never, never>, Record<never, never>>,
+    'settings-form-validation': RouteRecordInfo<'settings-form-validation', '/settings/form/validation', Record<never, never>, Record<never, never>>,
     'settings-membership': RouteRecordInfo<'settings-membership', '/settings/membership', Record<never, never>, Record<never, never>>,
     'settings-membership-type': RouteRecordInfo<'settings-membership-type', '/settings/membership/type', Record<never, never>, Record<never, never>>,
-    'settings-public-variable': RouteRecordInfo<'settings-public-variable', '/settings/public-variable', Record<never, never>, Record<never, never>>,
+    'settings-public-rule': RouteRecordInfo<'settings-public-rule', '/settings/public-rule', Record<never, never>, Record<never, never>>,
   }
 }
