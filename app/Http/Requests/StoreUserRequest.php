@@ -22,22 +22,31 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name'             => 'required|string|max:255',
-            'last_name'              => 'required|string|max:255',
-            'email'                  => 'required|email|unique:users,email',
-            'mobile_number'          => 'required|string|max:15|unique:users,mobile_number',
-            'password'               => 'required|string|min:8|confirmed', // Must match password_confirmation
-            'profile_picture'        => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // 2MB max size
-            'gender'                 => 'required|in:Male,Female',
-            'date_of_birth'          => 'required|date|before:today',
-            'address'                => 'required|string|max:500',
-            'city'                   => 'required|string|max:255',
+            'first_name' => 'required|string|max:255|unique:users,first_name',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'mobile_number' => 'required|string|max:15|unique:users,mobile_number',
+            'password' => 'nullable|string|min:8|confirmed', // Must match password_confirmation
+            'profile_picture' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (!preg_match('/^data:image\/(jpeg|png|jpg|gif);base64,/', $value)) {
+                        $fail('The profile picture must be a valid Base64 encoded image.');
+                    }
+                },
+            ],
+
+            'gender' => 'required|in:Male,Female',
+            'date_of_birth' => 'required|date|before:today',
+            'address' => 'required|string|max:500',
+            'city' => 'required|string|max:255',
             'emergency_contact_name' => 'required|string|max:255',
-            'emergency_contact_phone'=> 'required|string|max:15',
-            'hire_date'              => 'required|date',
-            'salary'                 => 'required|numeric|min:0',
-            'assigned_location'      => 'required|string|max:255',
-            'role'                   => 'required|exists:roles,name', // Ensure role exists in roles table
+            'emergency_contact_phone' => 'required|string|max:15',
+            'hire_date' => 'required|date',
+            'salary' => 'required|numeric|min:0',
+            'assigned_location' => 'required|string|max:255',
+            'role' => 'required|exists:roles,name', // Ensure role exists in roles table
         ];
     }
 

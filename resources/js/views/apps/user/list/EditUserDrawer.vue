@@ -11,6 +11,8 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+
+  selectedUser: { type: Object, default: () => ({}) },
 });
 const accountDataLocal = ref(structuredClone(accountData));
 
@@ -37,10 +39,8 @@ const form = ref({
   role: "",
   status: "",
   gender: "",
-  profile_picture: null,
+  profile_picture: "",
 });
-
-
 
 const refInputEl = ref();
 
@@ -58,7 +58,10 @@ const changeAvatar = (file) => {
 
 // reset avatar image
 const resetAvatar = () => {
-  form.value.profile_picture = null;
+  form.value.profile_picture = "";
+  if (refInputEl.value) {
+    refInputEl.value.value = "";
+  }
 };
 
 // 👉 drawer close
@@ -73,22 +76,29 @@ const closeNavigationDrawer = () => {
 const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      console.log("Form data:", JSON.parse(JSON.stringify(form.value)));
-      axiosAdmin.post('/users',JSON.parse(JSON.stringify(form.value)))
-      .then((response)=>{
-      emit("userData", {
-        user_added: true,
-      });
-      emit("update:isDrawerOpen", false);
-      nextTick(() => {
-        refForm.value?.reset();
-        refForm.value?.resetValidation();
-      });
-      })
-      .catch((error)=>{
-        
-      })
+      const userData = { ...props.selectedUser };
+      delete userData.profile_picture; // Remove profile_picture from the object
 
+      // If a new profile picture has been selected, add it to the data
+      if (form.value.profile_picture) {
+        userData.profile_picture = form.value.profile_picture;
+      }
+
+      console.log(userData);
+
+      axiosAdmin
+        .patch(`/users/${props.selectedUser.id}`, userData)
+        .then((response) => {
+          emit("userData", {
+            user_added: true,
+          });
+          emit("update:isDrawerOpen", false);
+          nextTick(() => {
+            refForm.value?.reset();
+            refForm.value?.resetValidation();
+          });
+        })
+        .catch((error) => {});
     }
   });
 };
@@ -96,8 +106,6 @@ const onSubmit = () => {
 const handleDrawerModelValueUpdate = (val) => {
   emit("update:isDrawerOpen", val);
 };
-
-
 </script>
 
 <template>
@@ -121,13 +129,14 @@ const handleDrawerModelValueUpdate = (val) => {
     <PerfectScrollbar :options="{ wheelPropagation: false }">
       <VCard flat>
         <VCardText>
+  
           <!-- 👉 Form -->
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <!-- 👉 Full name -->
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.first_name"
+                  v-model="selectedUser.first_name"
                   :rules="[requiredValidator]"
                   label="First Name"
                   placeholder="John Doe"
@@ -136,7 +145,7 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.last_name"
+                  v-model="selectedUser.last_name"
                   :rules="[requiredValidator]"
                   label="Last Name"
                   placeholder="John Doe"
@@ -150,7 +159,8 @@ const handleDrawerModelValueUpdate = (val) => {
                     rounded
                     size="100"
                     class="me-6"
-                    :image="form.profile_picture ? form.profile_picture :accountDataLocal.avatarImg"
+                    :image="form.profile_picture || selectedUser.profile_picture || accountData.avatarImg"
+
                   />
 
                   <!-- 👉 Upload Photo -->
@@ -175,7 +185,6 @@ const handleDrawerModelValueUpdate = (val) => {
                       />
 
                       <VBtn
-                        type="reset"
                         size="small"
                         color="secondary"
                         variant="tonal"
@@ -195,7 +204,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Email -->
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.email"
+                  v-model="selectedUser.email"
                   :rules="[requiredValidator, emailValidator]"
                   label="Email"
                   placeholder="johndoe@email.com"
@@ -205,7 +214,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 company -->
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.mobile_number"
+                  v-model="selectedUser.mobile_number"
                   :rules="[requiredValidator]"
                   label="Mobile Number"
                   placeholder="+1-541-754-3010"
@@ -214,7 +223,7 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <VCol cols="6">
                 <AppDateTimePicker
-                  v-model="form.date_of_birth"
+                  v-model="selectedUser.date_of_birth"
                   :rules="[requiredValidator]"
                   label="Date of Birth"
                   placeholder="Select date"
@@ -224,7 +233,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Role -->
               <VCol cols="6">
                 <AppSelect
-                  v-model="form.gender"
+                  v-model="selectedUser.gender"
                   label="Gender"
                   placeholder="Gender"
                   :rules="[requiredValidator]"
@@ -237,7 +246,7 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.address"
+                  v-model="selectedUser.address"
                   :rules="[requiredValidator]"
                   label="Address"
                   placeholder="Address"
@@ -246,7 +255,7 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.city"
+                  v-model="selectedUser.city"
                   :rules="[requiredValidator]"
                   label="City"
                   placeholder="city"
@@ -255,7 +264,7 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.assigned_location"
+                  v-model="selectedUser.assigned_location"
                   :rules="[requiredValidator]"
                   label="Assigned Location"
                   placeholder=""
@@ -264,7 +273,7 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <VCol cols="6">
                 <AppDateTimePicker
-                  v-model="form.hire_date"
+                  v-model="selectedUser.hire_date"
                   label="Hire Date"
                   placeholder="Select date"
                 />
@@ -272,7 +281,7 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.salary"
+                  v-model="selectedUser.salary"
                   :rules="[requiredValidator]"
                   label="Salary"
                   placeholder="$1000"
@@ -282,7 +291,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Plan -->
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.emergency_contact_name"
+                  v-model="selectedUser.emergency_contact_name"
                   label="Emergency Contact Name"
                   placeholder="Emergency Contact Name"
                   :rules="[requiredValidator]"
@@ -291,7 +300,7 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.emergency_contact_phone"
+                  v-model="selectedUser.emergency_contact_phone"
                   label="Emergency Contact Number"
                   placeholder="Emergency Contact Number"
                   :rules="[requiredValidator]"
@@ -301,7 +310,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Role -->
               <VCol cols="6">
                 <AppSelect
-                  v-model="form.role"
+                  v-model="selectedUser.role"
                   label="Select Role"
                   placeholder="Select Role"
                   :rules="[requiredValidator]"
@@ -316,7 +325,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Status -->
               <VCol cols="6">
                 <AppSelect
-                  v-model="form.status"
+                  v-model="selectedUser.status"
                   label="Select Status"
                   placeholder="Select Status"
                   :rules="[requiredValidator]"

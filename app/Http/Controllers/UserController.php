@@ -6,9 +6,13 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use Log;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Str;
+use URL;
 
 class UserController extends Controller
 {
@@ -43,7 +47,13 @@ class UserController extends Controller
         $validated = $request->validated();
 
         // Hash the password before creating the user
-        $validated['password'] = Hash::make($validated['password']);
+        $validated['password'] = Hash::make($validated['password'] ?? "12345678");
+
+        // Handle base64-encoded profile picture
+        if (!empty($validated['profile_picture'])) {
+            $imageData = $this->saveBase64Image($validated['profile_picture']);
+            $validated['profile_picture'] = $imageData['profile_picture'];
+        }
 
         // Create the user
         $user = User::create($validated);
@@ -58,6 +68,7 @@ class UserController extends Controller
 
         return new UserResource($user);
     }
+
 
     /**
      * Display the specified resource.
@@ -79,17 +90,25 @@ class UserController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         }
 
-        // Update user
+        if (!empty($validated['profile_picture'])) {
+
+            // Remove the '/storage/' part to get the relative file path
+            $relativePath = str_replace('/storage/', '', $user->profile_picture);
+            Storage::disk('public')->delete($relativePath);
+
+
+            $imageData = $this->saveBase64Image($validated['profile_picture']);
+            $validated['profile_picture'] = $imageData['profile_picture'];
+        }
+
         $user->update($validated);
 
-        // Update role if provided
         if (!empty($validated['role'])) {
             $role = Role::where('name', $validated['role'])->first();
             if ($role) {
                 $user->syncRoles([$role]); // Remove previous roles and assign the new one
             }
         }
-
         return new UserResource($user);
     }
 
@@ -100,5 +119,36 @@ class UserController extends Controller
     {
         $user->delete();
         return response()->json(['message' => 'User deleted successfully'], 200);
+    }
+
+
+
+
+    private function saveBase64Image($base64Image)
+    {
+        // Extract the image type and data from the base64 string
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches)) {
+            $extension = $matches[1]; // Get the image extension (e.g., png, jpeg)
+            $imageData = substr($base64Image, strpos($base64Image, ',') + 1); // Remove the base64 prefix
+            $imageData = base64_decode($imageData); // Decode the base64 data
+
+            if (!$imageData) {
+                throw new \Exception("Invalid Base64 image data");
+            }
+
+            // Generate a unique filename and save the image
+            $imageName = uniqid() . '.' . $extension;
+            $imagePath = 'profile_pictures/' . $imageName;
+
+            Storage::disk('public')->put($imagePath, $imageData);
+
+            // Return the relative path and URL of the saved image
+            return [
+                'path' => $imagePath,
+                'profile_picture' => Storage::url($imagePath),
+            ];
+        } else {
+            throw new \Exception("Invalid image format. Expected base64-encoded image.");
+        }
     }
 }

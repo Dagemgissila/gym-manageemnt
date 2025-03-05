@@ -42,6 +42,7 @@ class UpdateUserRequest extends FormRequest
             'salary' => ['sometimes', 'numeric', 'min:0'],
             'assigned_location' => ['sometimes', 'string', 'max:255'],
             'role' => ['sometimes', 'exists:roles,name'],
+            'profile_picture' => ['nullable', 'string'],
         ];
     }
 }
