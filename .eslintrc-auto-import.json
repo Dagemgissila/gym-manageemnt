@@ -363,6 +363,7 @@
     "whenever": true,
     "common": true,
     "sweetalert": true,
-    "decimalValidator": true
+    "decimalValidator": true,
+    "useStorage": true
   }
 }

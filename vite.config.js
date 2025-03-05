@@ -110,6 +110,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: 'public', // Output directly to the public directory
     chunkSizeWarningLimit: 5000,
   },
   optimizeDeps: {
