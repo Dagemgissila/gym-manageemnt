@@ -41,5 +41,6 @@ declare module 'vue-router/auto-routes' {
     'settings-membership': RouteRecordInfo<'settings-membership', '/settings/membership', Record<never, never>, Record<never, never>>,
     'settings-membership-type': RouteRecordInfo<'settings-membership-type', '/settings/membership/type', Record<never, never>, Record<never, never>>,
     'settings-public-rule': RouteRecordInfo<'settings-public-rule', '/settings/public-rule', Record<never, never>, Record<never, never>>,
+    'settings-variable-field': RouteRecordInfo<'settings-variable-field', '/settings/variable-field', Record<never, never>, Record<never, never>>,
   }
 }

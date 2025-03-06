@@ -7,6 +7,7 @@ use App\Http\Controllers\MembershipTypeController;
 use App\Http\Controllers\PublicRuleController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VariableFieldsController;
 use App\Models\FieldValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +31,7 @@ Route::middleware(["api.check.auth"])->group(function () {
    // In api.php
    Route::patch('/field-validations/bulk-update', [FieldValidationController::class, 'bulkUpdate']);
    Route::apiResource('field-validations', FieldValidationController::class);
-
+   Route::apiResource('variable-fields', VariableFieldsController::class);
 
 
    //role and permissions

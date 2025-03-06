@@ -16,6 +16,13 @@ export default [
           permission: 'users_view',
           icon: { icon: 'tabler-settings-cog' } // Updated for system-wide settings
         },
+
+        { 
+          title: 'Variable Fields', 
+          icon: { icon: 'tabler-users' }, // Updated Membership icon
+          to: 'settings-variable-field', 
+          permission: 'users_view' 
+        },
         {
           title: 'Membership',
           icon: { icon: 'tabler-users' }, // Updated Membership icon
@@ -35,18 +42,7 @@ export default [
           ],
         },
 
-        {
-          title: 'Variable Fields',
-          icon: { icon: 'tabler-users' }, // Updated Membership icon
-          children: [
-            {
-              title: 'Types',
-              to: "settings-membership-type", // Replace with actual route
-              icon: { icon: 'tabler-list' }, // List icon
-              permission:""
-            },
-          ],
-        },
+
       ],
     },
   ];
