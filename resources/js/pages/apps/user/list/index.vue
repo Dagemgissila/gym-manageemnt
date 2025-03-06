@@ -292,14 +292,9 @@ const resolveUserStatusVariant = (stat) => {
 
         <!-- Status -->
         <template #item.status="{ item }">
-          <VChip
-            :color="resolveUserStatusVariant(item.status)"
-            size="small"
-            label
-            class="text-capitalize"
-          >
-            {{ item.status }}
-          </VChip>
+          <div class="text-body-2">
+            {{ item.status ? "Active" : "Inactive" }}
+          </div>
         </template>
 
         <!-- Actions -->
@@ -338,18 +333,6 @@ const resolveUserStatusVariant = (stat) => {
             <VListItemTitle >Edit</VListItemTitle>
                 </VListItem>
 
-                <VListItem
-                  v-if="
-                    permsArray.includes('users_delete') ||
-                    permsArray.includes('admin')
-                  "
-                  @click="deleteUser(item.id)"
-                >
-                  <template #prepend>
-                    <VIcon icon="tabler-trash" />
-                  </template>
-                  <VListItemTitle>Delete</VListItemTitle>
-                </VListItem>
               </VList>
             </VMenu>
           </VBtn>

@@ -1,4 +1,5 @@
 <script setup>
+import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 
 const props = defineProps({
@@ -15,8 +16,6 @@ const isFormValid = ref(false);
 const refForm = ref();
 // Form fields
 
-
-
 // 👉 drawer close
 const closeNavigationDrawer = () => {
   emit("update:isDrawerOpen", false);
@@ -27,25 +26,41 @@ const closeNavigationDrawer = () => {
 };
 
 const onSubmit = () => {
+  clearAllServerErrors();
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      emit("updateMembershipTypeData", {
+      const formatedMembershipTypeData = {
         id: props.selectedMembershipType.id ?? null,
-        membershipType: props.selectedMembershipType.membership_type,
+        membership_type: props.selectedMembershipType.membership_type,
         background_color: props.selectedMembershipType.background_color,
-        isSessionBased: props.selectedMembershipType.is_session_based,
-        isLiveMembership: props.selectedMembershipType.live_membership,
-        isMembershipOverlap: props.selectedMembershipType.membership_overlap,
-      });
-      
-      emit("update:isDrawerOpen", false);
-      nextTick(() => {
-        refForm.value?.reset();
-        refForm.value?.resetValidation();
-        isSessionBased.value = false;
-        isLiveMembership.value = false;
-        isMembershipOverlap.value = false;
-      });
+        is_session_based: props.selectedMembershipType.is_session_based,
+        live_membership: props.selectedMembershipType.live_membership,
+        membership_overlap: props.selectedMembershipType.membership_overlap,
+        status:props.selectedMembershipType.status
+      };
+
+      axiosAdmin
+        .patch(
+          `/membership-types/${formatedMembershipTypeData.id}`,
+          formatedMembershipTypeData
+        ) // Include the ID in the URL
+        .then(function (response) {
+          emit("updateMembershipTypeData", {
+            value: true,
+          });
+
+          emit("update:isDrawerOpen", false);
+          nextTick(() => {
+            refForm.value?.reset();
+            refForm.value?.resetValidation();
+            
+          });
+        })
+        .catch(function (error) {
+          handleServerErrors(error);
+          // Trigger re-validation to show server errors
+          refForm.value?.validate();
+        });
     }
   });
 };
@@ -79,11 +94,13 @@ const handleDrawerModelValueUpdate = (val) => {
           <!-- 👉 Form -->
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
+
+            <pre>{{ selectedMembershipType }}</pre>
               <!-- 👉 Full name -->
               <VCol cols="12">
                 <AppTextField
                   v-model="selectedMembershipType.membership_type"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('membership_type')]"
                   label="Membership Type"
                   placeholder="Gym Membership"
                 />
@@ -151,6 +168,18 @@ const handleDrawerModelValueUpdate = (val) => {
                   <VSwitch
                     v-model="selectedMembershipType.membership_overlap"
                     :label="` Membership Overlap ?`"
+                    :true-value="1"
+                    :false-value="0"
+                  />
+                </div>
+              </VCol>
+
+
+              <VCol cols="12">
+                <div class="demo-space-x">
+                  <VSwitch
+                    v-model="selectedMembershipType.status"
+                    :label="`Status`"
                     :true-value="1"
                     :false-value="0"
                   />

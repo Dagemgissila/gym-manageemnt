@@ -13,7 +13,7 @@ class CreateMembershipItemsTable extends Migration
         Schema::create('membership_items', function (Blueprint $table) {
             $table->id();
             $table->string('membership_name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->foreignId('membership_type_id')
                 ->constrained('membership_types')
                 ->onDelete('restrict');

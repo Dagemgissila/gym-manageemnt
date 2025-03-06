@@ -19,6 +19,7 @@ class MembershipTypeSeeder extends Seeder
                 'live_membership' => true,
                 'background_color' => '#FF5733',
                 'membership_overlap' => false,
+                'status' => false,
                 'created_by' => 1, // Replace with a valid user ID
                 'updated_by' => 1, // Replace with a valid user ID
                 'created_at' => now(),
@@ -30,6 +31,7 @@ class MembershipTypeSeeder extends Seeder
                 'live_membership' => true,
                 'background_color' => '#33FF57',
                 'membership_overlap' => true,
+                'status' => true,
                 'created_by' => 1, // Replace with a valid user ID
                 'updated_by' => 1, // Replace with a valid user ID
                 'created_at' => now(),

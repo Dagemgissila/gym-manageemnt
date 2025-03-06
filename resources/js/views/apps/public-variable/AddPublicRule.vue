@@ -19,7 +19,7 @@ const refForm = ref();
 
 const setting_rule = ref();
 const setting_value = ref("");
-const status = ref("active");
+const status = ref(true);
 
 // Dropdown options
 const public_rules = ref([
@@ -129,14 +129,9 @@ const onSubmit = () => {
 
               <!-- 👉 Status -->
               <VCol cols="12">
-                <AppSelect
+                <VSwitch
                   v-model="status"
-                  :rules="[requiredValidator,serverErrorValidator('status')]"
-                  :items="status_options"
-                  item-title="title"
-                  item-value="value"
-                  label="Status"
-                  placeholder="Select a status"
+                  :label="`Status`"
                 />
               </VCol>
 

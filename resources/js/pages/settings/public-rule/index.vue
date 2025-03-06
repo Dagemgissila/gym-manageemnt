@@ -12,7 +12,7 @@ const orderBy = ref("desc");
 const selectedRows = ref([]);
 const isAddPublicRuleVisible = ref(false);
 const EditPublicRuleVisible = ref(false);
-const selectedRole = ref({});
+const selectedRule = ref({});
 const searchQuery = ref();
 
 // 👉 Users Data
@@ -50,7 +50,7 @@ const fetchPublicRule = async () => {
 const fetchPublicRuleById = async (id) => {
   try {
     const { data } = await axiosAdmin.get(`public-rules/${id}`);
-    selectedRole.value = { // Corrected assignment syntax
+    selectedRule.value = { // Corrected assignment syntax
       id: data.id,
       setting_rule: data.setting_rule,
       setting_value: data.setting_value,
@@ -144,7 +144,12 @@ onMounted(()=>{
         show-select
         @update:options="updateOptions"
       >
-
+        <!-- Status -->
+        <template #item.status="{ item }">
+          <div class="text-body-2">
+            {{ item.status ? "Active" : "Inactive" }}
+          </div>
+        </template>
 
 
         <!-- Actions -->
@@ -176,7 +181,7 @@ onMounted(()=>{
     <!-- Add User Drawer -->
     <EditPublicRule
       v-model:is-drawer-open="EditPublicRuleVisible"
-      :selectedRole="selectedRole"
+      :selectedRule="selectedRule"
       @publicRuleData="fetchPublicRule"
     />
   </section>

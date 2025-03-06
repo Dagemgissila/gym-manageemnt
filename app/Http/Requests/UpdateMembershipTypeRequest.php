@@ -28,6 +28,7 @@ class UpdateMembershipTypeRequest extends FormRequest
             'live_membership' => ['boolean'],
             'background_color' => ['required', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'membership_overlap' => ['boolean'],
+            "status" => ["required", "boolean"]
         ];
 
     }

@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
             'mobile_number' => '1234567890',
             'password' => Hash::make('password'), // Change to a secure password
             'profile_picture' => 'default.png',
-            'status' => UserStatus::ACTIVE, // Using your enum
+            'status' => true, // Using your enum
             'gender' => 'Male', // or "Female"
             'date_of_birth' => now()->subYears(30)->format('Y-m-d'),
             'address' => '123 Admin Street',

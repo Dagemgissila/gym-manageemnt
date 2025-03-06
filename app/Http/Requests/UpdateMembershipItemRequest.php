@@ -24,8 +24,8 @@ class UpdateMembershipItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'membership_name' => 'required|string|max:255',
-            'description' => 'required|string',
+            'membership_name' => 'required|string|max:255|unique:membership_items,membership_name',
+            'description' => 'nullable|string',
             'membership_type_id' => 'required|exists:membership_types,id',
             'duration_days' => 'required|integer|min:1',
             'upgradable' => 'required|boolean',

@@ -15,8 +15,7 @@ return new class extends Migration {
             $table->id();
             $table->string('setting_rule');
             $table->string('setting_value');
-            $table->enum('status', ActiveInactive::getValues())->default(ActiveInactive::ACTIVE);
-
+            $table->boolean('status')->default(true);
             $table->foreignId('created_by')
                 ->nullable()
                 ->constrained('users')

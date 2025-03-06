@@ -21,7 +21,7 @@ class UserFactory extends Factory
             'mobile_number' => $this->faker->phoneNumber,
             'password' => Hash::make('password'), // Default password
             'profile_picture' => null,
-            'status' => UserStatus::ACTIVE,
+            'status' => true,
             'gender' => $this->faker->randomElement(['Male', 'Female']),
             'date_of_birth' => $this->faker->date('Y-m-d', '-30 years'),
             'address' => $this->faker->address,

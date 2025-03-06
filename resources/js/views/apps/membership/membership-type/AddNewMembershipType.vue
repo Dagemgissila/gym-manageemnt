@@ -19,6 +19,8 @@ const background_color = ref("#ffffff"); // Default color
 const isSessionBased = ref(false);
 const isLiveMembership = ref(false);
 const isMembershipOverlap = ref(false);
+const status = ref(true);
+
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -40,6 +42,7 @@ const onSubmit = () => {
         is_session_based: isSessionBased.value,
         live_membership: isLiveMembership.value,
         membership_overlap: isMembershipOverlap.value,
+        status:status.value
       };
 
       axiosAdmin
@@ -163,6 +166,16 @@ const handleDrawerModelValueUpdate = (val) => {
                   <VSwitch
                     v-model="isMembershipOverlap"
                     :label="` Membership Overlap ?`"
+                  />
+                </div>
+              </VCol>
+
+
+              <VCol cols="12">
+                <div class="demo-space-x">
+                  <VSwitch
+                    v-model="status"
+                    :label="` Status`"
                   />
                 </div>
               </VCol>

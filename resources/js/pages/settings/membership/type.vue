@@ -29,6 +29,8 @@ const headers = [
   { title: "Live Membership", key: "live_membership" },
   { title: "Background Color (Calendar)", key: "background_color" },
   { title: "Membership Overlap", key: "membership_overlap" },
+  { title: "Status", key: "status" },
+
   { title: "Actions", key: "actions", sortable: true },
 ];
 
@@ -43,6 +45,7 @@ const fetchMembershipType = async () => {
       },
     });
 
+    console.log(response.data)
     membership_types.value = response.data;
     total.value = response.meta.total;
   } catch (error) {
@@ -79,6 +82,7 @@ const fetchMembershipTypeById = async (membership_id) => {
       is_session_based: data.is_session_based,
       live_membership: data.live_membership,
       membership_overlap: data.membership_overlap,
+      status:data.status
     };
 
     EditMembershipTypeVisible.value = true; // Open the drawer
@@ -86,29 +90,6 @@ const fetchMembershipTypeById = async (membership_id) => {
     console.error("Error fetching role:", error);
   }
 };
-
-const updatemembership = async (membershipData) => {
-  const formatedMembershipTypeData = {
-    id: membershipData.id,
-    membership_type: membershipData.membershipType,
-    background_color: membershipData.background_color,
-    is_session_based: membershipData.isSessionBased,
-    live_membership: membershipData.isLiveMembership,
-    membership_overlap: membershipData.isMembershipOverlap,
-  };
-
-  axiosAdmin
-    .patch(`/membership-types/${membershipData.id}`, formatedMembershipTypeData) // Include the ID in the URL
-    .then(function (response) {
-      // Refetch Membership Types
-      fetchMembershipType();
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
-};
-
-
 
 
 </script>
@@ -191,6 +172,13 @@ const updatemembership = async (membershipData) => {
           </div>
         </template>
 
+                <!-- Live Membership -->
+                <template #item.status="{ item }">
+          <div class="text-body-2">
+            {{ item.status ? "Active" : "Inactive" }}
+          </div>
+        </template>
+
         <!-- Background Color -->
         <template #item.background_color="{ item }">
           <!-- Display selected color in a rectangle -->
@@ -215,10 +203,6 @@ const updatemembership = async (membershipData) => {
      <!-- Actions -->
      <template #item.actions="{ item }">
           <template v-if="item">
-            <IconBtn v-if="permsArray.includes('membership_type_delete') || permsArray.includes('admin')" @click="deleteUser(item.id)">
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-
             <IconBtn v-if="permsArray.includes('membership_type_edit') || permsArray.includes('admin')" @click="fetchMembershipTypeById(item.id)">
               <VIcon icon="tabler-pencil" />
             </IconBtn>
@@ -246,7 +230,7 @@ const updatemembership = async (membershipData) => {
     <EditMembershipType
       v-model:is-drawer-open="EditMembershipTypeVisible"
       :selected-membership-type="selectedMembershipType"
-      @update-membership-type-data="updatemembership"
+      @update-membership-type-data="fetchMembershipType"
     />
   </section>
 </template>

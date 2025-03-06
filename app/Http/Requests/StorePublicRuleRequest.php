@@ -25,7 +25,7 @@ class StorePublicRuleRequest extends FormRequest
         return [
             "setting_rule" => ["required", "string", "max:255", "unique:public_rules,setting_rule"],
             "setting_value" => ["required", "string", "max:255"],
-            "status" => ["required", "string", "in:" . implode(',', ActiveInactive::getValues())], // Fixed in rule
+            "status" => ["required", "boolean"] // Fixed in rule
         ];
     }
 

@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->string("assigned_location")->nullable();
             $table->string('profile_picture')->nullable();
             $table->string('password');
-            $table->enum('status', UserStatus::getValues())->default(UserStatus::ACTIVE);
+            $table->boolean('status')->default(true);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

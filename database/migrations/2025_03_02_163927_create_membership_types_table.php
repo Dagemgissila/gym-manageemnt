@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->boolean('live_membership');
             $table->string('background_color');
             $table->boolean('membership_overlap')->default(false);
+            $table->boolean('status')->default(true);
+
             $table->foreignId('created_by')
                 ->nullable()
                 ->references('id')->on('users')

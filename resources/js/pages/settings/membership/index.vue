@@ -70,38 +70,7 @@ watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchMembershipItem);
 // 👉 Initial fetch
 onMounted(fetchMembershipItem);
 
-const addMembershipItem = async (membershipData) => {
-  const formattedMembershipItemData = {
-    membership_name: membershipData.membership_name,
-    description: membershipData.description,
-    membership_type_id: membershipData.selected_membership_type,
-    duration_days: parseInt(membershipData.membership_duration_days, 10),
-    upgradable: membershipData.is_upgradable,
-    price: parseFloat(membershipData.membership_price),
-    discount_available: membershipData.is_discount_available,
-    installment_available: membershipData.is_installment_option,
-    free_freezes_allowed: parseInt(
-      membershipData.total_free_freeze_weeks_allowed,
-      10
-    ),
-    freeze_duration_max_weeks: parseInt(
-      membershipData.maximum_freeze_duration_weeks,
-      10
-    ),
-    paid_freeze_allowed: membershipData.selected_freeze_status,
-    gym_access: membershipData.includes_gym_access,
-    status: membershipData.selected_status,
-  };
 
-  axiosAdmin
-    .post("/membership-items", formattedMembershipItemData)
-    .then(function (response) {
-      fetchMembershipItem();
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-};
 
 const fetchMembershipItemById = async (membership_id) => {
   try {
@@ -130,16 +99,7 @@ const fetchMembershipItemById = async (membership_id) => {
   }
 };
 
-const AddRule = (publicRuleData) => {
-  axiosAdmin
-    .post("/public-rules", publicRuleData)
-    .then((response) => {
-      fetchPublicRule(); // Call after a successful request
-    })
-    .catch((error) => {
-      console.log("error", error);
-    });
-};
+
 
 </script>
 
@@ -233,9 +193,6 @@ const AddRule = (publicRuleData) => {
         <!-- Actions -->
         <template #item.actions="{ item }">
           <template v-if="item">
-            <IconBtn v-if="permsArray.includes('membership_item_delete') || permsArray.includes('admin')" @click="deleteUser(item.id)">
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
 
             <IconBtn  v-if="permsArray.includes('membership_item_edit') || permsArray.includes('admin')" @click="fetchMembershipItemById(item.id)">
               <VIcon icon="tabler-pencil" />
@@ -257,14 +214,14 @@ const AddRule = (publicRuleData) => {
     <!-- Add User Drawer -->
     <AddMembershipItem
       v-model:is-drawer-open="isAddMembershipItemVisible"
-      @membership-item-data="addMembershipItem"
+      @membership-item-data="fetchMembershipItem"
     />
 
     <!-- Add User Drawer -->
     <EditmembershipItem
       v-model:is-drawer-open="EditmembershipItemVisible"
       :selected-membership-item="selectedMembershipItem"
-      @membership="updatememberShip"
+      @membership="fetchMembershipItem"
     />
   </section>
 </template>

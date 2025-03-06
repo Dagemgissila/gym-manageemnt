@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MembershipType extends Model
 {
     use Filterable;
-    protected $fillable = ['membership_type', 'is_session_based', 'live_membership', 'background_color', 'membership_overlap'];
+    protected $fillable = ['membership_type', 'is_session_based', 'live_membership', 'background_color', 'membership_overlap', 'status'];
 
     // Fields that can be searched
     protected $searchable = ['membership_type'];

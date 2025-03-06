@@ -24,9 +24,15 @@ class UpdatePublicRuleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "setting_rule" => ["required", "string", "max:255", Rule::unique('public_rules')->ignore($this->setting_rule)],
+            "setting_rule" => [
+                "required",
+                "string",
+                "max:255",
+                Rule::unique('public_rules')->ignore($this->route('public_rule')->id) // Ignore the current record
+            ],
             "setting_value" => ["required", "string", "max:255"],
-            "status" => ["required", "string", "in:" . implode(',', ActiveInactive::getValues())], // Fixed in rule
+            "status" => ["required", "boolean"]
         ];
     }
+
 }

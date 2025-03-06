@@ -9,7 +9,7 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  selectedRole: { type: Object, default: () => ({}) },
+  selectedRule: { type: Object, default: () => ({}) },
 });
 
 const emit = defineEmits(["update:isDrawerOpen", "publicRuleData"]);
@@ -45,11 +45,12 @@ const handleDrawerModelValueUpdate = (val) => {
 
 // 👉 Form submission
 const onSubmit = () => {
-  clearServerError()
+  clearAllServerErrors();
+
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       axiosAdmin
-        .patch(`/public-rules/${props.selectedRole.id}`, props.selectedRole)
+        .patch(`/public-rules/${props.selectedRule.id}`, props.selectedRule)
         .then((response) => {
           emit("publicRuleData", {
             value: true,
@@ -95,7 +96,7 @@ const onSubmit = () => {
               <!-- 👉 Rule -->
               <VCol cols="12">
                 <AppSelect
-                  v-model="selectedRole.setting_rule"
+                  v-model="selectedRule.setting_rule"
                   :items="public_rules"
                   :rules="[
                     requiredValidator,
@@ -111,7 +112,7 @@ const onSubmit = () => {
               <!-- 👉 Setting Value -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="selectedRole.setting_value"
+                  v-model="selectedRule.setting_value"
                   :rules="[requiredValidator, integerValidator]"
                   label="Setting Value"
                   placeholder="Setting Value"
@@ -119,15 +120,12 @@ const onSubmit = () => {
               </VCol>
 
               <!-- 👉 Status -->
-              <VCol cols="12">
-                <AppSelect
-                  v-model="selectedRole.status"
-                  :rules="[requiredValidator]"
-                  :items="status_options"
-                  item-title="title"
-                  item-value="value"
-                  label="Status"
-                  placeholder="Select a status"
+              <VCol cols="6">
+                <VSwitch
+                  v-model="selectedRule.status"
+                  :label="`User Status`"
+                  :true-value="1"
+                  :false-value="0"
                 />
               </VCol>
 

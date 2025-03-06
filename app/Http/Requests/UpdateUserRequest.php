@@ -43,7 +43,7 @@ class UpdateUserRequest extends FormRequest
             'assigned_location' => ['sometimes', 'string', 'max:255'],
             'role' => ['sometimes', 'exists:roles,name'],
             'profile_picture' => ['nullable', 'string'],
-            "status" => ["sometimes", "in:" . implode(",", UserStatus::getValues())],
+            "status" => ['required', 'boolean'],
         ];
     }
 }

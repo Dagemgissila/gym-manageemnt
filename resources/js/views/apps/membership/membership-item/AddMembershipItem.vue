@@ -1,4 +1,5 @@
 <script setup>
+import { serverErrorValidator } from "@/@core/utils/validators";
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { onMounted, ref } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
@@ -20,20 +21,17 @@ const refForm = ref();
 // Form fields
 const membership_name = ref("");
 const description = ref("");
-const selected_membership_type = ref(null);
-const membership_duration_days = ref("");
-const membership_price = ref("");
-const total_free_freeze_weeks_allowed = ref("");
-const maximum_freeze_duration_weeks = ref("");
-const is_upgradable = ref(false);
-const is_discount_available = ref(false);
-const is_installment_option = ref(false);
-const includes_gym_access = ref(false);
-const is_session_based = ref(false);
-const is_live_membership = ref(false);
-const is_membership_overlap = ref(false);
-const selected_status = ref("active");
-const selected_freeze_status = ref("NO");
+const membership_type = ref(null);
+const duration_days = ref("");
+const price = ref("");
+const free_freezes_allowed = ref("");
+const freeze_duration_max_weeks = ref("");
+const upgradable = ref(false);
+const discount_available = ref(false);
+const installment_available = ref(false);
+const gym_access = ref(false);
+const status = ref("active");
+const paid_freeze_allowed = ref("NO");
 
 // Dropdown options
 const membership_types = ref([]);
@@ -61,7 +59,7 @@ onMounted(async () => {
   }
 });
 
-// 👉 Close drawer and reset form
+
 const closeNavigationDrawer = () => {
   emit("update:isDrawerOpen", false);
   nextTick(() => {
@@ -71,8 +69,6 @@ const closeNavigationDrawer = () => {
   });
 };
 
-
-
 // 👉 Handle drawer model value update
 const handleDrawerModelValueUpdate = (val) => {
   emit("update:isDrawerOpen", val);
@@ -80,31 +76,53 @@ const handleDrawerModelValueUpdate = (val) => {
 
 // 👉 Form submission
 const onSubmit = () => {
+
+  clearAllServerErrors();
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      emit("membershipItemData", {
+      const formattedMembershipItemData = {
         membership_name: membership_name.value,
         description: description.value,
-        selected_membership_type: selected_membership_type.value,
-        membership_duration_days: membership_duration_days.value,
-        membership_price: membership_price.value,
-        total_free_freeze_weeks_allowed: total_free_freeze_weeks_allowed.value,
-        maximum_freeze_duration_weeks: maximum_freeze_duration_weeks.value,
-        is_upgradable: is_upgradable.value,
-        is_discount_available: is_discount_available.value,
-        is_installment_option: is_installment_option.value,
-        includes_gym_access: includes_gym_access.value,
-        selected_status: selected_status.value,
-        selected_freeze_status: selected_freeze_status.value,
-      });
-      emit("update:isDrawerOpen", false);
-      nextTick(() => {
-        refForm.value?.reset();
-        refForm.value?.resetValidation();
-      });
+        membership_type_id: membership_type.value,
+        duration_days: duration_days.value,
+        price: price.value,
+        free_freezes_allowed: free_freezes_allowed.value,
+        freeze_duration_max_weeks: freeze_duration_max_weeks.value,
+        upgradable: upgradable.value,
+        discount_available: discount_available.value,
+        installment_available: installment_available.value,
+        gym_access: gym_access.value,
+        status: status.value,
+        paid_freeze_allowed: paid_freeze_allowed.value,
+      };
+
+
+      console.log("data",formattedMembershipItemData);
+
+      axiosAdmin
+        .post("/membership-items", formattedMembershipItemData)
+        .then(function (response) {
+          emit("membershipItemData", {
+            value: true,
+          });
+
+          emit("update:isDrawerOpen", false);
+          nextTick(() => {
+            refForm.value?.reset();
+            refForm.value?.resetValidation();
+          });
+        })
+        .catch(function (error) {
+
+          handleServerErrors(error);
+          // Trigger re-validation to show server errors
+          refForm.value?.validate();
+        });
     }
   });
 };
+
+const addMembershipItem = async (membershipData) => {};
 </script>
 
 <template>
@@ -134,7 +152,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="membership_name"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('membership_name')]"
                   label="Membership Name"
                   placeholder="Gym Membership"
                 />
@@ -143,9 +161,9 @@ const onSubmit = () => {
               <!-- 👉 Membership Type -->
               <VCol cols="12">
                 <AppSelect
-                  v-model="selected_membership_type"
+                  v-model="membership_type"
                   :items="membership_types"
-                  :rules="[requiredValidator]"
+                  :rules="[serverErrorValidator('membership_type_id')]"
                   item-title="membership_type"
                   item-value="id"
                   label="Membership Type"
@@ -156,8 +174,8 @@ const onSubmit = () => {
               <!-- 👉 Membership Duration (Days) -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="membership_duration_days"
-                  :rules="[requiredValidator, integerValidator]"
+                  v-model="duration_days"
+                  :rules="[requiredValidator, integerValidator,serverErrorValidator('duration_days')]"
                   label="Membership Duration (Days)"
                   placeholder="Membership Duration (Days)"
                 />
@@ -165,14 +183,14 @@ const onSubmit = () => {
 
               <!-- 👉 Switches -->
               <VCol cols="12">
-                <VSwitch v-model="is_upgradable" :label="`Can Be Upgraded?`" />
+                <VSwitch v-model="upgradable" :label="`Can Be Upgraded?`" />
               </VCol>
 
               <!-- 👉 Membership Price -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="membership_price"
-                  :rules="[requiredValidator, decimalValidator]"
+                  v-model="price"
+                  :rules="[requiredValidator, decimalValidator,serverErrorValidator('price')]"
                   label="Membership Price"
                   placeholder="Membership Price"
                 />
@@ -180,20 +198,20 @@ const onSubmit = () => {
 
               <VCol cols="12">
                 <VSwitch
-                  v-model="is_discount_available"
+                  v-model="discount_available"
                   :label="`Discount Available?`"
                 />
               </VCol>
               <VCol cols="12">
                 <VSwitch
-                  v-model="is_installment_option"
+                  v-model="installment_available"
                   :label="`Installment Option?`"
                 />
               </VCol>
 
               <VCol cols="12">
                 <VSwitch
-                  v-model="includes_gym_access"
+                  v-model="gym_access"
                   :label="`Includes Gym Access?`"
                 />
               </VCol>
@@ -201,7 +219,7 @@ const onSubmit = () => {
               <!-- 👉 Total Free Freeze Weeks Allowed -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="total_free_freeze_weeks_allowed"
+                  v-model="free_freezes_allowed"
                   :rules="[requiredValidator, integerValidator]"
                   label="Total Free Freeze Weeks Allowed"
                   placeholder="Total Free Freeze Weeks Allowed"
@@ -211,8 +229,8 @@ const onSubmit = () => {
               <!-- 👉 Maximum Freeze Duration (Weeks) -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="maximum_freeze_duration_weeks"
-                  :rules="[requiredValidator, integerValidator]"
+                  v-model="freeze_duration_max_weeks"
+                  :rules="[requiredValidator, integerValidator,serverErrorValidator('freeze_duration_max_weeks')]"
                   label="Maximum Freeze Duration (Weeks)"
                   placeholder="Maximum Freeze Duration (Weeks)"
                 />
@@ -221,8 +239,8 @@ const onSubmit = () => {
               <!-- 👉 Paid Freeze Allowed -->
               <VCol cols="12">
                 <AppSelect
-                  v-model="selected_freeze_status"
-                  :rules="[requiredValidator]"
+                  v-model="paid_freeze_allowed"
+                  :rules="[requiredValidator,serverErrorValidator('paid_freeze_allowed')]"
                   :items="paid_freeze_allowed_options"
                   item-title="title"
                   item-value="value"
@@ -234,7 +252,7 @@ const onSubmit = () => {
               <!-- 👉 Status -->
               <VCol cols="12">
                 <AppSelect
-                  v-model="selected_status"
+                  v-model="status"
                   :rules="[requiredValidator]"
                   :items="status_options"
                   item-title="title"
@@ -253,8 +271,6 @@ const onSubmit = () => {
                   rows="2"
                 />
               </VCol>
-
-
 
               <!-- 👉 Submit and Cancel -->
               <VCol cols="12">

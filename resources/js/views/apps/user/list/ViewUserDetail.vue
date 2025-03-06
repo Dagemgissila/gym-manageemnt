@@ -35,15 +35,7 @@ const avatarText = (name) => {
     .toUpperCase();
 };
 
-const resolveUserStatusVariant = (stat) => {
-  if (!stat) return "primary"; // Fallback if status is undefined or null
-  const stats = {
-    active: "success",
-    suspended: "error", // Use "error" for red color
-    inactive: "secondary",
-  };
-  return stats[stat.toLowerCase()] || "primary";
-};
+
 </script>
 
 <template>
@@ -191,14 +183,11 @@ const resolveUserStatusVariant = (stat) => {
                 <VListItem>
                   <div class="d-flex gap-x-2 align-center">
                     <h6 class="text-h6">Status:</h6>
-                    <VChip
-                      label
-                      :color="resolveUserStatusVariant(selectedUser.status)"
-                      size="small"
-                    >
-                      {{ selectedUser.status }}
-                    </VChip>
+  
+                    {{ selectedUser.status ? "Active" : "Inactive" }}
+
                   </div>
+
                 </VListItem>
               </VList>
             </VCardText>

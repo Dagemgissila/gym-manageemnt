@@ -47,7 +47,7 @@ class StoreUserRequest extends FormRequest
             'salary' => 'required|numeric|min:0',
             'assigned_location' => 'required|string|max:255',
             'role' => 'required|exists:roles,name', // Ensure role exists in roles table
-            "status" => ["sometimes", "in:" . implode(",", UserStatus::getValues())],
+            "status" => ['required', 'boolean'],
 
         ];
     }

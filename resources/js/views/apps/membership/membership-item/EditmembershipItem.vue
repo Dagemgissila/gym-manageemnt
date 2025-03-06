@@ -61,17 +61,47 @@ const handleDrawerModelValueUpdate = (val) => {
 
 // 👉 Form submission
 const onSubmit = () => {
+  clearAllServerErrors();
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      emit("membership", {
-      
-       membership_item: props.selectedMembershipItem,
-      });
-      emit("update:isDrawerOpen", false);
-      nextTick(() => {
-        refForm.value?.reset();
-        refForm.value?.resetValidation();
-      });
+
+      const formattedMembershipItemData = {
+        id: props.selectedMembershipItem.id ?? null,
+        membership_name: props.selectedMembershipItem.membership_name,
+        description: props.selectedMembershipItem.description ?? "", // Handle null values
+        membership_type_id: props.selectedMembershipItem.membership_type_id,
+        duration_days: props.selectedMembershipItem.duration_days,
+        price: props.selectedMembershipItem.price,
+        free_freezes_allowed: props.selectedMembershipItem.free_freezes_allowed,
+        freeze_duration_max_weeks:
+          props.selectedMembershipItem.freeze_duration_max_weeks,
+        upgradable: props.selectedMembershipItem.upgradable,
+        discount_available: props.selectedMembershipItem.discount_available,
+        installment_available:
+          props.selectedMembershipItem.installment_available,
+        gym_access: props.selectedMembershipItem.gym_access,
+        status: props.selectedMembershipItem.status,
+        paid_freeze_allowed: props.selectedMembershipItem.paid_freeze_allowed,
+      };
+
+      axiosAdmin
+        .patch(`/membership-items/${formattedMembershipItemData.id}`, formattedMembershipItemData)
+        .then(function (response) {
+          emit("membership", {
+            value: true,
+          });
+
+          emit("update:isDrawerOpen", false);
+          nextTick(() => {
+            refForm.value?.reset();
+            refForm.value?.resetValidation();
+          });
+        })
+        .catch(function (error) {
+          handleServerErrors(error);
+          // Trigger re-validation to show server errors
+          refForm.value?.validate();
+        });
     }
   });
 };
@@ -104,18 +134,17 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="selectedMembershipItem.membership_name"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('membership_name')]"
                   label="Membership Name"
                   placeholder="Gym Membership"
                 />
               </VCol>
 
-            
               <VCol cols="12">
                 <AppSelect
                   v-model="selectedMembershipItem.membership_type_id"
                   :items="membership_types"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('membership_type_id')]"
                   item-title="membership_type"
                   item-value="id"
                   label="Membership Type"
@@ -127,7 +156,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="selectedMembershipItem.duration_days"
-                  :rules="[requiredValidator, integerValidator]"
+                  :rules="[requiredValidator, integerValidator,serverErrorValidator('duration_days')]"
                   label="Membership Duration (Days)"
                   placeholder="Membership Duration (Days)"
                 />
@@ -183,7 +212,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="selectedMembershipItem.free_freezes_allowed"
-                  :rules="[requiredValidator, integerValidator]"
+                  :rules="[requiredValidator, integerValidator,serverErrorValidator('free_freezes_allowed')]"
                   label="Total Free Freeze Weeks Allowed"
                   placeholder="Total Free Freeze Weeks Allowed"
                 />
@@ -193,7 +222,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="selectedMembershipItem.freeze_duration_max_weeks"
-                  :rules="[requiredValidator, integerValidator]"
+                  :rules="[requiredValidator, integerValidator,serverErrorValidator('freeze_duration_max_weeks')]"
                   label="Maximum Freeze Duration (Weeks)"
                   placeholder="Maximum Freeze Duration (Weeks)"
                 />
@@ -203,7 +232,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppSelect
                   v-model="selectedMembershipItem.paid_freeze_allowed"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('freeze_duration_max_weeks')]"
                   :items="paid_freeze_allowed_options"
                   item-title="title"
                   item-value="value"

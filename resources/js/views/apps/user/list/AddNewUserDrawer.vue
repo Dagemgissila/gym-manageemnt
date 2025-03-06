@@ -14,8 +14,6 @@ const props = defineProps({
   },
 });
 
-
-
 const accountDataLocal = ref(structuredClone(accountData));
 
 const emit = defineEmits(["update:isDrawerOpen", "userData"]);
@@ -90,8 +88,7 @@ const onSubmit = () => {
           });
         })
         .catch((error) => {
-       
-          handleServerErrors(error)
+          handleServerErrors(error);
           // Trigger re-validation to show server errors
           refForm.value?.validate();
         });
@@ -355,19 +352,8 @@ onMounted(() => {
                 />
               </VCol>
 
-              <!-- 👉 Status -->
               <VCol cols="6">
-                <AppSelect
-                  v-model="form.status"
-                  label="Select Status"
-                  placeholder="Select Status"
-                  :rules="[requiredValidator, serverErrorValidator('status')]"
-                  :items="[
-                    { title: 'Active', value: 'active' },
-                    { title: 'Inactive', value: 'inactive' },
-                    { title: 'Suspended', value: 'suspended' },
-                  ]"
-                />
+                <VSwitch v-model="form.status" :label="`User Status`" />
               </VCol>
 
               <!-- 👉 Submit and Cancel -->

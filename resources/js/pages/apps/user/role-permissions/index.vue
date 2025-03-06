@@ -245,9 +245,7 @@ const updateRole = async (roleData) => {
         <!-- Actions -->
         <template #item.actions="{ item }">
           <template v-if="(permsArray.includes('roles_delete') || permsArray.includes('admin')) && (item.name !== 'admin')">
-            <IconBtn @click="deleteUser(item.id)">
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
+     
 
             <IconBtn @click="fetchRoleById(item.id)">
               <VIcon icon="tabler-pencil" />
