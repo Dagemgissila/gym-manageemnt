@@ -78,26 +78,6 @@ const updateOptions = (options) => {
 watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchPublicRule);
 
 
-const AddRule = (publicRuleData) => {
-  axiosAdmin
-    .post("/public-rules", publicRuleData)
-    .then((response) => {
-      fetchPublicRule(); // Call after a successful request
-    })
-    .catch((error) => {
-      console.log("error", error);
-    });
-};
-
-const UpdateRule=(updatedData)=>{
-  axiosAdmin.patch(`/public-rules/${updatedData.public_rule.id}`,updatedData.public_rule)
-  .then((response)=>{
-    fetchPublicRule();
-  })
-  .catch((error)=>{
-    console.log(error)
-  })
-}
 
 
 onMounted(()=>{
@@ -144,7 +124,7 @@ onMounted(()=>{
             prepend-icon="tabler-plus"
             @click="isAddPublicRuleVisible = true"
           >
-            Add Rule
+            Add Public Rule
           </VBtn>
         </div>
       </VCardText>
@@ -169,11 +149,7 @@ onMounted(()=>{
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <template v-if="item.name !== 'admin'">
-            <IconBtn @click="deleteUser(item.id)">
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-
+          <template v-if="item">
             <IconBtn @click="fetchPublicRuleById(item.id)">
               <VIcon icon="tabler-pencil" />
             </IconBtn>
@@ -194,14 +170,14 @@ onMounted(()=>{
     <!-- Add User Drawer -->
     <AddPublicRule
       v-model:is-drawer-open="isAddPublicRuleVisible"
-      @public-rule-data="AddRule"
+      @public-rule-data="fetchPublicRule"
     />
 
     <!-- Add User Drawer -->
     <EditPublicRule
       v-model:is-drawer-open="EditPublicRuleVisible"
       :selectedRole="selectedRole"
-      @publicRuleData="UpdateRule"
+      @publicRuleData="fetchPublicRule"
     />
   </section>
 </template>

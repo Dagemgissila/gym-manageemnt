@@ -30,6 +30,7 @@ class MembershipTypeController extends Controller
      */
     public function store(StoreMembershipTypeRequest $request)
     {
+        Log::info($request->validated());
         $validated = $request->validated();
         $validated["created_by"] = auth()->id();
         $validated["updated_by"] = auth()->id();

@@ -364,6 +364,11 @@
     "common": true,
     "sweetalert": true,
     "decimalValidator": true,
-    "useStorage": true
+    "useStorage": true,
+    "serverErrorValidator": true,
+    "serverErrors": true,
+    "clearServerError": true,
+    "handleServerErrors": true,
+    "clearAllServerErrors": true
   }
 }

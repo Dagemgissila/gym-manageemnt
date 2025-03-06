@@ -41,13 +41,13 @@ class User extends Authenticatable implements JWTSubject
         'gender',
         'date_of_birth',
         'address',
-        'city',
         'emergency_contact_name',
         'emergency_contact_phone',
         'hire_date',
         'salary',
         'assigned_location',
-        "profile_picture"
+        "profile_picture",
+        "status",
     ];
 
 
@@ -103,4 +103,11 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
+
+
+    protected $casts = [
+        'date_of_birth' => 'date',
+        'hire_date' => 'date',
+    ];
+
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateMembershipTypeRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class UpdateMembershipTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'membership_type' => ['required', 'string', 'max:255'],
+            'membership_type' => ['required', 'string', 'max:255', Rule::unique('membership_types')->ignore($this->route('membership_type'))],
             'is_session_based' => ['boolean'],
             'live_membership' => ['boolean'],
             'background_color' => ['required', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],

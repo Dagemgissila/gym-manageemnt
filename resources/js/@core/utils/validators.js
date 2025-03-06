@@ -1,4 +1,5 @@
-import { isEmpty, isEmptyArray, isNullOrUndefined } from './helpers'
+import { ref } from 'vue';
+import { isEmpty, isEmptyArray, isNullOrUndefined } from './helpers';
 
 // 👉 Required Validator
 export const requiredValidator = value => {
@@ -7,6 +8,39 @@ export const requiredValidator = value => {
   
   return !!String(value).trim().length || 'This field is required'
 }
+
+
+
+// Dynamic server errors object
+export const serverErrors = ref({});
+
+// Server error validator
+export const serverErrorValidator = (fieldName) => () => {
+  return serverErrors.value[fieldName] || true;
+};
+
+// Clear server errors for a specific field
+export const clearServerError = (fieldName) => {
+  if (serverErrors.value[fieldName]) {
+    serverErrors.value[fieldName] = null;
+  }
+};
+
+// Handle server validation errors
+export const handleServerErrors = (error) => {
+  serverErrors.value = Object.keys(error.data.errors).reduce(
+    (acc, key) => {
+      acc[key] = error.data.errors[key][0]; // Take the first error message
+      return acc;
+    },
+    {}
+  );
+};
+
+
+export const clearAllServerErrors = () => {
+  serverErrors.value = {};
+};
 
 // 👉 Email Validator
 export const emailValidator = value => {

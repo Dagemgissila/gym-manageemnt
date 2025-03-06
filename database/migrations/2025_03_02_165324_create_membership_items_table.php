@@ -21,8 +21,8 @@ class CreateMembershipItemsTable extends Migration
             $table->integer('duration_days');
             $table->boolean('upgradable');
             $table->decimal('price', 8, 2)->default(0);
-            $table->boolean('discount_available');
-            $table->boolean('installment_available');
+            $table->boolean('discount_available')->default(false);
+            $table->boolean('installment_available')->default(false);
             $table->integer('free_freezes_allowed');
             $table->integer('freeze_duration_max_weeks');
             $table->enum('paid_freeze_allowed', YesNo::getValues())->default(YesNo::YES);

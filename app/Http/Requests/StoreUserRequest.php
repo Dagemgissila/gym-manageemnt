@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserStatus;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends FormRequest
@@ -22,7 +23,7 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required|string|max:255|unique:users,first_name',
+            'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'mobile_number' => 'required|string|max:15|unique:users,mobile_number',
@@ -40,13 +41,14 @@ class StoreUserRequest extends FormRequest
             'gender' => 'required|in:Male,Female',
             'date_of_birth' => 'required|date|before:today',
             'address' => 'required|string|max:500',
-            'city' => 'required|string|max:255',
             'emergency_contact_name' => 'required|string|max:255',
             'emergency_contact_phone' => 'required|string|max:15',
             'hire_date' => 'required|date',
             'salary' => 'required|numeric|min:0',
             'assigned_location' => 'required|string|max:255',
             'role' => 'required|exists:roles,name', // Ensure role exists in roles table
+            "status" => ["sometimes", "in:" . implode(",", UserStatus::getValues())],
+
         ];
     }
 

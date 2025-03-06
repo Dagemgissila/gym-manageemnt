@@ -16,6 +16,8 @@ declare global {
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const avatarText: typeof import('./resources/js/@core/utils/formatters.js')['avatarText']
   const betweenValidator: typeof import('./resources/js/@core/utils/validators.js')['betweenValidator']
+  const clearAllServerErrors: typeof import('./resources/js/@core/utils/validators.js')['clearAllServerErrors']
+  const clearServerError: typeof import('./resources/js/@core/utils/validators.js')['clearServerError']
   const common: typeof import('./resources/js/composables/common.js')['default']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
@@ -56,6 +58,7 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
+  const handleServerErrors: typeof import('./resources/js/@core/utils/validators.js')['handleServerErrors']
   const hexToRgb: typeof import('./resources/js/@core/utils/colorConverter.js')['hexToRgb']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
@@ -131,6 +134,8 @@ declare global {
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const resolveVuetifyTheme: typeof import('./resources/js/@core/utils/vuetify.js')['resolveVuetifyTheme']
   const rgbaToHex: typeof import('./resources/js/@core/utils/colorConverter.js')['rgbaToHex']
+  const serverErrorValidator: typeof import('./resources/js/@core/utils/validators.js')['serverErrorValidator']
+  const serverErrors: typeof import('./resources/js/@core/utils/validators.js')['serverErrors']
   const setActivePinia: typeof import('pinia')['setActivePinia']
   const setMapStoreSuffix: typeof import('pinia')['setMapStoreSuffix']
   const shallowReactive: typeof import('vue')['shallowReactive']
@@ -379,6 +384,8 @@ declare module 'vue' {
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly avatarText: UnwrapRef<typeof import('./resources/js/@core/utils/formatters.js')['avatarText']>
     readonly betweenValidator: UnwrapRef<typeof import('./resources/js/@core/utils/validators.js')['betweenValidator']>
+    readonly clearAllServerErrors: UnwrapRef<typeof import('./resources/js/@core/utils/validators.js')['clearAllServerErrors']>
+    readonly clearServerError: UnwrapRef<typeof import('./resources/js/@core/utils/validators.js')['clearServerError']>
     readonly common: UnwrapRef<typeof import('./resources/js/composables/common.js')['default']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
@@ -419,6 +426,7 @@ declare module 'vue' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly handleServerErrors: UnwrapRef<typeof import('./resources/js/@core/utils/validators.js')['handleServerErrors']>
     readonly hexToRgb: UnwrapRef<typeof import('./resources/js/@core/utils/colorConverter.js')['hexToRgb']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -494,6 +502,8 @@ declare module 'vue' {
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly resolveVuetifyTheme: UnwrapRef<typeof import('./resources/js/@core/utils/vuetify.js')['resolveVuetifyTheme']>
     readonly rgbaToHex: UnwrapRef<typeof import('./resources/js/@core/utils/colorConverter.js')['rgbaToHex']>
+    readonly serverErrorValidator: UnwrapRef<typeof import('./resources/js/@core/utils/validators.js')['serverErrorValidator']>
+    readonly serverErrors: UnwrapRef<typeof import('./resources/js/@core/utils/validators.js')['serverErrors']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>

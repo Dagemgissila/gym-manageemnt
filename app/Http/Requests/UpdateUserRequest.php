@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -30,12 +31,11 @@ class UpdateUserRequest extends FormRequest
                 'email',
                 Rule::unique('users')->ignore($this->user->id),
             ],
-            'mobile_number' => ['sometimes', 'string', 'max:20'],
+            'mobile_number' => ['sometimes', 'string', 'max:20', Rule::unique('users')->ignore($this->user->id)],
             'password' => ['nullable', 'confirmed', 'min:6'],
             'gender' => ['sometimes', 'in:Male,Female,Other'],
             'date_of_birth' => ['sometimes', 'date'],
             'address' => ['sometimes', 'string', 'max:500'],
-            'city' => ['sometimes', 'string', 'max:255'],
             'emergency_contact_name' => ['sometimes', 'string', 'max:255'],
             'emergency_contact_phone' => ['sometimes', 'string', 'max:20'],
             'hire_date' => ['sometimes', 'date'],
@@ -43,6 +43,7 @@ class UpdateUserRequest extends FormRequest
             'assigned_location' => ['sometimes', 'string', 'max:255'],
             'role' => ['sometimes', 'exists:roles,name'],
             'profile_picture' => ['nullable', 'string'],
+            "status" => ["sometimes", "in:" . implode(",", UserStatus::getValues())],
         ];
     }
 }

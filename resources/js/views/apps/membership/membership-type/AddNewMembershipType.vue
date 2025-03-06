@@ -1,4 +1,5 @@
 <script setup>
+import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 
 const props = defineProps({
@@ -13,7 +14,7 @@ const emit = defineEmits(["update:isDrawerOpen", "membershipTypeData"]);
 const isFormValid = ref(false);
 const refForm = ref();
 // Form fields
-const membershipType = ref("");
+const membership_type = ref("");
 const background_color = ref("#ffffff"); // Default color
 const isSessionBased = ref(false);
 const isLiveMembership = ref(false);
@@ -29,24 +30,39 @@ const closeNavigationDrawer = () => {
 };
 
 const onSubmit = () => {
+  clearAllServerErrors();
+
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      emit("membershipTypeData", {
-        membershipType: membershipType.value,
+      const formatedMembershipTypeData = {
+        membership_type: membership_type.value,
         background_color: background_color.value,
-        isSessionBased: isSessionBased.value,
-        isLiveMembership: isLiveMembership.value,
-        isMembershipOverlap: isMembershipOverlap.value,
-      });
-      emit("update:isDrawerOpen", false);
-      nextTick(() => {
-        refForm.value?.reset();
-        refForm.value?.resetValidation();
-        background_color.value = "#ffffff"; // Default color
-        isSessionBased.value = false;
-        isLiveMembership.value = false;
-        isMembershipOverlap.value = false;
-      });
+        is_session_based: isSessionBased.value,
+        live_membership: isLiveMembership.value,
+        membership_overlap: isMembershipOverlap.value,
+      };
+
+      axiosAdmin
+        .post("/membership-types", formatedMembershipTypeData)
+        .then(function (response) {
+          emit("membershipTypeData", {
+            value: true,
+          });
+          emit("update:isDrawerOpen", false);
+          nextTick(() => {
+            refForm.value?.reset();
+            refForm.value?.resetValidation();
+            background_color.value = "#ffffff"; // Default color
+            isSessionBased.value = false;
+            isLiveMembership.value = false;
+            isMembershipOverlap.value = false;
+          });
+        })
+        .catch((error) => {
+          handleServerErrors(error);
+          // Trigger re-validation to show server errors
+          refForm.value?.validate();
+        });
     }
   });
 };
@@ -82,8 +98,8 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Full name -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="membershipType"
-                  :rules="[requiredValidator]"
+                  v-model="membership_type"
+                  :rules="[requiredValidator, serverErrorValidator('membership_type') ]"
                   label="Membership Type"
                   placeholder="Gym Membership"
                 />

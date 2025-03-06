@@ -20,7 +20,6 @@ return new class extends Migration {
             $table->enum("gender", ["Male", "Female"])->default("Male");
             $table->date("date_of_birth");
             $table->string("address");
-            $table->string("city");
             $table->string("hire_date")->nullable();
             $table->decimal("salary", 10, 2)->nullable();
             $table->string("emergency_contact_name");

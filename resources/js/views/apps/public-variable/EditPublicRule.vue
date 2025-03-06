@@ -1,4 +1,5 @@
 <script setup>
+import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { ref } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 
@@ -17,22 +18,15 @@ const emit = defineEmits(["update:isDrawerOpen", "publicRuleData"]);
 const isFormValid = ref(false);
 const refForm = ref();
 
-
-const setting_rule = ref();
-const setting_value = ref("");
-const status = ref("active");
-
 // Dropdown options
 const public_rules = ref([
-  {title:"Backdated Entry Date"},
-  {title:"Upgrade Limit"}
+  { title: "Backdated Entry Date" },
+  { title: "Upgrade Limit" },
 ]);
 const status_options = ref([
   { title: "Active", value: "active" },
   { title: "Inactive", value: "inactive" },
 ]);
-
-
 
 // 👉 Close drawer and reset form
 const closeNavigationDrawer = () => {
@@ -44,8 +38,6 @@ const closeNavigationDrawer = () => {
   });
 };
 
-
-
 // 👉 Handle drawer model value update
 const handleDrawerModelValueUpdate = (val) => {
   emit("update:isDrawerOpen", val);
@@ -53,17 +45,25 @@ const handleDrawerModelValueUpdate = (val) => {
 
 // 👉 Form submission
 const onSubmit = () => {
+  clearServerError()
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      emit("publicRuleData", {
-       public_rule: props.selectedRole,
-
-      });
-      emit("update:isDrawerOpen", false);
-      nextTick(() => {
-        refForm.value?.reset();
-        refForm.value?.resetValidation();
-      });
+      axiosAdmin
+        .patch(`/public-rules/${props.selectedRole.id}`, props.selectedRole)
+        .then((response) => {
+          emit("publicRuleData", {
+            value: true,
+          });
+          emit("update:isDrawerOpen", false);
+          nextTick(() => {
+            refForm.value?.reset();
+            refForm.value?.resetValidation();
+          });
+        })
+        .catch((error) => {
+          handleServerErrors(error);
+          refForm.value?.validate();
+        });
     }
   });
 };
@@ -92,14 +92,15 @@ const onSubmit = () => {
           <!-- 👉 Form -->
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
-
               <!-- 👉 Rule -->
               <VCol cols="12">
                 <AppSelect
                   v-model="selectedRole.setting_rule"
                   :items="public_rules"
-                  :rules="[requiredValidator]"
-                  
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('setting_rule'),
+                  ]"
                   item-title="title"
                   item-value="title"
                   label="Rule"
@@ -117,7 +118,6 @@ const onSubmit = () => {
                 />
               </VCol>
 
-       
               <!-- 👉 Status -->
               <VCol cols="12">
                 <AppSelect
@@ -130,7 +130,6 @@ const onSubmit = () => {
                   placeholder="Select a status"
                 />
               </VCol>
-
 
               <!-- 👉 Submit and Cancel -->
               <VCol cols="12">

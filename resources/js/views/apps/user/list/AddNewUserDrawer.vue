@@ -1,6 +1,7 @@
 <script setup>
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import avatar1 from "@images/avatars/avatar-1.png";
+import { onMounted } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 const accountData = {
   avatarImg: avatar1,
@@ -12,13 +13,16 @@ const props = defineProps({
     required: true,
   },
 });
+
+
+
 const accountDataLocal = ref(structuredClone(accountData));
 
 const emit = defineEmits(["update:isDrawerOpen", "userData"]);
 
 const isFormValid = ref(false);
 const refForm = ref();
-
+const roles = ref([]);
 // 👉 Form fields
 const form = ref({
   first_name: "",
@@ -28,7 +32,6 @@ const form = ref({
   date_of_birth: "",
   profile_picture: "",
   address: "",
-  city: "",
   assigned_location: "",
   hire_date: "",
   salary: "",
@@ -39,8 +42,6 @@ const form = ref({
   gender: "",
   profile_picture: null,
 });
-
-
 
 const refInputEl = ref();
 
@@ -71,24 +72,29 @@ const closeNavigationDrawer = () => {
 };
 
 const onSubmit = () => {
+  clearAllServerErrors();
+
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       console.log("Form data:", JSON.parse(JSON.stringify(form.value)));
-      axiosAdmin.post('/users',JSON.parse(JSON.stringify(form.value)))
-      .then((response)=>{
-      emit("userData", {
-        user_added: true,
-      });
-      emit("update:isDrawerOpen", false);
-      nextTick(() => {
-        refForm.value?.reset();
-        refForm.value?.resetValidation();
-      });
-      })
-      .catch((error)=>{
-        
-      })
-
+      axiosAdmin
+        .post("/users", JSON.parse(JSON.stringify(form.value)))
+        .then((response) => {
+          emit("userData", {
+            user_added: true,
+          });
+          emit("update:isDrawerOpen", false);
+          nextTick(() => {
+            refForm.value?.reset();
+            refForm.value?.resetValidation();
+          });
+        })
+        .catch((error) => {
+       
+          handleServerErrors(error)
+          // Trigger re-validation to show server errors
+          refForm.value?.validate();
+        });
     }
   });
 };
@@ -97,7 +103,22 @@ const handleDrawerModelValueUpdate = (val) => {
   emit("update:isDrawerOpen", val);
 };
 
+const fetchRoles = async () => {
+  try {
+    const response = await axiosAdmin.get("/roles");
 
+    roles.value = response.data.map((role) => ({
+      title: role.display_name || role.name, // Use display_name if available, otherwise fallback to name
+      value: role.name,
+    }));
+  } catch (error) {
+    console.error("Error fetching roles:", error);
+  }
+};
+
+onMounted(() => {
+  fetchRoles();
+});
 </script>
 
 <template>
@@ -128,7 +149,10 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="form.first_name"
-                  :rules="[requiredValidator]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('first_name'),
+                  ]"
                   label="First Name"
                   placeholder="John Doe"
                 />
@@ -137,7 +161,10 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="form.last_name"
-                  :rules="[requiredValidator]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('last_name'),
+                  ]"
                   label="Last Name"
                   placeholder="John Doe"
                 />
@@ -150,7 +177,11 @@ const handleDrawerModelValueUpdate = (val) => {
                     rounded
                     size="100"
                     class="me-6"
-                    :image="form.profile_picture ? form.profile_picture :accountDataLocal.avatarImg"
+                    :image="
+                      form.profile_picture
+                        ? form.profile_picture
+                        : accountDataLocal.avatarImg
+                    "
                   />
 
                   <!-- 👉 Upload Photo -->
@@ -196,9 +227,14 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="form.email"
-                  :rules="[requiredValidator, emailValidator]"
+                  :rules="[
+                    requiredValidator,
+                    emailValidator,
+                    serverErrorValidator('email'),
+                  ]"
                   label="Email"
                   placeholder="johndoe@email.com"
+                  @update:model-value="clearServerError('email')"
                 />
               </VCol>
 
@@ -206,7 +242,10 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="form.mobile_number"
-                  :rules="[requiredValidator]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('mobile_number'),
+                  ]"
                   label="Mobile Number"
                   placeholder="+1-541-754-3010"
                 />
@@ -215,7 +254,10 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppDateTimePicker
                   v-model="form.date_of_birth"
-                  :rules="[requiredValidator]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('date_of_birth'),
+                  ]"
                   label="Date of Birth"
                   placeholder="Select date"
                 />
@@ -227,7 +269,7 @@ const handleDrawerModelValueUpdate = (val) => {
                   v-model="form.gender"
                   label="Gender"
                   placeholder="Gender"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator, serverErrorValidator('gender')]"
                   :items="[
                     { title: 'Male', value: 'Male' },
                     { title: 'Female', value: 'Female' },
@@ -238,7 +280,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="form.address"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator, serverErrorValidator('address')]"
                   label="Address"
                   placeholder="Address"
                 />
@@ -246,17 +288,8 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <VCol cols="6">
                 <AppTextField
-                  v-model="form.city"
-                  :rules="[requiredValidator]"
-                  label="City"
-                  placeholder="city"
-                />
-              </VCol>
-
-              <VCol cols="6">
-                <AppTextField
                   v-model="form.assigned_location"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator, serverErrorValidator('location')]"
                   label="Assigned Location"
                   placeholder=""
                 />
@@ -265,6 +298,10 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppDateTimePicker
                   v-model="form.hire_date"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('hire_date'),
+                  ]"
                   label="Hire Date"
                   placeholder="Select date"
                 />
@@ -273,7 +310,10 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="form.salary"
-                  :rules="[requiredValidator]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('hire_date'),
+                  ]"
                   label="Salary"
                   placeholder="$1000"
                 />
@@ -285,7 +325,10 @@ const handleDrawerModelValueUpdate = (val) => {
                   v-model="form.emergency_contact_name"
                   label="Emergency Contact Name"
                   placeholder="Emergency Contact Name"
-                  :rules="[requiredValidator]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('hire_date'),
+                  ]"
                 />
               </VCol>
 
@@ -294,7 +337,10 @@ const handleDrawerModelValueUpdate = (val) => {
                   v-model="form.emergency_contact_phone"
                   label="Emergency Contact Number"
                   placeholder="Emergency Contact Number"
-                  :rules="[requiredValidator]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('emergency_contact_phone'),
+                  ]"
                 />
               </VCol>
 
@@ -303,13 +349,9 @@ const handleDrawerModelValueUpdate = (val) => {
                 <AppSelect
                   v-model="form.role"
                   label="Select Role"
+                  :rules="[requiredValidator, serverErrorValidator('role')]"
+                  :items="roles"
                   placeholder="Select Role"
-                  :rules="[requiredValidator]"
-                  :items="[
-                    { title: 'Admin', value: 'admin' },
-                    { title: 'Member', value: 'member' },
-                    { title: 'Trainner', value: 'trainner' },
-                  ]"
                 />
               </VCol>
 
@@ -319,7 +361,7 @@ const handleDrawerModelValueUpdate = (val) => {
                   v-model="form.status"
                   label="Select Status"
                   placeholder="Select Status"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator, serverErrorValidator('status')]"
                   :items="[
                     { title: 'Active', value: 'active' },
                     { title: 'Inactive', value: 'inactive' },

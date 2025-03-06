@@ -3,6 +3,8 @@ import axiosAdmin from "@/composables/axios/axiosAdmin";
 import common from "@/composables/common";
 import AddNewUserDrawer from "@/views/apps/user/list/AddNewUserDrawer.vue";
 import EditUserDrawer from "@/views/apps/user/list/EditUserDrawer.vue";
+import ViewUserDetail from "@/views/apps/user/list/ViewUserDetail.vue";
+
 import { onMounted, ref } from "vue";
 
 // 👉 Search and Filters
@@ -22,6 +24,8 @@ const selected_user=ref({});
 // 👉 Add User Dialog
 const isAddNewUserDrawerVisible = ref(false);
 const isEditUserDrawerVisible = ref(false);
+const isViewDetailVisible = ref(false);
+
 
 // 👉 Users Data
 const users = ref([]);
@@ -77,7 +81,17 @@ const fetchUserById = async (id) => {
     const response = await axiosAdmin.get(`/users/${id}`);
     selected_user.value = response.data;
     isEditUserDrawerVisible.value = true;
-    console.log(isEditUserDrawerVisible.value);
+  } catch (error) {
+    console.error(error); // Always log the error for debugging
+  }
+}
+
+
+const fetchUserByIdView = async (id) => {
+  try {
+    const response = await axiosAdmin.get(`/users/${id}`);
+    selected_user.value = response.data;
+    isViewDetailVisible.value = true;
   } catch (error) {
     console.error(error); // Always log the error for debugging
   }
@@ -132,7 +146,7 @@ const resolveUserRoleVariant = (role) => {
 const resolveUserStatusVariant = (stat) => {
   const stats = {
     active: "success",
-    suspended: "warning",
+    suspended: "error",
     inactive: "secondary",
   };
   return stats[stat.toLowerCase()] || "primary";
@@ -295,19 +309,18 @@ const resolveUserStatusVariant = (stat) => {
             <VMenu activator="parent">
               <VList>
                 <VListItem
-                  :to="{ name: 'apps-user-view-id', params: { id: item.id } }"
+                  link
+                  v-if="
+                    permsArray.includes('users_edit') ||
+                    permsArray.includes('admin')
+                  "
+                  @click="fetchUserByIdView(item.id)"
                 >
-                  <template
-                    #prepend
-                    v-if="
-                      permsArray.includes('users_view') ||
-                      permsArray.includes('admin')
-                    "
-                  >
+                  <template #prepend>
                     <VIcon icon="tabler-eye" />
                   </template>
-
-                  <VListItemTitle>View</VListItemTitle>
+            
+            <VListItemTitle >View</VListItemTitle>
                 </VListItem>
 
                 <VListItem
@@ -365,5 +378,10 @@ const resolveUserStatusVariant = (stat) => {
       @user-data="fetchUsers"
     >
     </EditUserDrawer>
+
+    <ViewUserDetail
+    v-model:is-drawer-open="isViewDetailVisible"
+    :selectedUser="selected_user"
+     />
   </section>
 </template>

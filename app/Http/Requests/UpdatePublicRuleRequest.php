@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\ActiveInactive;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdatePublicRuleRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class UpdatePublicRuleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "setting_rule" => ["required", "string", "max:255"],
+            "setting_rule" => ["required", "string", "max:255", Rule::unique('public_rules')->ignore($this->setting_rule)],
             "setting_value" => ["required", "string", "max:255"],
             "status" => ["required", "string", "in:" . implode(',', ActiveInactive::getValues())], // Fixed in rule
         ];

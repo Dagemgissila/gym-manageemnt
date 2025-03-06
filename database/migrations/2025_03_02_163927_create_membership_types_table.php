@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->boolean('is_session_based');
             $table->boolean('live_membership');
             $table->string('background_color');
-            $table->boolean('membership_overlap');
+            $table->boolean('membership_overlap')->default(false);
             $table->foreignId('created_by')
                 ->nullable()
                 ->references('id')->on('users')

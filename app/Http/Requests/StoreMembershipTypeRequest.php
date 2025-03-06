@@ -22,7 +22,7 @@ class StoreMembershipTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'membership_type' => ['required', 'string', 'max:255'],
+            'membership_type' => ['required', 'string', 'max:255', "unique:membership_types,membership_type"],
             'is_session_based' => ['boolean'],
             'live_membership' => ['boolean'],
             'background_color' => ['required', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],

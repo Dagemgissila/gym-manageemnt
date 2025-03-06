@@ -20,6 +20,7 @@ const emit = defineEmits(["update:isDrawerOpen", "userData"]);
 
 const isFormValid = ref(false);
 const refForm = ref();
+const roles=ref([]);
 
 // 👉 Form fields
 const form = ref({
@@ -27,12 +28,11 @@ const form = ref({
   last_name: "",
   email: "",
   mobile_number: "",
-  date_of_birth: "",
+  date_of_birth: null, // Provide a default (could be '' or null)
   profile_picture: "",
   address: "",
-  city: "",
   assigned_location: "",
-  hire_date: "",
+  hire_date: null,
   salary: "",
   emergency_contact_name: "",
   emergency_contact_phone: "",
@@ -41,6 +41,8 @@ const form = ref({
   gender: "",
   profile_picture: "",
 });
+
+
 
 const refInputEl = ref();
 
@@ -74,6 +76,9 @@ const closeNavigationDrawer = () => {
 };
 
 const onSubmit = () => {
+  clearAllServerErrors();
+
+  
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       const userData = { ...props.selectedUser };
@@ -98,10 +103,32 @@ const onSubmit = () => {
             refForm.value?.resetValidation();
           });
         })
-        .catch((error) => {});
+        .catch((error) => {
+          handleServerErrors(error)
+          // Trigger re-validation to show server errors
+          refForm.value?.validate();
+        });
     }
   });
 };
+
+
+const fetchRoles = async () => {
+  try {
+    const response = await axiosAdmin.get("/roles");
+
+    roles.value = response.data.map((role) => ({
+      title: role.display_name || role.name, // Use display_name if available, otherwise fallback to name
+      value: role.name,
+    }));
+  } catch (error) {
+    console.error("Error fetching roles:", error);
+  }
+};
+
+onMounted(()=>{
+  fetchRoles();
+})
 
 const handleDrawerModelValueUpdate = (val) => {
   emit("update:isDrawerOpen", val);
@@ -137,7 +164,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="selectedUser.first_name"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('first_name')]"
                   label="First Name"
                   placeholder="John Doe"
                 />
@@ -146,7 +173,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="selectedUser.last_name"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('last_name'),]"
                   label="Last Name"
                   placeholder="John Doe"
                 />
@@ -205,7 +232,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="selectedUser.email"
-                  :rules="[requiredValidator, emailValidator]"
+                  :rules="[requiredValidator, emailValidator,serverErrorValidator('email'),]"
                   label="Email"
                   placeholder="johndoe@email.com"
                 />
@@ -215,7 +242,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="selectedUser.mobile_number"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('mobile_number'),]"
                   label="Mobile Number"
                   placeholder="+1-541-754-3010"
                 />
@@ -224,7 +251,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppDateTimePicker
                   v-model="selectedUser.date_of_birth"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('date_of_birth'),]"
                   label="Date of Birth"
                   placeholder="Select date"
                 />
@@ -236,7 +263,7 @@ const handleDrawerModelValueUpdate = (val) => {
                   v-model="selectedUser.gender"
                   label="Gender"
                   placeholder="Gender"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('gender'),]"
                   :items="[
                     { title: 'Male', value: 'Male' },
                     { title: 'Female', value: 'Female' },
@@ -247,25 +274,18 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="selectedUser.address"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('address'),]"
                   label="Address"
                   placeholder="Address"
                 />
               </VCol>
 
-              <VCol cols="6">
-                <AppTextField
-                  v-model="selectedUser.city"
-                  :rules="[requiredValidator]"
-                  label="City"
-                  placeholder="city"
-                />
-              </VCol>
+
 
               <VCol cols="6">
                 <AppTextField
                   v-model="selectedUser.assigned_location"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('assined_location'),]"
                   label="Assigned Location"
                   placeholder=""
                 />
@@ -274,6 +294,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppDateTimePicker
                   v-model="selectedUser.hire_date"
+                  :rules="[requiredValidator,serverErrorValidator('hire_date'),]"
                   label="Hire Date"
                   placeholder="Select date"
                 />
@@ -282,7 +303,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="6">
                 <AppTextField
                   v-model="selectedUser.salary"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,serverErrorValidator('salary'),]"
                   label="Salary"
                   placeholder="$1000"
                 />
@@ -314,11 +335,7 @@ const handleDrawerModelValueUpdate = (val) => {
                   label="Select Role"
                   placeholder="Select Role"
                   :rules="[requiredValidator]"
-                  :items="[
-                    { title: 'Admin', value: 'admin' },
-                    { title: 'Member', value: 'member' },
-                    { title: 'Trainner', value: 'trainner' },
-                  ]"
+                  :items="roles"
                 />
               </VCol>
 

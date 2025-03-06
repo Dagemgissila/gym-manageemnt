@@ -67,26 +67,7 @@ watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchMembershipType);
 // 👉 Initial fetch
 onMounted(fetchMembershipType);
 
-const addMembershipType = async (membershipData) => {
-  const formatedMembershipTypeData = {
-    membership_type: membershipData.membershipType,
-    background_color: membershipData.background_color,
-    is_session_based: membershipData.isSessionBased,
-    live_membership: membershipData.isLiveMembership,
-    membership_overlap: membershipData.isMembershipOverlap,
-  };
 
-  axiosAdmin
-    .post("/membership-types", formatedMembershipTypeData)
-    .then(function (response) {
-      fetchMembershipType();
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-
-  // Refetch Membership
-};
 
 const fetchMembershipTypeById = async (membership_id) => {
   try {
@@ -171,7 +152,7 @@ const updatemembership = async (membershipData) => {
             prepend-icon="tabler-plus"
             @click="isAddNewMembershipTypeVisible = true"
           >
-            Add Membership
+            Add Membership Type
           </VBtn>
         </div>
       </VCardText>
@@ -258,7 +239,7 @@ const updatemembership = async (membershipData) => {
     <!-- Add User Drawer -->
     <AddNewMembershipType
       v-model:is-drawer-open="isAddNewMembershipTypeVisible"
-      @membership-type-data="addMembershipType"
+      @membership-type-data="fetchMembershipType"
     />
 
     <!-- Add User Drawer -->
