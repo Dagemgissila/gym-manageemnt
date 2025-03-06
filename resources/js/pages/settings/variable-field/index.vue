@@ -1,7 +1,7 @@
 <script setup>
 import axiosAdmin from "@/composables/axios/axiosAdmin";
-import AddPublicRule from "@/views/apps/public-variable/AddPublicRule.vue";
-import EditPublicRule from "@/views/apps/public-variable/EditPublicRule.vue";
+import AddVariableField from "@/views/apps/variable-field/AddVariableField.vue";
+import EditVariableField from "@/views/apps/variable-field/EditVariableField.vue";
 import { onMounted, ref } from "vue";
 
 // 👉 Data Table Options
@@ -10,10 +10,13 @@ const page = ref(1);
 const sortBy = ref("id");
 const orderBy = ref("desc");
 const selectedRows = ref([]);
-const isAddPublicRuleVisible = ref(false);
-const EditPublicRuleVisible = ref(false);
+const isAddVariableFieldVisible = ref(false);
+const EditVariableFieldVisible = ref(false);
 const selectedRule = ref({});
 const searchQuery = ref();
+const field_contents=ref();
+const selectedField=ref();
+const selectedStatus=ref();
 
 // 👉 Users Data
 const public_rules = ref([]);
@@ -28,13 +31,15 @@ const headers = [
 ];
 
 // 👉 Fetch Role
-const fetchPublicRule = async () => {
+const fetchvariable = async () => {
   try {
     const response = await axiosAdmin.get("/variable-fields", {
       params: {
         page: page.value,
         itemsPerPage: itemsPerPage.value,
         q: searchQuery.value,
+        field_content_id:selectedField.value,
+        status:selectedStatus.value
       },
     });
 
@@ -47,7 +52,26 @@ const fetchPublicRule = async () => {
 };
 
 
-const fetchPublicRuleById = async (id) => {
+
+
+// 👉 Fetch Role
+const fetchFields = async () => {
+  try {
+    const response = await axiosAdmin.get("/field-contents",);
+
+
+    field_contents.value = response.data.map((name) => ({
+      title:  name.name, // Use display_name if available, otherwise fallback to name
+      value: name.id,
+    }));
+
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
+};
+
+
+const fetchvariableById = async (id) => {
   try {
     const { data } = await axiosAdmin.get(`public-rules/${id}`);
     selectedRule.value = { // Corrected assignment syntax
@@ -56,11 +80,13 @@ const fetchPublicRuleById = async (id) => {
       setting_value: data.setting_value,
       status: data.status
     };
-    EditPublicRuleVisible.value=true
+    EditVariableFieldVisible.value=true
   } catch (error) {
     console.error("Error fetching public rule:", error);
   }
 };
+
+
 
 
 // 👉 Update sorting options
@@ -75,14 +101,21 @@ const updateOptions = (options) => {
 };
 
 // 👉 Watch for changes that require data refresh
-watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchPublicRule);
+watch([page, itemsPerPage, sortBy, orderBy, searchQuery,selectedField,selectedStatus], fetchvariable);
 
 
 
 
 onMounted(()=>{
-  fetchPublicRule();
+  fetchvariable();
+  fetchFields();
 })
+
+
+const status = [
+  { title: "Active", value: 1 },
+  { title: "Inactive", value: 0 },
+];
 
 </script>
 
@@ -90,6 +123,35 @@ onMounted(()=>{
   <section>
     <VCard class="mb-6">
       <VDivider />
+{{}}
+      <VCardText>
+        <VRow>
+          <!-- 👉 Select Role -->
+          <VCol cols="12" sm="4">
+            <AppSelect
+              v-model="selectedField"
+              placeholder="Select Field"
+              :items="field_contents"
+              clearable
+              clear-icon="tabler-x"
+            />
+          </VCol>
+
+          <!-- 👉 Select Status -->
+          <VCol cols="12" sm="4">
+            <AppSelect
+              v-model="selectedStatus"
+              placeholder="Select Status"
+              :items="status"
+              clearable
+              clear-icon="tabler-x"
+            />
+          </VCol>
+        </VRow>
+      </VCardText>
+
+      <VDivider />
+
 
       <VCardText class="d-flex flex-wrap gap-4">
         <div class="me-3 d-flex gap-3">
@@ -120,12 +182,12 @@ onMounted(()=>{
           </div>
 
           <!-- 👉 Add user button -->
-          <!-- <VBtn
+          <VBtn
             prepend-icon="tabler-plus"
-            @click="isAddPublicRuleVisible = true"
+            @click="isAddVariableFieldVisible = true"
           >
             Add variable Field
-          </VBtn> -->
+          </VBtn>
         </div>
       </VCardText>
 
@@ -155,7 +217,7 @@ onMounted(()=>{
         <!-- Actions -->
         <template #item.actions="{ item }">
           <template v-if="item">
-            <IconBtn @click="fetchPublicRuleById(item.id)">
+            <IconBtn @click="fetchvariableById(item.id)">
               <VIcon icon="tabler-pencil" />
             </IconBtn>
           </template>
@@ -173,16 +235,16 @@ onMounted(()=>{
       <!-- SECTION -->
     </VCard>
     <!-- Add User Drawer -->
-    <AddPublicRule
-      v-model:is-drawer-open="isAddPublicRuleVisible"
-      @public-rule-data="fetchPublicRule"
+    <AddVariableField
+      v-model:is-drawer-open="isAddVariableFieldVisible"
+      @public-rule-data="fetchvariable"
     />
 
     <!-- Add User Drawer -->
-    <EditPublicRule
-      v-model:is-drawer-open="EditPublicRuleVisible"
+    <EditVariableField
+      v-model:is-drawer-open="EditVariableFieldVisible"
       :selectedRule="selectedRule"
-      @publicRuleData="fetchPublicRule"
+      @publicRuleData="fetchvariable"
     />
   </section>
 </template>

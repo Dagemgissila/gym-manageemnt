@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\FieldContentController;
 use App\Http\Controllers\FieldValidationController;
 use App\Http\Controllers\MembershipItemController;
 use App\Http\Controllers\MembershipTypeController;
@@ -32,6 +33,7 @@ Route::middleware(["api.check.auth"])->group(function () {
    Route::patch('/field-validations/bulk-update', [FieldValidationController::class, 'bulkUpdate']);
    Route::apiResource('field-validations', FieldValidationController::class);
    Route::apiResource('variable-fields', VariableFieldsController::class);
+   Route::get('/field-contents', [FieldContentController::class, "index"]);
 
 
    //role and permissions

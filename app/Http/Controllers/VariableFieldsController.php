@@ -28,7 +28,20 @@ class VariableFieldsController extends Controller
      */
     public function store(StoreVariableFieldsRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $created = [];
+
+        foreach ($validated['values'] as $value) {
+            $created[] = VariableFields::create([
+                'field_content_id' => $validated['field_content_id'],
+                'value' => $value,
+                'status' => $validated['status'] ?? true,
+            ]);
+        }
+
+        return response()->json([
+            "message" => "data created succesfully",
+        ]);
     }
 
     /**

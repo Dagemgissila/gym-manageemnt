@@ -12,7 +12,7 @@ const sortBy = ref("id");
 const orderBy = ref("desc");
 const selectedRows = ref([]);
 
-const {permsArray}=common();
+const { permsArray } = common();
 
 // 👉 Users Data
 const roles_list = ref([]);
@@ -88,13 +88,14 @@ const addNewRole = async (roleData) => {
 
   axiosAdmin
     .post("/add-role-permissions", formattedRoleData)
-    .then(function (response) {})
+    .then(function (response) {
+      fetchRoles();
+    })
     .catch(function (error) {
       console.log(error);
     });
 
   // Refetch User
-  fetchRoles();
 };
 
 const fetchRoleById = async (roleId) => {
@@ -164,7 +165,10 @@ const updateRole = async (roleData) => {
         <div class="app-user-search-filter d-flex align-center flex-wrap gap-4">
           <!-- 👉 Add user button -->
           <VBtn
-          v-if="permsArray.includes('roles_create') || permsArray.includes('admin')"
+            v-if="
+              permsArray.includes('roles_create') ||
+              permsArray.includes('admin')
+            "
             prepend-icon="tabler-plus"
             @click="isAddNewRoleDrawerVisible = true"
           >
@@ -234,19 +238,21 @@ const updateRole = async (roleData) => {
           </div>
         </template>
 
-
-
         <template #item.description="{ item }">
-                <div class="text-body-2">
-                  {{ item.description }}
-                </div>
-          </template>
+          <div class="text-body-2">
+            {{ item.description }}
+          </div>
+        </template>
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <template v-if="(permsArray.includes('roles_delete') || permsArray.includes('admin')) && (item.name !== 'admin')">
-     
-
+          <template
+            v-if="
+              (permsArray.includes('roles_delete') ||
+                permsArray.includes('admin')) &&
+              item.name !== 'admin'
+            "
+          >
             <IconBtn @click="fetchRoleById(item.id)">
               <VIcon icon="tabler-pencil" />
             </IconBtn>

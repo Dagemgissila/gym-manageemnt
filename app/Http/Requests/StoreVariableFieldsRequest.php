@@ -11,7 +11,7 @@ class StoreVariableFieldsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreVariableFieldsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'field_content_id' => 'required|exists:field_contents,id',
+            'values' => 'required|array|min:1',
+            'values.*' => 'required|string|max:255',
+            'status' => 'boolean',
         ];
     }
 }
