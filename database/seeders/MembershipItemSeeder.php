@@ -20,7 +20,7 @@ class MembershipItemSeeder extends Seeder
                 'description' => 'Basic access to the gym with no additional perks.',
                 'membership_type_id' => 1, // Replace with a valid membership type ID
                 'duration_days' => 30,
-                'upgradable' => true,
+                'upgradable_limit' => 1,
                 'price' => 50.00,
                 'discount_available' => true,
                 'installment_available' => false,
@@ -29,8 +29,13 @@ class MembershipItemSeeder extends Seeder
                 'paid_freeze_allowed' => YesNo::YES,
                 'gym_access' => true,
                 'status' => MembershipItem::ACTIVE,
+                "suspend_based_on_balance" => 1,
+                'suspend_after' => 1,
+                'accessible_days' => 1,
+                'sessions' => 1,
                 'created_by' => 1, // Replace with a valid user ID
                 'updated_by' => 1, // Replace with a valid user ID
+                'link_access_to_booked_appts' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -39,7 +44,7 @@ class MembershipItemSeeder extends Seeder
                 'description' => 'Access to all gym facilities including spa and sauna.',
                 'membership_type_id' => 2, // Replace with a valid membership type ID
                 'duration_days' => 90,
-                'upgradable' => false,
+                'upgradable_limit' => 1,
                 'price' => 150.00,
                 'discount_available' => false,
                 'installment_available' => true,
@@ -48,8 +53,13 @@ class MembershipItemSeeder extends Seeder
                 'paid_freeze_allowed' => YesNo::NO,
                 'gym_access' => true,
                 'status' => MembershipItem::ACTIVE,
+                "suspend_based_on_balance" => 1,
+                'suspend_after' => 1,
+                'accessible_days' => 1,
+                'sessions' => 1,
                 'created_by' => 1, // Replace with a valid user ID
                 'updated_by' => 1, // Replace with a valid user ID
+                'link_access_to_booked_appts' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

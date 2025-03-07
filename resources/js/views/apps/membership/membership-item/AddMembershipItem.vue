@@ -1,5 +1,4 @@
 <script setup>
-import { serverErrorValidator } from "@/@core/utils/validators";
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { onMounted, ref } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
@@ -26,12 +25,17 @@ const duration_days = ref("");
 const price = ref("");
 const free_freezes_allowed = ref("");
 const freeze_duration_max_weeks = ref("");
-const upgradable = ref(false);
+const upgradable_limit = ref();
 const discount_available = ref(false);
 const installment_available = ref(false);
-const gym_access = ref(false);
+const gym_access = ref(true);
 const status = ref("active");
 const paid_freeze_allowed = ref("NO");
+const suspend_after = ref();
+const suspend_based_on_balance = ref();
+const accessible_days = ref();
+const sessions = ref();
+const link_access_to_booked_appts=ref();
 
 // Dropdown options
 const membership_types = ref([]);
@@ -59,7 +63,6 @@ onMounted(async () => {
   }
 });
 
-
 const closeNavigationDrawer = () => {
   emit("update:isDrawerOpen", false);
   nextTick(() => {
@@ -76,7 +79,6 @@ const handleDrawerModelValueUpdate = (val) => {
 
 // 👉 Form submission
 const onSubmit = () => {
-
   clearAllServerErrors();
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
@@ -88,16 +90,15 @@ const onSubmit = () => {
         price: price.value,
         free_freezes_allowed: free_freezes_allowed.value,
         freeze_duration_max_weeks: freeze_duration_max_weeks.value,
-        upgradable: upgradable.value,
+        upgradable_limit: upgradable_limit.value,
         discount_available: discount_available.value,
         installment_available: installment_available.value,
         gym_access: gym_access.value,
         status: status.value,
         paid_freeze_allowed: paid_freeze_allowed.value,
+        suspend_based_on_balance: suspend_based_on_balance.value,
+        suspend_after: suspend_after.value,
       };
-
-
-      console.log("data",formattedMembershipItemData);
 
       axiosAdmin
         .post("/membership-items", formattedMembershipItemData)
@@ -110,10 +111,12 @@ const onSubmit = () => {
           nextTick(() => {
             refForm.value?.reset();
             refForm.value?.resetValidation();
+            discount_available.value = false; // Reset to false
+            installment_available.value = false; // Reset to false
+            gym_access.value = false; // Reset to false
           });
         })
         .catch(function (error) {
-
           handleServerErrors(error);
           // Trigger re-validation to show server errors
           refForm.value?.validate();
@@ -129,7 +132,7 @@ const addMembershipItem = async (membershipData) => {};
   <VNavigationDrawer
     data-allow-mismatch
     temporary
-    :width="800"
+    :width="1200"
     location="end"
     class="scrollable-content"
     :model-value="props.isDrawerOpen"
@@ -149,21 +152,27 @@ const addMembershipItem = async (membershipData) => {};
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <!-- 👉 Membership Name -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppTextField
                   v-model="membership_name"
-                  :rules="[requiredValidator,serverErrorValidator('membership_name')]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('membership_name'),
+                  ]"
                   label="Membership Name"
                   placeholder="Gym Membership"
                 />
               </VCol>
 
               <!-- 👉 Membership Type -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppSelect
                   v-model="membership_type"
                   :items="membership_types"
-                  :rules="[serverErrorValidator('membership_type_id')]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('membership_type_id'),
+                  ]"
                   item-title="membership_type"
                   item-value="id"
                   label="Membership Type"
@@ -171,53 +180,127 @@ const addMembershipItem = async (membershipData) => {};
                 />
               </VCol>
 
+              <!-- 👉 Accessible Days -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="accessible_days"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('accessible_days'),
+                  ]"
+                  label="Accessible Days"
+                  placeholder="Acccessible Days"
+                />
+              </VCol>
+
+              <!-- 👉 Sessions  -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="sessions"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('sessions'),
+                  ]"
+                  label="Sessions"
+                  placeholder="Sessions"
+                />
+              </VCol>
+
               <!-- 👉 Membership Duration (Days) -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppTextField
                   v-model="duration_days"
-                  :rules="[requiredValidator, integerValidator,serverErrorValidator('duration_days')]"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('duration_days'),
+                  ]"
                   label="Membership Duration (Days)"
                   placeholder="Membership Duration (Days)"
                 />
               </VCol>
 
-              <!-- 👉 Switches -->
-              <VCol cols="12">
-                <VSwitch v-model="upgradable" :label="`Can Be Upgraded?`" />
-              </VCol>
-
               <!-- 👉 Membership Price -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppTextField
                   v-model="price"
-                  :rules="[requiredValidator, decimalValidator,serverErrorValidator('price')]"
+                  :rules="[
+                    requiredValidator,
+                    decimalValidator,
+                    serverErrorValidator('price'),
+                  ]"
                   label="Membership Price"
                   placeholder="Membership Price"
                 />
               </VCol>
 
-              <VCol cols="12">
+              <!-- 👉 Suspend Based On -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="suspend_based_on_balance"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('price'),
+                  ]"
+                  label="Suspend Based On Balance"
+                  placeholder="Suspend Based On Balance"
+                />
+              </VCol>
+
+              <!-- 👉 Suspend After -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="suspend_after"
+                  :rules="[
+                    integerValidator,
+                    decimalValidator,
+                    serverErrorValidator('price'),
+                  ]"
+                  label="Suspend After"
+                  placeholder="Suspeend After"
+                />
+              </VCol>
+
+              <VCol cols="4">
                 <VSwitch
                   v-model="discount_available"
                   :label="`Discount Available?`"
                 />
               </VCol>
-              <VCol cols="12">
+              <VCol cols="4">
                 <VSwitch
                   v-model="installment_available"
                   :label="`Installment Option?`"
                 />
               </VCol>
 
-              <VCol cols="12">
-                <VSwitch
-                  v-model="gym_access"
-                  :label="`Includes Gym Access?`"
-                />
+              <VCol cols="4">
+                <VSwitch v-model="gym_access" :label="`Includes Gym Access?`" />
               </VCol>
 
+
+              <VCol cols="4">
+                <VSwitch v-model="link_access_to_booked_appts" :label="`Link Access to Booked Appts?`" />
+              </VCol>
+              
+              <!-- 👉 Suspend Based On -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="upgradable_limit"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('price'),
+                  ]"
+                  label="Upgrade Limit"
+                  placeholder="Upgrade Limit"
+                />
+              </VCol>
               <!-- 👉 Total Free Freeze Weeks Allowed -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppTextField
                   v-model="free_freezes_allowed"
                   :rules="[requiredValidator, integerValidator]"
@@ -227,20 +310,27 @@ const addMembershipItem = async (membershipData) => {};
               </VCol>
 
               <!-- 👉 Maximum Freeze Duration (Weeks) -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppTextField
                   v-model="freeze_duration_max_weeks"
-                  :rules="[requiredValidator, integerValidator,serverErrorValidator('freeze_duration_max_weeks')]"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('freeze_duration_max_weeks'),
+                  ]"
                   label="Maximum Freeze Duration (Weeks)"
                   placeholder="Maximum Freeze Duration (Weeks)"
                 />
               </VCol>
 
               <!-- 👉 Paid Freeze Allowed -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppSelect
                   v-model="paid_freeze_allowed"
-                  :rules="[requiredValidator,serverErrorValidator('paid_freeze_allowed')]"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('paid_freeze_allowed'),
+                  ]"
                   :items="paid_freeze_allowed_options"
                   item-title="title"
                   item-value="value"
@@ -250,7 +340,7 @@ const addMembershipItem = async (membershipData) => {};
               </VCol>
 
               <!-- 👉 Status -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppSelect
                   v-model="status"
                   :rules="[requiredValidator]"

@@ -17,7 +17,7 @@ class MembershipTypeResource extends JsonResource
         return [
             "id" => $this->id,
             "membership_type" => $this->membership_type,
-            "is_session_based" => $this->is_session_based,
+            "membership_base" => $this->membership_base,
             "live_membership" => $this->live_membership,
             "background_color" => $this->background_color,
             "membership_overlap" => $this->membership_overlap,

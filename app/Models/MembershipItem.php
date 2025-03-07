@@ -14,7 +14,7 @@ class MembershipItem extends Model
         'description',
         'membership_type_id',
         'duration_days',
-        'upgradable',
+        'upgradable_limit',
         'price',
         'discount_available',
         'installment_available',
@@ -23,8 +23,13 @@ class MembershipItem extends Model
         'paid_freeze_allowed',
         'gym_access',
         'status',
+        "suspend_based_on_balance",
+        'suspend_after',
+        'accessible_days',
+        'sessions',
         'created_by',
-        'updated_by'
+        'updated_by',
+        'link_access_to_booked_appts'
     ];
 
     protected $searchable = ['membership_name'];

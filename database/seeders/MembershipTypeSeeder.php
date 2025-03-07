@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\MembershipBase;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -15,7 +16,7 @@ class MembershipTypeSeeder extends Seeder
         DB::table('membership_types')->insert([
             [
                 'membership_type' => 'Basic',
-                'is_session_based' => false,
+                'membership_base' => MembershipBase::SESSION_BASED,
                 'live_membership' => true,
                 'background_color' => '#FF5733',
                 'membership_overlap' => false,
@@ -27,7 +28,7 @@ class MembershipTypeSeeder extends Seeder
             ],
             [
                 'membership_type' => 'Premium',
-                'is_session_based' => true,
+                'membership_base' => MembershipBase::CLASSES_BASED,
                 'live_membership' => true,
                 'background_color' => '#33FF57',
                 'membership_overlap' => true,

@@ -14,13 +14,20 @@ const emit = defineEmits(["update:isDrawerOpen", "membershipTypeData"]);
 const isFormValid = ref(false);
 const refForm = ref();
 // Form fields
-const membership_type = ref("");
+const membership_type=ref();
+const membership_base = ref();
 const background_color = ref("#ffffff"); // Default color
-const isSessionBased = ref(false);
 const isLiveMembership = ref(false);
 const isMembershipOverlap = ref(false);
 const status = ref(true);
 
+
+const membership_bases=ref([
+  {title:'Duration Based',value:"Duration Based"},
+  {title:'Session Based',value:"Session Based"},
+  {title:'Classes Based',value:"Classes Based"},
+  
+])
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -39,7 +46,7 @@ const onSubmit = () => {
       const formatedMembershipTypeData = {
         membership_type: membership_type.value,
         background_color: background_color.value,
-        is_session_based: isSessionBased.value,
+        membership_base: membership_base.value,
         live_membership: isLiveMembership.value,
         membership_overlap: isMembershipOverlap.value,
         status:status.value
@@ -56,7 +63,6 @@ const onSubmit = () => {
             refForm.value?.reset();
             refForm.value?.resetValidation();
             background_color.value = "#ffffff"; // Default color
-            isSessionBased.value = false;
             isLiveMembership.value = false;
             isMembershipOverlap.value = false;
             status.value=true;
@@ -143,14 +149,16 @@ const handleDrawerModelValueUpdate = (val) => {
                   ></div>
                 </div>
               </VCol>
-
               <VCol cols="12">
-                <div class="demo-space-x">
-                  <VSwitch
-                    v-model="isSessionBased"
-                    :label="` Session-Based Membership ?`"
-                  />
-                </div>
+                <AppSelect
+                  v-model="membership_base"
+                  :items="membership_bases"
+                  :rules="[serverErrorValidator('membership_base')]"
+                  item-title="title"
+                  item-value="value"
+                  label="Membership Base"
+                  placeholder="Select a membership type"
+                />
               </VCol>
 
               <VCol cols="12">

@@ -75,7 +75,7 @@ const onSubmit = () => {
         free_freezes_allowed: props.selectedMembershipItem.free_freezes_allowed,
         freeze_duration_max_weeks:
           props.selectedMembershipItem.freeze_duration_max_weeks,
-        upgradable: props.selectedMembershipItem.upgradable,
+        upgradable_limit: props.selectedMembershipItem.upgradable_limit,
         discount_available: props.selectedMembershipItem.discount_available,
         installment_available:
           props.selectedMembershipItem.installment_available,
@@ -165,7 +165,7 @@ const onSubmit = () => {
               <!-- 👉 Switches -->
               <VCol cols="12">
                 <VSwitch
-                  v-model="selectedMembershipItem.upgradable"
+                  v-model="selectedMembershipItem.upgradable_limit"
                   :true-value="1"
                   :false-value="0"
                   :label="`Can Be Upgraded?`"

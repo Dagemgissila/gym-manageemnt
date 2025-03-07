@@ -33,7 +33,7 @@ const onSubmit = () => {
         id: props.selectedMembershipType.id ?? null,
         membership_type: props.selectedMembershipType.membership_type,
         background_color: props.selectedMembershipType.background_color,
-        is_session_based: props.selectedMembershipType.is_session_based,
+        membership_base: props.selectedMembershipType.membership_base,
         live_membership: props.selectedMembershipType.live_membership,
         membership_overlap: props.selectedMembershipType.membership_overlap,
         status:props.selectedMembershipType.status
@@ -68,6 +68,16 @@ const onSubmit = () => {
 const handleDrawerModelValueUpdate = (val) => {
   emit("update:isDrawerOpen", val);
 };
+
+
+const membership_bases=ref([
+  {title:'Duration Based',value:"Duration Based"},
+  {title:'Session Based',value:"Session Based"},
+  {title:'Classes Based',value:"Classes Based"},
+  
+])
+
+
 </script>
 
 <template>
@@ -140,14 +150,15 @@ const handleDrawerModelValueUpdate = (val) => {
               </VCol>
 
               <VCol cols="12">
-                <div class="demo-space-x">
-                  <VSwitch
-                    v-model="selectedMembershipType.is_session_based"
-                    :label="` Session-Based Membership ?`"
-                    :true-value="1"
-                    :false-value="0"
-                  />
-                </div>
+                <AppSelect
+                  v-model="selectedMembershipType.membership_base"
+                  :items="membership_bases"
+                  :rules="[serverErrorValidator('membership_base')]"
+                  item-title="title"
+                  item-value="value"
+                  label="Membership Base"
+                  placeholder="Select a membership type"
+                />
               </VCol>
 
               <VCol cols="12">

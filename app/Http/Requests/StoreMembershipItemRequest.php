@@ -28,7 +28,7 @@ class StoreMembershipItemRequest extends FormRequest
             'description' => 'nullable|string',
             'membership_type_id' => 'required|exists:membership_types,id',
             'duration_days' => 'required|integer|min:1',
-            'upgradable' => 'sometimes|boolean',
+            'upgradable_limit' => 'required|integer',
             'price' => 'required|numeric|min:0',
             'discount_available' => 'sometimes|boolean',
             'installment_available' => 'sometimes|boolean',
@@ -37,6 +37,11 @@ class StoreMembershipItemRequest extends FormRequest
             'paid_freeze_allowed' => 'required|in:' . implode(',', YesNo::getValues()),
             'gym_access' => 'sometimes|boolean',
             'status' => 'required|in:' . implode(',', MembershipItem::getValues()),
+            "suspend_based_on_balance" => 'required|numeric|min:0',
+            'suspend_after' => 'required|numeric|min:0',
+            'accessible_days' => 'required|numeric|min:0',
+            'sessions' => 'required|numeric|min:0',
+            'link_access_to_booked_appts' => 'nullable|boolean'
         ];
     }
 }

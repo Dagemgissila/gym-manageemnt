@@ -19,7 +19,7 @@ class CreateMembershipItemsTable extends Migration
                 ->onDelete('restrict');
 
             $table->integer('duration_days');
-            $table->boolean('upgradable');
+            $table->integer('upgradable_limit');
             $table->decimal('price', 8, 2)->default(0);
             $table->boolean('discount_available')->default(false);
             $table->boolean('installment_available')->default(false);
@@ -27,6 +27,15 @@ class CreateMembershipItemsTable extends Migration
             $table->integer('freeze_duration_max_weeks');
             $table->enum('paid_freeze_allowed', YesNo::getValues())->default(YesNo::YES);
             $table->boolean('gym_access');
+
+            //suspenssion
+            $table->integer('suspend_based_on_balance');
+            $table->integer('suspend_after');
+
+            $table->integer('accessible_days');
+            $table->integer('sessions');
+
+            $table->boolean('link_access_to_booked_appts')->default(false);
 
 
 

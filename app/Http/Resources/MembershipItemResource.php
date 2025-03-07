@@ -20,7 +20,7 @@ class MembershipItemResource extends JsonResource
             'description' => $this->description,
             'membership_type' => new MembershipTypeResource($this->whenLoaded('membershipType')),
             'duration_days' => $this->duration_days,
-            'upgradable' => $this->upgradable,
+            'upgradable_limit' => $this->upgradable_limit,
             'price' => $this->price,
             'discount_available' => $this->discount_available,
             'installment_available' => $this->installment_available,
@@ -31,6 +31,11 @@ class MembershipItemResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
+            "suspend_based_on_balance" => $this->suspend_based_on_balance,
+            'suspend_after' => $this->suspend_after,
+            'accessible_days' => $this->accessible_days,
+            'sessions' => $this->sessions,
+            'link_access_to_booked_appts' => $this->link_access_to_booked_appts
         ];
     }
 }

@@ -25,7 +25,7 @@ const total = ref(0);
 // 👉 Headers
 const headers = [
   { title: "Membership Type", key: "membership_type" },
-  { title: "Session-Based Membership?", key: "is_session_based" },
+  { title: "Membership Base", key: "membership_base" },
   { title: "Live Membership", key: "live_membership" },
   { title: "Background Color (Calendar)", key: "background_color" },
   { title: "Membership Overlap", key: "membership_overlap" },
@@ -79,7 +79,7 @@ const fetchMembershipTypeById = async (membership_id) => {
       id: data.id,
       membership_type: data.membership_type,
       background_color: data.background_color,
-      is_session_based: data.is_session_based,
+      membership_base: data.membership_base,
       live_membership: data.live_membership,
       membership_overlap: data.membership_overlap,
       status:data.status
@@ -158,12 +158,7 @@ const fetchMembershipTypeById = async (membership_id) => {
           <div class="text-sm ">{{ item.membership_type }}</div>
         </template>
 
-        <!-- Session-Based Membership -->
-        <template #item.is_session_based="{ item }">
-          <div class="text-body-2">
-            {{ item.is_session_based ? "Yes" : "No" }}
-          </div>
-        </template>
+
 
         <!-- Live Membership -->
         <template #item.live_membership="{ item }">

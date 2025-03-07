@@ -81,7 +81,7 @@ const fetchMembershipItemById = async (membership_id) => {
       description: data.description,
       membership_type_id: data.membership_type.id,
       duration_days: data.duration_days,
-      upgradable: data.upgradable,
+      upgradable_limit: data.upgradable_limit,
       price: data.price,
       discount_available: data.discount_available,
       installment_available: data.installment_available,
@@ -130,7 +130,7 @@ const fetchMembershipItemById = async (membership_id) => {
             <!-- 👉 Search  -->
             <AppTextField
               v-model="searchQuery"
-              placeholder="Search Membership Type"
+              placeholder="Search Membership Item"
               style="inline-size: 220px"
               class="me-3"
             />

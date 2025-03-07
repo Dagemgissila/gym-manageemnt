@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('membership_types', function (Blueprint $table) {
             $table->id();
             $table->string('membership_type');
-            $table->boolean('is_session_based');
+            $table->string('membership_base');
             $table->boolean('live_membership');
             $table->string('background_color');
             $table->boolean('membership_overlap')->default(false);
