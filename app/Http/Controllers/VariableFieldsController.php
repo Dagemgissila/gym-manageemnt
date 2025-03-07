@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateVariableFieldsRequest;
 use App\Http\Resources\VariableFieldResource;
 use App\Models\VariableFields;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class VariableFieldsController extends Controller
 {
@@ -29,35 +31,54 @@ class VariableFieldsController extends Controller
     public function store(StoreVariableFieldsRequest $request)
     {
         $validated = $request->validated();
-        $created = [];
 
-        foreach ($validated['values'] as $value) {
-            $created[] = VariableFields::create([
-                'field_content_id' => $validated['field_content_id'],
-                'value' => $value,
-                'status' => $validated['status'] ?? true,
-            ]);
+        try {
+            DB::beginTransaction();
+
+            $createdRecords = [];
+            foreach ($validated['values'] as $valueData) {
+                $createdRecords[] = VariableFields::create([
+                    'field_content_id' => $validated['field_content_id'],
+                    'value' => $valueData['value'],
+                    'status' => $valueData['status'],
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Data created successfully',
+                'data' => $createdRecords,
+            ], Response::HTTP_CREATED);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Failed to create data',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        return response()->json([
-            "message" => "data created succesfully",
-        ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(VariableFields $variableFields)
+    public function show(VariableFields $variableField)
     {
-        //
+        return new VariableFieldResource($variableField->load('fieldContent'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateVariableFieldsRequest $request, VariableFields $variableFields)
+    public function update(UpdateVariableFieldsRequest $request, VariableFields $variableField)
     {
-        //
+        $validated = $request->validated();
+        $variableField->update($validated);
+
+        return new VariableFieldResource($variableField);
+
     }
 
     /**

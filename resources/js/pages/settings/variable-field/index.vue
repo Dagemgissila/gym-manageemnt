@@ -12,7 +12,7 @@ const orderBy = ref("desc");
 const selectedRows = ref([]);
 const isAddVariableFieldVisible = ref(false);
 const EditVariableFieldVisible = ref(false);
-const selectedRule = ref({});
+const selectedVariableField = ref({});
 const searchQuery = ref();
 const field_contents=ref();
 const selectedField=ref();
@@ -73,13 +73,10 @@ const fetchFields = async () => {
 
 const fetchvariableById = async (id) => {
   try {
-    const { data } = await axiosAdmin.get(`public-rules/${id}`);
-    selectedRule.value = { // Corrected assignment syntax
-      id: data.id,
-      setting_rule: data.setting_rule,
-      setting_value: data.setting_value,
-      status: data.status
-    };
+    const { data } = await axiosAdmin.get(`/variable-fields/${id}`);
+
+    console.log(data)
+    selectedVariableField.value =data
     EditVariableFieldVisible.value=true
   } catch (error) {
     console.error("Error fetching public rule:", error);
@@ -242,8 +239,9 @@ const status = [
 
     <!-- Add User Drawer -->
     <EditVariableField
+    v-if="EditVariableFieldVisible"
       v-model:is-drawer-open="EditVariableFieldVisible"
-      :selectedRule="selectedRule"
+      :selectedVariableField="selectedVariableField"
       @publicRuleData="fetchvariable"
     />
   </section>

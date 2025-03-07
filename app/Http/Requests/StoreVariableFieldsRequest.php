@@ -24,9 +24,8 @@ class StoreVariableFieldsRequest extends FormRequest
         return [
             'field_content_id' => 'required|exists:field_contents,id',
             'values' => 'required|array|min:1',
-            'values.*' => 'required|string|max:255',
-            'status' => 'required|array',
-            'status.*' => 'required|boolean'
+            'values.*.value' => 'required|string|max:255',
+            'values.*.status' => 'required|boolean',
         ];
     }
 }

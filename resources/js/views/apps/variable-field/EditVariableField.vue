@@ -1,4 +1,5 @@
 <script setup>
+import { handleServerErrors } from "@/@core/utils/validators";
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { ref } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
@@ -9,7 +10,7 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  selectedRule: { type: Object, default: () => ({}) },
+  selectedVariableField: { type: Object, default: () => ({}) },
 });
 
 const emit = defineEmits(["update:isDrawerOpen", "publicRuleData"]);
@@ -18,29 +19,23 @@ const emit = defineEmits(["update:isDrawerOpen", "publicRuleData"]);
 const isFormValid = ref(false);
 const refForm = ref();
 
-// Dropdown options
-const public_rules = ref([
-  { title: "Backdated Entry Date" },
-  { title: "Upgrade Limit" },
-]);
-const status_options = ref([
-  { title: "Active", value: "active" },
-  { title: "Inactive", value: "inactive" },
-]);
+const field = ref();
+const status = ref(true);
+const field_contents = ref();
+const field_value = ref(""); // Single field value
 
-// 👉 Close drawer and reset form
-const closeNavigationDrawer = () => {
-  emit("update:isDrawerOpen", false);
-  nextTick(() => {
-    refForm.value?.reset();
-    refForm.value?.resetValidation();
-    resetFormFields();
-  });
-};
+// Fetch fields from the server
+const fetchFields = async () => {
+  try {
+    const response = await axiosAdmin.get("/field-contents");
 
-// 👉 Handle drawer model value update
-const handleDrawerModelValueUpdate = (val) => {
-  emit("update:isDrawerOpen", val);
+    field_contents.value = response.data.map((field) => ({
+      title: field.name, // Use display_name if available, otherwise fallback to name
+      value: field.id,
+    }));
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
 };
 
 // 👉 Form submission
@@ -50,7 +45,12 @@ const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       axiosAdmin
-        .patch(`/public-rules/${props.selectedRule.id}`, props.selectedRule)
+        .patch(`/variable-fields/${props.selectedVariableField.id}`, {
+          id: props.selectedVariableField.id,
+          value: props.selectedVariableField.value,
+          field_content_id: props.selectedVariableField.field_content.id,
+          status: props.selectedVariableField.status,
+        })
         .then((response) => {
           emit("publicRuleData", {
             value: true,
@@ -62,11 +62,31 @@ const onSubmit = () => {
           });
         })
         .catch((error) => {
+          console.log(error);
           handleServerErrors(error);
           refForm.value?.validate();
         });
     }
   });
+};
+
+onMounted(() => {
+  fetchFields();
+});
+
+// 👉 Close drawer and reset form
+const closeNavigationDrawer = () => {
+  emit("update:isDrawerOpen", false);
+  nextTick(() => {
+    refForm.value?.reset();
+    refForm.value?.resetValidation();
+    field_value.value = ""; // Reset the field value
+  });
+};
+
+// 👉 Handle drawer model value update
+const handleDrawerModelValueUpdate = (val) => {
+  emit("update:isDrawerOpen", val);
 };
 </script>
 
@@ -82,7 +102,7 @@ const onSubmit = () => {
   >
     <!-- 👉 Title -->
     <AppDrawerHeaderSection
-      title="Add Public Rule"
+      title="Add Variable Field"
       @cancel="closeNavigationDrawer"
     />
     <VDivider />
@@ -96,34 +116,32 @@ const onSubmit = () => {
               <!-- 👉 Rule -->
               <VCol cols="12">
                 <AppSelect
-                  v-model="selectedRule.setting_rule"
-                  :items="public_rules"
-                  :rules="[
-                    requiredValidator,
-                    serverErrorValidator('setting_rule'),
-                  ]"
+                  v-model="selectedVariableField.field_content.id"
+                  :rules="[requiredValidator, serverErrorValidator('field')]"
+                  :items="field_contents"
                   item-title="title"
-                  item-value="title"
+                  item-value="value"
                   label="Rule"
-                  placeholder="Select a Rule"
+                  placeholder="Select Field"
+                  @update:model-value="clearServerError('field')"
                 />
               </VCol>
 
-              <!-- 👉 Setting Value -->
+              <!-- 👉 Field Value -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="selectedRule.setting_value"
-                  :rules="[requiredValidator, integerValidator]"
-                  label="Setting Value"
-                  placeholder="Setting Value"
+                  v-model="selectedVariableField.value"
+                  :rules="[requiredValidator]"
+                  label="Field Value"
+                  placeholder="Field Value"
                 />
               </VCol>
 
               <!-- 👉 Status -->
-              <VCol cols="6">
+              <VCol cols="12">
                 <VSwitch
-                  v-model="selectedRule.status"
-                  :label="`User Status`"
+                  v-model="selectedVariableField.status"
+                  :label="`Status`"
                   :true-value="1"
                   :false-value="0"
                 />

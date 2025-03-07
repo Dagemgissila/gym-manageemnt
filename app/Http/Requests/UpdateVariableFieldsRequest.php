@@ -11,7 +11,7 @@ class UpdateVariableFieldsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true; // Allow all authenticated users to make this request
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateVariableFieldsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "value" => ["required", "string", "max:255"],
+            "field_content_id" => ["required", "exists:field_contents,id"],
+            "status" => ['required', 'boolean'],
+
         ];
     }
 }
