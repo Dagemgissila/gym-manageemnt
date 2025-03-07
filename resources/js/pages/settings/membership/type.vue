@@ -121,8 +121,8 @@ const fetchMembershipTypeById = async (membership_id) => {
             <!-- 👉 Search  -->
             <AppTextField
               v-model="searchQuery"
-              placeholder="Search Member Type"
-              style="inline-size: 200px"
+              placeholder="Search Membership Type"
+              style="inline-size: 220px"
               class="me-3"
             />
           </div>

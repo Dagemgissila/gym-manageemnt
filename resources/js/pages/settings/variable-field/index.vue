@@ -61,7 +61,7 @@ const fetchFields = async () => {
 
 
     field_contents.value = response.data.map((name) => ({
-      title:  name.name, // Use display_name if available, otherwise fallback to name
+      title:  name.name,
       value: name.id,
     }));
 

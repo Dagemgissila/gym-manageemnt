@@ -21,5 +21,8 @@ class VariableFieldResource extends JsonResource
             "status" => $this->status,
 
         ];
+
+
+
     }
 }

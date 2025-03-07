@@ -59,7 +59,6 @@ class RolePermissionController extends Controller
     public function addRolePermission(Request $request)
     {
         $request->validate([
-            'display_name' => 'required|string|max:255',
             'role_name' => 'required|string|unique:roles,name|max:255',
             'permissions' => 'array',
             'permissions.*' => 'integer|exists:permissions,id',
@@ -67,7 +66,6 @@ class RolePermissionController extends Controller
 
         $role = Role::create([
             'name' => $request->role_name,
-            'display_name' => $request->display_name, // If you added a display_name column
             'description' => $request->description,
         ]);
 
@@ -83,7 +81,6 @@ class RolePermissionController extends Controller
     {
         $role = Role::findOrFail($request->id);
         $role->update([
-            'display_name' => $request->display_name,
             'name' => $request->role_name,
             'description' => $request->description,
         ]);

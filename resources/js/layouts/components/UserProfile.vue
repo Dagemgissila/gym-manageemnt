@@ -12,7 +12,7 @@ const userData = ref(storedUserData ? JSON.parse(storedUserData) : null)
 
 
 // Computed property to get user role
-const userRole = computed(() => userData.value?.role ? userData.value.role.display_name : 'User')
+const userRole = computed(() => userData.value?.role ? userData.value.role.name : 'User')
 
 
 const logout = async () => {

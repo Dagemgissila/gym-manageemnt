@@ -59,6 +59,7 @@ const onSubmit = () => {
             isSessionBased.value = false;
             isLiveMembership.value = false;
             isMembershipOverlap.value = false;
+            status.value=true;
           });
         })
         .catch((error) => {

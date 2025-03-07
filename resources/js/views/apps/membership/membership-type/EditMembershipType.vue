@@ -94,8 +94,6 @@ const handleDrawerModelValueUpdate = (val) => {
           <!-- 👉 Form -->
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
-
-            <pre>{{ selectedMembershipType }}</pre>
               <!-- 👉 Full name -->
               <VCol cols="12">
                 <AppTextField

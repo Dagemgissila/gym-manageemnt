@@ -21,14 +21,6 @@
             <VRow>
               <VCol cols="6">
                 <AppTextField
-                  v-model="display_name"
-                  :rules="[requiredValidator]"
-                  label="Display Name"
-                  placeholder="User"
-                />
-              </VCol>
-              <VCol cols="6">
-                <AppTextField
                   v-model="role_name"
                   :rules="[requiredValidator]"
                   label="Role Name"
@@ -220,7 +212,6 @@ const emit = defineEmits(["update:isDrawerOpen", "updatedRoleData"]);
 
 const isFormValid = ref(false);
 const refForm = ref();
-const display_name = ref("");
 const role_name = ref("");
 const description = ref("");
 
@@ -253,7 +244,6 @@ watch(
 
   (newRole) => {
     if (newRole && Object.keys(newRole).length > 0) {
-      display_name.value = newRole.display_name || "";
       role_name.value = newRole.name || "";
       description.value = newRole.description || "";
       checkedPermissions.value = newRole.permissions.map(
@@ -271,7 +261,6 @@ const onSubmit = () => {
     if (valid) {
       emit("updatedRoleData", {
         id: props.selectedRole.id ?? null,
-        display_name: display_name.value,
         role_name: role_name.value,
         description: description.value,
         permissions: checkedPermissions.value,

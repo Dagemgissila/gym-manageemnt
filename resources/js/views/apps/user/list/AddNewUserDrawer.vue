@@ -36,7 +36,7 @@ const form = ref({
   emergency_contact_name: "",
   emergency_contact_phone: "",
   role: "",
-  status: "",
+  status: true,
   gender: "",
   profile_picture: null,
 });
@@ -105,7 +105,7 @@ const fetchRoles = async () => {
     const response = await axiosAdmin.get("/roles");
 
     roles.value = response.data.map((role) => ({
-      title: role.display_name || role.name, // Use display_name if available, otherwise fallback to name
+      title: role.name, 
       value: role.name,
     }));
   } catch (error) {
