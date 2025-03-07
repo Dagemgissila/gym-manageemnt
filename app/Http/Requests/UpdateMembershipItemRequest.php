@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\MembershipItem;
 use App\Enums\YesNo;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateMembershipItemRequest extends FormRequest
 {
@@ -24,7 +25,8 @@ class UpdateMembershipItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'membership_name' => 'required|string|max:255|unique:membership_items,membership_name',
+            'membership_name' => 'required|string|max:255',
+            Rule::unique('membership_items')->ignore($this->id),
             'description' => 'nullable|string',
             'membership_type_id' => 'required|exists:membership_types,id',
             'duration_days' => 'required|integer|min:1',

@@ -16,7 +16,7 @@ const orderBy = ref("desc");
 const selectedRows = ref([]);
 const isAddMembershipItemVisible = ref(false);
 const EditmembershipItemVisible = ref(false);
-const selectedMembershipItem = ref({});
+const selectedMembershipItem = ref();
 const searchQuery = ref();
 
 // 👉 Users Data
@@ -74,23 +74,10 @@ onMounted(fetchMembershipItem);
 
 const fetchMembershipItemById = async (membership_id) => {
   try {
-    const { data } = await axiosAdmin.get(`/membership-items/${membership_id}`); // Fetch role by ID
-    selectedMembershipItem.value = {
-      id:data.id,
-      membership_name: data.membership_name,
-      description: data.description,
-      membership_type_id: data.membership_type.id,
-      duration_days: data.duration_days,
-      upgradable_limit: data.upgradable_limit,
-      price: data.price,
-      discount_available: data.discount_available,
-      installment_available: data.installment_available,
-      free_freezes_allowed: data.free_freezes_allowed,
-      freeze_duration_max_weeks: data.freeze_duration_max_weeks,
-      paid_freeze_allowed: data.paid_freeze_allowed,
-      gym_access: data.gym_access,
-      status: data.status,
-    };
+    const response= await axiosAdmin.get(`/membership-items/${membership_id}`); // Fetch role by ID
+    const data=response.data;
+    console.log(data);
+    selectedMembershipItem.value = data;
 
 
     EditmembershipItemVisible.value = true; // Open the drawer
@@ -221,7 +208,7 @@ const fetchMembershipItemById = async (membership_id) => {
     <EditmembershipItem
       v-model:is-drawer-open="EditmembershipItemVisible"
       :selected-membership-item="selectedMembershipItem"
-      @membership="fetchMembershipItem"
+      @membership-item-data="fetchMembershipItem"
     />
   </section>
 </template>

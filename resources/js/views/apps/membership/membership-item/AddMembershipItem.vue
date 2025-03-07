@@ -1,6 +1,6 @@
 <script setup>
 import axiosAdmin from "@/composables/axios/axiosAdmin";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 
 // Props and Emits
@@ -98,6 +98,8 @@ const onSubmit = () => {
         paid_freeze_allowed: paid_freeze_allowed.value,
         suspend_based_on_balance: suspend_based_on_balance.value,
         suspend_after: suspend_after.value,
+        accessible_days:accessible_days.value,
+        sessions:sessions.value
       };
 
       axiosAdmin
@@ -125,7 +127,26 @@ const onSubmit = () => {
   });
 };
 
-const addMembershipItem = async (membershipData) => {};
+// Add this computed property
+const showLinkAccess = computed(() => {
+  if (gym_access.value) return false;
+  
+  const selectedType = membership_types.value.find(
+    type => type.id === membership_type.value
+  );
+  
+  return selectedType?.membership_base === 'Classes Based' || 
+         selectedType?.membership_base === 'Session Based';
+});
+
+// Add watcher to enforce the rule
+watch(gym_access, (newValue) => {
+  if (newValue) {
+    // If gym access is enabled, force link access to false
+    link_access_to_booked_appts.value = false;
+  }
+});
+
 </script>
 
 <template>
@@ -282,9 +303,12 @@ const addMembershipItem = async (membershipData) => {};
               </VCol>
 
 
-              <VCol cols="4">
-                <VSwitch v-model="link_access_to_booked_appts" :label="`Link Access to Booked Appts?`" />
-              </VCol>
+              <VCol cols="4" v-if="showLinkAccess">
+    <VSwitch 
+      v-model="link_access_to_booked_appts" 
+      :label="`Link Access to Booked Appts?`" 
+    />
+  </VCol>
               
               <!-- 👉 Suspend Based On -->
               <VCol cols="4">

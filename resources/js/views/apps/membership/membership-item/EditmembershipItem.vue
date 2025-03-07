@@ -1,6 +1,6 @@
 <script setup>
 import axiosAdmin from "@/composables/axios/axiosAdmin";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 
 // Props and Emits
@@ -12,11 +12,27 @@ const props = defineProps({
   selectedMembershipItem: { type: Object, default: () => ({}) },
 });
 
-const emit = defineEmits(["update:isDrawerOpen", "membership"]);
-
-// Form validation and ref
-const isFormValid = ref(false);
-const refForm = ref();
+// Local editable state
+const localMembership = ref({
+  membership_name: "",
+  description: "",
+  membership_type_id: null,
+  duration_days: "",
+  price: "",
+  free_freezes_allowed: "",
+  freeze_duration_max_weeks: "",
+  upgradable_limit: "",
+  discount_available: false,
+  installment_available: false,
+  gym_access: false,
+  status: "active",
+  paid_freeze_allowed: "NO",
+  suspend_based_on_balance: "",
+  suspend_after: "",
+  accessible_days: "",
+  sessions: "",
+  link_access_to_booked_appts: false,
+});
 
 // Dropdown options
 const membership_types = ref([]);
@@ -29,6 +45,53 @@ const paid_freeze_allowed_options = ref([
   { title: "Yes", value: "YES" },
   { title: "No", value: "NO" },
 ]);
+
+// Watchers
+watch(
+  () => props.selectedMembershipItem,
+  (newVal) => {
+    if (newVal.id) {
+      localMembership.value = {
+        ...newVal,
+        membership_type_id: newVal.membership_type?.id,
+        gym_access: Boolean(newVal.gym_access),
+        discount_available: Boolean(newVal.discount_available),
+        installment_available: Boolean(newVal.installment_available),
+        link_access_to_booked_appts: Boolean(
+          newVal.link_access_to_booked_appts
+        ),
+      };
+    }
+  },
+  { immediate: true, deep: true }
+);
+
+watch(
+  () => localMembership.value.gym_access,
+  (newVal) => {
+    if (newVal) {
+      localMembership.value.link_access_to_booked_appts = false;
+    }
+  }
+);
+// Computed properties
+const showLinkAccess = computed(() => {
+  if (localMembership.value.gym_access) return false;
+
+  const selectedType = membership_types.value.find(
+    (type) => type.id === localMembership.value.membership_type_id
+  );
+
+  return ["Classes Based", "Session Based"].includes(
+    selectedType?.membership_base
+  );
+});
+
+const emit = defineEmits(["update:isDrawerOpen", "membershipItemData"]);
+
+// Form validation and ref
+const isFormValid = ref(false);
+const refForm = ref();
 
 // 👉 Fetch membership types
 onMounted(async () => {
@@ -44,7 +107,6 @@ onMounted(async () => {
   }
 });
 
-// 👉 Close drawer and reset form
 const closeNavigationDrawer = () => {
   emit("update:isDrawerOpen", false);
   nextTick(() => {
@@ -64,30 +126,23 @@ const onSubmit = () => {
   clearAllServerErrors();
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-
-      const formattedMembershipItemData = {
-        id: props.selectedMembershipItem.id ?? null,
-        membership_name: props.selectedMembershipItem.membership_name,
-        description: props.selectedMembershipItem.description ?? "", // Handle null values
-        membership_type_id: props.selectedMembershipItem.membership_type_id,
-        duration_days: props.selectedMembershipItem.duration_days,
-        price: props.selectedMembershipItem.price,
-        free_freezes_allowed: props.selectedMembershipItem.free_freezes_allowed,
-        freeze_duration_max_weeks:
-          props.selectedMembershipItem.freeze_duration_max_weeks,
-        upgradable_limit: props.selectedMembershipItem.upgradable_limit,
-        discount_available: props.selectedMembershipItem.discount_available,
-        installment_available:
-          props.selectedMembershipItem.installment_available,
-        gym_access: props.selectedMembershipItem.gym_access,
-        status: props.selectedMembershipItem.status,
-        paid_freeze_allowed: props.selectedMembershipItem.paid_freeze_allowed,
+      const payload = {
+        ...localMembership.value,
+        gym_access: localMembership.value.gym_access ? 1 : 0,
+        discount_available: localMembership.value.discount_available ? 1 : 0,
+        installment_available: localMembership.value.installment_available
+          ? 1
+          : 0,
+        link_access_to_booked_appts: localMembership.value
+          .link_access_to_booked_appts
+          ? 1
+          : 0,
       };
 
       axiosAdmin
-        .patch(`/membership-items/${formattedMembershipItemData.id}`, formattedMembershipItemData)
+        .patch(`/membership-items/${localMembership.value.id}`, payload)
         .then(function (response) {
-          emit("membership", {
+          emit("membershipItemData", {
             value: true,
           });
 
@@ -105,13 +160,15 @@ const onSubmit = () => {
     }
   });
 };
+
+
 </script>
 
 <template>
   <VNavigationDrawer
     data-allow-mismatch
     temporary
-    :width="800"
+    :width="1200"
     location="end"
     class="scrollable-content"
     :model-value="props.isDrawerOpen"
@@ -131,108 +188,194 @@ const onSubmit = () => {
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <!-- 👉 Membership Name -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppTextField
-                  v-model="selectedMembershipItem.membership_name"
-                  :rules="[requiredValidator,serverErrorValidator('membership_name')]"
+                  v-model="localMembership.membership_name"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('membership_name'),
+                  ]"
                   label="Membership Name"
                   placeholder="Gym Membership"
                 />
               </VCol>
 
-              <VCol cols="12">
+              <!-- Membership Type -->
+              <VCol cols="4">
                 <AppSelect
-                  v-model="selectedMembershipItem.membership_type_id"
+                  v-model="localMembership.membership_type_id"
                   :items="membership_types"
-                  :rules="[requiredValidator,serverErrorValidator('membership_type_id')]"
                   item-title="membership_type"
                   item-value="id"
                   label="Membership Type"
-                  placeholder="Select a membership type"
+                  :rules="[requiredValidator]"
+                />
+              </VCol>
+
+              <!-- 👉 Accessible Days -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="localMembership.accessible_days"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('accessible_days'),
+                  ]"
+                  label="Accessible Days"
+                  placeholder="Acccessible Days"
+                />
+              </VCol>
+
+              <!-- 👉 Sessions  -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="localMembership.sessions"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('sessions'),
+                  ]"
+                  label="Sessions"
+                  placeholder="Sessions"
                 />
               </VCol>
 
               <!-- 👉 Membership Duration (Days) -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppTextField
-                  v-model="selectedMembershipItem.duration_days"
-                  :rules="[requiredValidator, integerValidator,serverErrorValidator('duration_days')]"
+                  v-model="localMembership.duration_days"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('duration_days'),
+                  ]"
                   label="Membership Duration (Days)"
                   placeholder="Membership Duration (Days)"
                 />
               </VCol>
 
-              <!-- 👉 Switches -->
-              <VCol cols="12">
-                <VSwitch
-                  v-model="selectedMembershipItem.upgradable_limit"
-                  :true-value="1"
-                  :false-value="0"
-                  :label="`Can Be Upgraded?`"
-                />
-              </VCol>
-
               <!-- 👉 Membership Price -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppTextField
-                  v-model="selectedMembershipItem.price"
-                  :rules="[requiredValidator, decimalValidator]"
+                  v-model="localMembership.price"
+                  :rules="[
+                    requiredValidator,
+                    decimalValidator,
+                    serverErrorValidator('price'),
+                  ]"
                   label="Membership Price"
                   placeholder="Membership Price"
                 />
               </VCol>
 
-              <VCol cols="12">
-                <VSwitch
-                  v-model="selectedMembershipItem.discount_available"
-                  :label="`Discount Available?`"
-                  :true-value="1"
-                  :false-value="0"
-                />
-              </VCol>
-              <VCol cols="12">
-                <VSwitch
-                  v-model="selectedMembershipItem.installment_available"
-                  :label="`Installment Option?`"
-                  :true-value="1"
-                  :false-value="0"
-                />
-              </VCol>
-
-              <VCol cols="12">
-                <VSwitch
-                  v-model="selectedMembershipItem.gym_access"
-                  :label="`Includes Gym Access?`"
-                  :true-value="1"
-                  :false-value="0"
-                />
-              </VCol>
-
-              <!-- 👉 Total Free Freeze Weeks Allowed -->
-              <VCol cols="12">
+              <!-- 👉 Suspend Based On -->
+              <VCol cols="4">
                 <AppTextField
-                  v-model="selectedMembershipItem.free_freezes_allowed"
-                  :rules="[requiredValidator, integerValidator,serverErrorValidator('free_freezes_allowed')]"
+                  v-model="localMembership.suspend_based_on_balance"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('price'),
+                  ]"
+                  label="Suspend Based On Balance"
+                  placeholder="Suspend Based On Balance"
+                />
+              </VCol>
+
+              <!-- 👉 Suspend After -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="localMembership.suspend_after"
+                  :rules="[
+                    integerValidator,
+                    decimalValidator,
+                    serverErrorValidator('price'),
+                  ]"
+                  label="Suspend After"
+                  placeholder="Suspeend After"
+                />
+              </VCol>
+
+              <VCol cols="4">
+                <VSwitch
+                  v-model="localMembership.discount_available"
+                  :label="`Discount Available?`"
+                  :true-value="true"
+                  :false-value="false"
+                />
+              </VCol>
+              <VCol cols="4">
+                <VSwitch
+                  v-model="localMembership.installment_available"
+                  :label="`Installment Option?`"
+                  :true-value="true"
+                  :false-value="false"
+                />
+              </VCol>
+
+              <VCol cols="4">
+                <VSwitch
+                  v-model="localMembership.gym_access"
+                  :true-value="true"
+                  :false-value="false"
+                  :label="`Includes Gym Access?`"
+                />
+              </VCol>
+
+              <VCol cols="4" v-if="showLinkAccess">
+                <VSwitch
+                  v-model="localMembership.link_access_to_booked_appts"
+                  :label="`Link Access to Booked Appts?`"
+                  :true-value="true"
+                  :false-value="false"
+                />
+              </VCol>
+
+              <!-- 👉 Suspend Based On -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="localMembership.upgradable_limit"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('price'),
+                  ]"
+                  label="Upgrade Limit"
+                  placeholder="Upgrade Limit"
+                />
+              </VCol>
+              <!-- 👉 Total Free Freeze Weeks Allowed -->
+              <VCol cols="4">
+                <AppTextField
+                  v-model="localMembership.free_freezes_allowed"
+                  :rules="[requiredValidator, integerValidator]"
                   label="Total Free Freeze Weeks Allowed"
                   placeholder="Total Free Freeze Weeks Allowed"
                 />
               </VCol>
 
               <!-- 👉 Maximum Freeze Duration (Weeks) -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppTextField
-                  v-model="selectedMembershipItem.freeze_duration_max_weeks"
-                  :rules="[requiredValidator, integerValidator,serverErrorValidator('freeze_duration_max_weeks')]"
+                  v-model="localMembership.freeze_duration_max_weeks"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('freeze_duration_max_weeks'),
+                  ]"
                   label="Maximum Freeze Duration (Weeks)"
                   placeholder="Maximum Freeze Duration (Weeks)"
                 />
               </VCol>
 
               <!-- 👉 Paid Freeze Allowed -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppSelect
-                  v-model="selectedMembershipItem.paid_freeze_allowed"
-                  :rules="[requiredValidator,serverErrorValidator('freeze_duration_max_weeks')]"
+                  v-model="localMembership.paid_freeze_allowed"
+                  :rules="[
+                    requiredValidator,
+                    serverErrorValidator('paid_freeze_allowed'),
+                  ]"
                   :items="paid_freeze_allowed_options"
                   item-title="title"
                   item-value="value"
@@ -242,9 +385,9 @@ const onSubmit = () => {
               </VCol>
 
               <!-- 👉 Status -->
-              <VCol cols="12">
+              <VCol cols="4">
                 <AppSelect
-                  v-model="selectedMembershipItem.status"
+                  v-model="localMembership.status"
                   :rules="[requiredValidator]"
                   :items="status_options"
                   item-title="title"
@@ -257,7 +400,7 @@ const onSubmit = () => {
               <!-- 👉 Description -->
               <VCol cols="12">
                 <AppTextarea
-                  v-model="selectedMembershipItem.description"
+                  v-model="localMembership.description"
                   label="Description"
                   placeholder="Manage user-related actions"
                   rows="2"
