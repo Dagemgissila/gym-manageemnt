@@ -180,6 +180,8 @@ onMounted(() => {
                         icon
                         variant="text"
                         color="error"
+                        tabindex="-1"
+
                         @click="removeFieldValue(index)"
                       >
                         <VIcon icon="tabler-x" />

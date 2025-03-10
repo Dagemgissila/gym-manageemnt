@@ -163,19 +163,14 @@ const fetchMembershipItemById = async (membership_id) => {
           </div>
         </template>
 
-        <!-- Live Membership -->
-        <template #item.paid_freeze_allowed="{ item }">
+                <!-- Session-Based Membership -->
+                <template #item.status="{ item }">
           <div class="text-body-2">
-            {{ item.paid_freeze_allowed ? "Yes" : "No" }}
+            {{ item.status ? "Active" : "Inactive" }}
           </div>
         </template>
 
-        <!-- Live Membership -->
-        <template #item.gym_access="{ item }">
-          <div class="text-body-2">
-            {{ item.gym_access ? "Yes" : "No" }}
-          </div>
-        </template>
+ 
 
         <!-- Actions -->
         <template #item.actions="{ item }">

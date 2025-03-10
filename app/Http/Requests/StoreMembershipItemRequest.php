@@ -36,7 +36,7 @@ class StoreMembershipItemRequest extends FormRequest
             'freeze_duration_max_weeks' => 'required|integer|min:0',
             'paid_freeze_allowed' => 'required|in:' . implode(',', YesNo::getValues()),
             'gym_access' => 'sometimes|boolean',
-            'status' => 'required|in:' . implode(',', MembershipItem::getValues()),
+            'status' => 'required|boolean',
             "suspend_based_on_balance" => 'required|numeric|min:0',
             'suspend_after' => 'required|numeric|min:0',
             'accessible_days' => 'required|numeric|min:0',

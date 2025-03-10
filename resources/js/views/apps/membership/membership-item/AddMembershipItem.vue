@@ -29,7 +29,7 @@ const upgradable_limit = ref();
 const discount_available = ref(false);
 const installment_available = ref(false);
 const gym_access = ref(true);
-const status = ref("active");
+const status = ref(true);
 const paid_freeze_allowed = ref("NO");
 const suspend_after = ref();
 const suspend_based_on_balance = ref();
@@ -39,11 +39,7 @@ const link_access_to_booked_appts=ref();
 
 // Dropdown options
 const membership_types = ref([]);
-const status_options = ref([
-  { title: "Active", value: "active" },
-  { title: "Inactive", value: "inactive" },
-  { title: "Archived", value: "archived" },
-]);
+
 const paid_freeze_allowed_options = ref([
   { title: "Yes", value: "YES" },
   { title: "No", value: "NO" },
@@ -365,15 +361,7 @@ watch(gym_access, (newValue) => {
 
               <!-- 👉 Status -->
               <VCol cols="4">
-                <AppSelect
-                  v-model="status"
-                  :rules="[requiredValidator]"
-                  :items="status_options"
-                  item-title="title"
-                  item-value="value"
-                  label="Status"
-                  placeholder="Select a status"
-                />
+                <VSwitch v-model="status" :label="`Status`" />
               </VCol>
 
               <!-- 👉 Description -->

@@ -39,9 +39,7 @@ class CreateMembershipItemsTable extends Migration
 
 
 
-            $table->enum('status', MembershipItem::getValues())
-                ->default(MembershipItem::ACTIVE);
-
+            $table->boolean('status')->default(true);
             $table->foreignId('created_by')
                 ->nullable()
                 ->constrained('users')

@@ -25,7 +25,7 @@ const localMembership = ref({
   discount_available: false,
   installment_available: false,
   gym_access: false,
-  status: "active",
+  status: false,
   paid_freeze_allowed: "NO",
   suspend_based_on_balance: "",
   suspend_after: "",
@@ -36,11 +36,7 @@ const localMembership = ref({
 
 // Dropdown options
 const membership_types = ref([]);
-const status_options = ref([
-  { title: "Active", value: "active" },
-  { title: "Inactive", value: "inactive" },
-  { title: "Archived", value: "archived" },
-]);
+
 const paid_freeze_allowed_options = ref([
   { title: "Yes", value: "YES" },
   { title: "No", value: "NO" },
@@ -57,6 +53,8 @@ watch(
         gym_access: Boolean(newVal.gym_access),
         discount_available: Boolean(newVal.discount_available),
         installment_available: Boolean(newVal.installment_available),
+        status: Boolean(newVal.status),
+
         link_access_to_booked_appts: Boolean(
           newVal.link_access_to_booked_appts
         ),
@@ -130,6 +128,8 @@ const onSubmit = () => {
         ...localMembership.value,
         gym_access: localMembership.value.gym_access ? 1 : 0,
         discount_available: localMembership.value.discount_available ? 1 : 0,
+        status: localMembership.value.status ? 1 : 0,
+
         installment_available: localMembership.value.installment_available
           ? 1
           : 0,
@@ -160,8 +160,6 @@ const onSubmit = () => {
     }
   });
 };
-
-
 </script>
 
 <template>
@@ -386,14 +384,11 @@ const onSubmit = () => {
 
               <!-- 👉 Status -->
               <VCol cols="4">
-                <AppSelect
+                <VSwitch
                   v-model="localMembership.status"
-                  :rules="[requiredValidator]"
-                  :items="status_options"
-                  item-title="title"
-                  item-value="value"
-                  label="Status"
-                  placeholder="Select a status"
+                  :true-value="true"
+                  :false-value="false"
+                  :label="`Status`"
                 />
               </VCol>
 
