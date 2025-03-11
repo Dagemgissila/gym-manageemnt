@@ -165,7 +165,7 @@ onMounted(() => {
                         placeholder="Field Value"
                       />
                     </VCol>
-                    <VCol cols="4" class="d-flex align-center">
+                    <!-- <VCol cols="4" class="d-flex align-center">
                       <VSwitch
                         v-model="item.status"
                         label="Active"
@@ -173,7 +173,7 @@ onMounted(() => {
                         :false-value="false"
                         tabindex="-1"
                       />
-                    </VCol>
+                    </VCol> -->
                     <VCol cols="3" class="d-flex align-center gap-2">
                       <VBtn
                         v-if="fieldItems.length > 1"

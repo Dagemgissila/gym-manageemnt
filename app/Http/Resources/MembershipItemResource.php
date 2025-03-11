@@ -19,6 +19,7 @@ class MembershipItemResource extends JsonResource
             'membership_name' => $this->membership_name,
             'description' => $this->description,
             'membership_type' => new MembershipTypeResource($this->whenLoaded('membershipType')),
+            'selected_days' => DateTimeRstrictionResource::collection($this->whenLoaded('dateTimeRestrictions')),
             'duration_days' => $this->duration_days,
             'upgradable_limit' => $this->upgradable_limit,
             'price' => $this->price,

@@ -2,7 +2,7 @@
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { computed, onMounted, ref, watch } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
-
+import EditDayTimeRestriction from "./dialog/EditDayTimeRestriction.vue";
 // Props and Emits
 const props = defineProps({
   isDrawerOpen: {
@@ -11,6 +11,12 @@ const props = defineProps({
   },
   selectedMembershipItem: { type: Object, default: () => ({}) },
 });
+
+
+
+const isCardAddDialogVisible = ref(false)
+
+
 
 // Local editable state
 const localMembership = ref({
@@ -32,6 +38,7 @@ const localMembership = ref({
   accessible_days: "",
   sessions: "",
   link_access_to_booked_appts: false,
+  selected_days:[]
 });
 
 // Dropdown options
@@ -129,6 +136,7 @@ const onSubmit = () => {
         gym_access: localMembership.value.gym_access ? 1 : 0,
         discount_available: localMembership.value.discount_available ? 1 : 0,
         status: localMembership.value.status ? 1 : 0,
+        selected_days: localMembership.value.selected_days,
 
         installment_available: localMembership.value.installment_available
           ? 1
@@ -160,6 +168,18 @@ const onSubmit = () => {
     }
   });
 };
+
+
+
+function dateTimeRestriction(data) {
+  localMembership.value.selected_days = [...data];
+  console.log("this is formatted data", data);
+}
+
+const removeSelectedDay = (index) => {
+  localMembership.value.selected_days = localMembership.value.selected_days.filter((_, i) => i !== index);
+};
+
 </script>
 
 <template>
@@ -174,7 +194,7 @@ const onSubmit = () => {
   >
     <!-- 👉 Title -->
     <AppDrawerHeaderSection
-      title="Add Membership Item"
+      title="Edit Membership Item"
       @cancel="closeNavigationDrawer"
     />
     <VDivider />
@@ -320,6 +340,16 @@ const onSubmit = () => {
                 />
               </VCol>
 
+
+              <VCol cols="4" v-if="localMembership.gym_access">
+                <EditDayTimeRestriction v-model:is-dialog-visible="isCardAddDialogVisible" :selectedDays="localMembership.selected_days"
+                  @date-time-restriction="dateTimeRestriction" />
+
+                <VBtn @click="isCardAddDialogVisible = !isCardAddDialogVisible">
+                  Date & Time Restriction
+                </VBtn>
+              </VCol>
+
               <VCol cols="4" v-if="showLinkAccess">
                 <VSwitch
                   v-model="localMembership.link_access_to_booked_appts"
@@ -401,6 +431,39 @@ const onSubmit = () => {
                   rows="2"
                 />
               </VCol>
+
+
+              <VCol cols="12">
+
+<VTable class="text-no-wrap">
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>From</th>
+      <th>To</th>
+      <th>Time Period</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="(item, index) in localMembership.selected_days" :key="index">
+      <td>{{ item.day }}</td>
+      <td>{{ item.from_time }}</td>
+      <td>{{ item.to_time }}</td>
+      <td>{{ item.time_period }}</td>
+      <td>
+
+        <IconBtn @click="removeSelectedDay(index)">
+          <VIcon icon="tabler-trash" />
+        </IconBtn>
+      </td>
+    </tr>
+    <tr v-if="localMembership.selected_days.length === 0">
+      <td colspan="5" class="text-center">No day/time restrictions added</td>
+    </tr>
+  </tbody>
+</VTable>
+</VCol>
 
               <!-- 👉 Submit and Cancel -->
               <VCol cols="12">

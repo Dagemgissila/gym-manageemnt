@@ -49,4 +49,9 @@ class MembershipItem extends Model
         return $this->belongsTo(MembershipType::class, "membership_type_id");
     }
 
+
+    public function dateTimeRestrictions()
+    {
+        return $this->hasMany(DateTimeRestriction::class, 'membership_item_id');
+    }
 }

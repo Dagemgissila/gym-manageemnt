@@ -41,7 +41,12 @@ class StoreMembershipItemRequest extends FormRequest
             'suspend_after' => 'required|numeric|min:0',
             'accessible_days' => 'required|numeric|min:0',
             'sessions' => 'required|numeric|min:0',
-            'link_access_to_booked_appts' => 'nullable|boolean'
+            'link_access_to_booked_appts' => 'nullable|boolean',
+            'selected_days' => 'nullable|array', // Ensure selected_days is an array
+            'selected_days.*.day' => 'required|string', // Validate each day entry
+            'selected_days.*.from_time' => 'required|string', // Change start_time to from_time
+            'selected_days.*.to_time' => 'required|string', // Change end_time to to_time
+
         ];
     }
 }
