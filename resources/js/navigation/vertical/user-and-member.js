@@ -23,14 +23,10 @@ export default [
     children: [
       { 
         title: 'List', 
-        to: '', 
+        to: 'members', 
         permission: 'users_view' 
       },
-      {
-        title: 'Add', 
-        to: '', 
-        permission: 'users_view' 
-      },
+
     ],
   },
 ]

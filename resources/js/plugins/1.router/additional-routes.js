@@ -1,4 +1,4 @@
-// const emailRouteComponent = () => import('@/pages/apps/email/index.vue')
+const MemberDetail = () => import('@/pages/members/details/index.vue')
 const ForbiddenComponent = () => import('@/pages/forbidden.vue')
 
 
@@ -38,16 +38,12 @@ export const redirects = [
 
 ]
 export const routes = [
-  // Email filter
-  // {
-  //   path: '/apps/email/filter/:filter',
-  //   name: 'apps-email-filter',
-  //   component: emailRouteComponent,
-  //   meta: {
-  //     navActiveLink: 'apps-email',
-  //     layoutWrapperClasses: 'layout-content-height-fixed',
-  //   },
-  // },
+  {
+    path: '/members/details/:id',
+    name: 'apps-email-filter',
+    component: MemberDetail,
+
+  },
 
 
   
@@ -56,7 +52,7 @@ export const routes = [
   // {
   //   path: '/apps/email/label/:label',
   //   name: 'apps-email-label',
-  //   component: emailRouteComponent,
+  //   component: MemberDetail,
   //   meta: {
   //     // contentClass: 'email-application',
   //     navActiveLink: 'apps-email',

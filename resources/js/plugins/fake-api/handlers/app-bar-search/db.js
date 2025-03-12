@@ -40,7 +40,11 @@ export const db = {
           icon: 'tabler-file-description',
           title: 'Landing Front',
         },
-     
+        {
+          url: { name: 'front-pages-pricing' },
+          icon: 'tabler-file-description',
+          title: 'Pricing Front',
+        },
         {
           url: { name: 'front-pages-payment' },
           icon: 'tabler-file-description',
@@ -51,7 +55,11 @@ export const db = {
           icon: 'tabler-file-description',
           title: 'Checkout Front',
         },
-     
+        {
+          url: { name: 'front-pages-help-center' },
+          icon: 'tabler-file-description',
+          title: 'Help Center Front',
+        },
       ],
     },
     {
@@ -218,8 +226,16 @@ export const db = {
           icon: 'tabler-link',
           title: 'Account Settings - Connections',
         },
-    
-    
+        {
+          url: { name: 'pages-pricing' },
+          icon: 'tabler-currency-dollar',
+          title: 'Pricing',
+        },
+        {
+          url: { name: 'pages-faq' },
+          icon: 'tabler-help-circle',
+          title: 'FAQ',
+        },
         {
           url: { name: 'pages-misc-coming-soon' },
           icon: 'tabler-clock',
