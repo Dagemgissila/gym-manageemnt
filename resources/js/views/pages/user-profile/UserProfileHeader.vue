@@ -1,67 +1,98 @@
 <script setup>
 const profileHeaderData = ref();
 const { data, error } = await useApi("/pages/profile/header");
-console.log("ff", error.value);
 if (error.value) {
   console.log(error.value);
 } else {
   if (data.value) profileHeaderData.value = data.value;
 }
+
+const emit = defineEmits(['update-tab'])
+
+// Map each clickable field to a tab index (adjust these as needed)
+const goToTab = (tabIndex) => {
+  emit('update-tab', tabIndex)
+}
+
+
+const resolveStatus = statusMsg => {
+  if (statusMsg === 'Scheduled')
+    return {
+      text: 'Scheduled',
+      color: 'warning',
+    }
+  if (statusMsg === 'Member')
+    return {
+      text: 'Member',
+      color: 'success',
+    }
+  if (statusMsg === 'Suspended')
+    return {
+      text: 'Suspended',
+      color: 'error',
+    }}
+
+
 </script>
 
 <template>
-
-  <VCard >
-
+  <VCard>
 
     <VCardText
-      class="d-flex align-bottom flex-sm-row flex-column justify-center gap-x-6"
+      class="d-flex align-center flex-sm-row flex-column justify-center gap-x-6"
     >
-      <div class="d-flex h-0 mt-10 mb-10">
+      <div class="d-flex p-4">
         <VAvatar
           rounded
           size="130"
-          image="http://127.0.0.1:5174/resources/images/avatars/avatar-1.png"
-
+          image="https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D"
           class="user-profile-avatar mx-auto m"
         />
       </div>
 
       <div class="user-profile-info w-100 mt-16 pt-6 pt-sm-0 mt-sm-0">
-        <h4 class="text-h4 text-center text-sm-start font-weight-medium mb-2">
-        dagem
+     <div class="mb-2">
+             <h4 class="text-h5 text-center text-sm-start font-weight-medium mb-2">
+          Dagem Gissila
         </h4>
 
+        <VChip
+            v-bind="resolveStatus('Suspended')"
+            density="default"
+            label
+            size="small"
+          />
+</div>
         <div
           class="d-flex align-center justify-center justify-sm-space-between flex-wrap gap-5"
         >
           <div
             class="d-flex flex-wrap justify-center justify-sm-start flex-grow-1 gap-6"
           >
-            <span class="d-flex gap-x-2 align-center">
-              <VIcon size="24" icon="tabler-palette" />
+            <span class="d-flex gap-x-2 align-center cursor-pointer" @click="goToTab(0)">
+              <VIcon size="24" icon="tabler-clock" />
               <div class="text-body-1 font-weight-medium">
-                UX Designer
-
+                2025-03-15 04:35 PM
               </div>
             </span>
 
-            <span class="d-flex gap-x-2 align-center">
-              <VIcon size="24" icon="tabler-map-pin" />
-              <div class="text-body-1 font-weight-medium">
-                Addis Ababa
-              </div>
+            <span class="d-flex gap-x-2 align-center cursor-pointer" @click="goToTab(1)">
+              <VIcon size="24" icon="tabler-calendar-event" />
+              <div class="text-body-1 font-weight-medium">3/12</div>
             </span>
 
-            <span class="d-flex gap-x-2 align-center">
-              <VIcon size="24" icon="tabler-calendar" />
-              <div class="text-body-1 font-weight-medium">
-                today
-              </div>
+            <span class="d-flex gap-x-2 align-center cursor-pointer" @click="goToTab(2)">
+              <VIcon size="24" icon="tabler-wallet" />
+              <div class="text-body-1 font-weight-medium">$25</div>
+            </span>
+
+            <span class="d-flex gap-x-2 align-center cursor-pointer" @click="goToTab(3)">
+              <VIcon size="24" icon="tabler-star" />
+              <div class="text-body-1 font-weight-medium">65</div>
             </span>
           </div>
 
-          <VBtn prepend-icon="tabler-user-check"> Connected </VBtn>
+          <VBtn prepend-icon="tabler-bell"> Notifications </VBtn>
         </div>
       </div>
     </VCardText>
@@ -72,7 +103,6 @@ if (error.value) {
 .user-profile-avatar {
   border: 5px solid rgb(var(--v-theme-surface));
   background-color: rgb(var(--v-theme-surface)) !important;
-  inset-block-start: -3rem;
 
   .v-img__img {
     border-radius: 0.125rem;

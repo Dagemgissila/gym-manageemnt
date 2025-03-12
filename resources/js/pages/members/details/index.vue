@@ -15,52 +15,65 @@ const userTab = ref(0)
 
 const tabs = [
   { title: 'Overview', icon: 'tabler-home' },
-  { title: 'Billing', icon: 'tabler-credit-card' },
   { title: 'Membership Details', icon: 'tabler-id' },
-  { title: 'Appointments', icon: 'tabler-calendar' },
-  { title: 'Communications', icon: 'tabler-message' },
-  { title: 'Needs Attention', icon: 'tabler-alert-triangle' },
-  { title: 'Related Tasks', icon: 'tabler-list-check' },
-  { title: 'Attendance', icon: 'tabler-check' },
-  { title: 'Workout & Diet', icon: 'tabler-dumbbell' },
-  { title: 'Upgrade', icon: 'tabler-arrow-up' },
-  { title: 'Transfer', icon: 'tabler-repeat' },
-  { title: 'Freeze', icon: 'tabler-snowflake' },
-  { title: 'Digital Wallet', icon: 'tabler-wallet' },
-  { title: 'Refferals', icon: 'tabler-users' },
-  { title: 'Loyalty Points', icon: 'tabler-star' },
+  { title: 'Invoices & Receipts', icon: 'tabler-calendar' },
 ]
 
-const { data } = await useApi(`/apps/ecommerce/customers/${route.params.id}`)
-if (data.value) {
-  customerData.value = data.value
-}
+// Using Tabler icons for the dropdown
+const moreTabs = ref([
+  { title: 'Freeze', icon: 'tabler-snowflake' },
+  { title: 'Upgrade', icon: 'tabler-arrow-up' },
+  { title: 'Transfer', icon: 'tabler-arrows-swap' },
+  { title: 'Refund', icon: 'tabler-currency-dollar' },
+  { title: 'Gift Voucher', icon: 'tabler-gift' },
+  { title: 'Referrals', icon: 'tabler-users' },
+])
 
 const isAddCustomerDrawerOpen = ref(false)
+
+// Function to update the current tab based on the moreTabs index
+const selectMoreTab = (index) => {
+  userTab.value = index + tabs.length
+}
 </script>
 
 <template>
   <div>
     <!-- Header: Profile and Tab List Side by Side -->
-    <div class="d-flex flex-column  justify-space-between gap-4 mb-6">
+    <div class="d-flex flex-column justify-space-between gap-4 mb-6">
       <!-- Customer Profile -->
       <div class="customer-profile">
-        <UserProfileHeader/>
-
+        <UserProfileHeader @update-tab="selectMoreTab" />
       </div>
       <!-- Tab List -->
-      <div class="flex-grow-1">
+      <div class="flex-grow-1 d-flex">
         <VTabs v-model="userTab" class="v-tabs-pill disable-tab-transition" align-with-title>
           <VTab v-for="(tab, index) in tabs" :key="tab.title" :value="index">
             <VIcon size="20" start :icon="tab.icon" />
             {{ tab.title }}
           </VTab>
         </VTabs>
+
+        <!-- More Dropdown -->
+        <v-menu v-if="moreTabs.length" offset-y>
+          <template v-slot:activator="{ props }">
+            <v-btn class="align-self-center me-4" height="100%" rounded="0" variant="plain" v-bind="props">
+              Actions <v-icon icon="mdi-menu-down" end></v-icon>
+            </v-btn>
+          </template>
+          <v-list class="bg-grey-lighten-3" style="z-index: 1000;">
+            <v-list-item
+              v-for="(tab, index) in moreTabs"
+              :key="index"
+              @click="selectMoreTab(index)"
+              class="cursor-pointer"
+            >
+              <v-icon size="20" start :icon="tab.icon" />
+              {{ tab.title }}
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
-
-      
-
-      
     </div>
 
     <!-- Tab Content Full Width Below -->
@@ -78,6 +91,17 @@ const isAddCustomerDrawerOpen = ref(false)
         <VWindowItem :value="3">
           <CustomerTabNotification />
         </VWindowItem>
+        <!-- More Tab Contents -->
+        <VWindowItem
+          v-for="(tab, index) in moreTabs"
+          :key="tab.title"
+          :value="index + tabs.length"
+        >
+          <div class="p-4">
+            <!-- Replace with actual content for each extra tab -->
+            Content for {{ tab.title }} tab
+          </div>
+        </VWindowItem>
       </VWindow>
     </div>
 
@@ -86,11 +110,13 @@ const isAddCustomerDrawerOpen = ref(false)
 </template>
 
 <style scoped>
-/* Adjust layout if needed */
 .customer-profile {
-  /* You can customize the width or margins here */
+  /* Customize layout if needed */
 }
 .tab-content {
   width: 100%;
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
