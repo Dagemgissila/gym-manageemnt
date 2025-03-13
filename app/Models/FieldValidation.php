@@ -12,7 +12,7 @@ class FieldValidation extends Model
         'field_key',
         'prospect',
         'trial',
-        'member',
+        'membership',
     ];
 
 }

@@ -13,12 +13,12 @@ const selectedRows = ref([]);
 const field_validation_items = ref([]);
 const total = ref(0);
 
-// 👉 Updated Headers for Membership Items Table
+// 👉 Updated Headers for membershipship Items Table
 const headers = [
   { title: "Field Name", key: "field_name" }, // Foreign key reference
   { title: "Prospect", key: "prospect" },
   { title: "Trial", key: "trial" },
-  { title: "Member", key: "member" },
+  { title: "Member", key: "membership" },
 ];
 
 
@@ -92,7 +92,7 @@ const handleSubmit = () => {
         :items-per-page="-1"
         hide-default-footer
       >
-        <!-- Session-Based Membership -->
+        <!-- Session-Based membershipship -->
         <template #item.prospect="{ item }">
           <div class="text-body-2">
             <VCol cols="12">
@@ -107,7 +107,7 @@ const handleSubmit = () => {
           </div>
         </template>
 
-        <!-- Live Membership -->
+        <!-- Live membershipship -->
         <template #item.trial="{ item }">
           <div class="text-body-2">
             <VCol cols="12">
@@ -122,13 +122,13 @@ const handleSubmit = () => {
           </div>
         </template>
 
-        <!-- Live Membership -->
-        <template #item.member="{ item }">
+        <!-- Live membershipship -->
+        <template #item.membership="{ item }">
           <div class="text-body-2">
             <VCol cols="12">
               <div class="demo-space-x">
                 <VSwitch
-                  v-model="item.member"
+                  v-model="item.membership"
                   true-value="YES"
                   false-value="NO"
                 />

@@ -59,7 +59,7 @@ class FieldValidationController extends Controller
             '*.field_key' => 'sometimes|string|max:255',
             '*.prospect' => 'sometimes|string|in:YES,NO',
             '*.trial' => 'sometimes|string|in:YES,NO',
-            '*.member' => 'sometimes|string|in:YES,NO',
+            '*.membership' => 'sometimes|string|in:YES,NO',
         ]);
 
         Log::info('Validated Data:', $validatedData);
