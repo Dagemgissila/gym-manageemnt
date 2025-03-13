@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string("field_key");
             $table->enum('prospect', YesNo::getValues())->default(YesNo::NO);
             $table->enum('trial', YesNo::getValues())->default(YesNo::NO);
-            $table->enum('member', YesNo::getValues())->default(YesNo::NO);
+            $table->enum('membership', YesNo::getValues())->default(YesNo::NO);
             $table->timestamps();
         });
     }

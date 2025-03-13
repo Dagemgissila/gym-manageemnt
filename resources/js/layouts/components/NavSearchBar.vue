@@ -63,7 +63,7 @@ const redirectToUserProfile = (user) => {
           hide-details
           single-line
           style="min-width: 400px"
-           class="no-border"
+          class="no-border"
           @click:clear="clearSearch"
           @click="Shepherd.activeTour?.cancel()"
         />
@@ -103,15 +103,13 @@ const redirectToUserProfile = (user) => {
                           class="text-link font-weight-medium d-inline-block"
                           style="line-height: 1.375rem"
                         >
-                          {{ user.first_name  + ' ' + user.last_name}}
+                          {{ user.first_name + " " + user.last_name }}
                         </RouterLink>
                         <div class="text-body-2">
                           {{ user.email }}
                         </div>
                       </div>
                     </div>
-
-             
                   </VListItem>
                 </VList>
 
@@ -125,27 +123,17 @@ const redirectToUserProfile = (user) => {
 
               <!-- If no users found, display suggestion buttons -->
               <div v-else class="text-center py-4">
-                <VBtn
-                  color="primary"
-                  class="mx-2"
-                  @click="redirectToSuggestion('create-prospect')"
-                >
-                  Create Prospect
-                </VBtn>
-                <VBtn
-                  color="primary"
-                  class="mx-2"
-                  @click="redirectToSuggestion('book-trial')"
-                >
-                  Book Trial
-                </VBtn>
-                <VBtn
-                  color="primary"
-                  class="mx-2"
-                  @click="redirectToSuggestion('buy-new-membership')"
-                >
-                  Buy New Membership
-                </VBtn>
+                <RouterLink :to="{ name: 'member-create-prospect' }">
+                  <VBtn color="primary" class="mx-2">Create Prospect</VBtn>
+                </RouterLink>
+
+                <RouterLink :to="{ name: 'member-create-tria;' }">
+                  <VBtn color="primary" class="mx-2">Book Trial</VBtn>
+                </RouterLink>
+
+                <RouterLink :to="{ name: 'member-create-membership' }">
+                  <VBtn color="primary" class="mx-2">Buy New Membership</VBtn>
+                </RouterLink>
               </div>
             </template>
           </div>
