@@ -67,7 +67,12 @@ onMounted(fetchFieldValidations);
 
 <template>
   <VCard flat>
-    <h1>Create</h1>
+    <VCardItem class="pb-4">
+        <VCardTitle>Trial</VCardTitle>
+      </VCardItem>
+
+      <VDivider />
+
     <VCardText>
       <!-- 👉 Form -->
       <VForm ref="refForm">
