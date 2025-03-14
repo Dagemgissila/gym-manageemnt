@@ -2,7 +2,8 @@
 import { requiredValidator } from "@/@core/utils/validators";
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import avatar1 from "@images/avatars/avatar-1.png";
-import { onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
+
 const accountData = {
   avatarImg: avatar1,
 };
@@ -14,7 +15,6 @@ const form = ref({
 });
 
 const accountDataLocal = ref(structuredClone(accountData));
-
 const refInputEl = ref();
 
 const changeAvatar = (file) => {
@@ -29,32 +29,26 @@ const changeAvatar = (file) => {
   }
 };
 
-// reset avatar image
 const resetAvatar = () => {
   form.value.profile_picture = null;
-  // Reset the file input's value
   if (refInputEl.value) {
-    // If refInputEl is an array (from v-for), adjust accordingly:
     if (Array.isArray(refInputEl.value)) {
-      refInputEl.value.forEach(el => el.value = '');
+      refInputEl.value.forEach((el) => (el.value = ""));
     } else {
-      refInputEl.value.value = '';
+      refInputEl.value.value = "";
     }
   }
 };
-
 
 // Fetch and initialize fields
 const fetchFieldValidations = async () => {
   try {
     const response = await axiosAdmin.get("/field-validations");
-    // Filter out 'photo' and initialize form
-    fields.value = response.filter(
-      (field) => field.trial === "YES"
-    );
+    fields.value = response.filter((field) => field.trial === "YES");
+
     fields.value.forEach((field) => {
       if (!form.value.hasOwnProperty(field.field_key)) {
-        form.value[field.field_key] = ""; // Initialize with default value
+        form.value[field.field_key] = "";
       }
     });
   } catch (error) {
@@ -62,81 +56,90 @@ const fetchFieldValidations = async () => {
   }
 };
 
+// Group fields by 'group' dynamically
+const groupedFields = computed(() => {
+  return fields.value.reduce((acc, field) => {
+    if (!acc[field.group]) acc[field.group] = [];
+    acc[field.group].push(field);
+    return acc;
+  }, {});
+});
+
 onMounted(fetchFieldValidations);
 </script>
 
 <template>
   <VCard flat>
     <VCardItem class="pb-4">
-        <VCardTitle>Trial</VCardTitle>
-      </VCardItem>
-
-      <VDivider />
+      <VCardTitle>Prospect</VCardTitle>
+    </VCardItem>
+    <VDivider />
 
     <VCardText>
-      <!-- 👉 Form -->
       <VForm ref="refForm">
-        <VRow>
-          <VCol v-for="field in fields" :key="field.field_key" :cols="field.field_key === 'photo' ? 12 : 4">
-
-          <template v-if="field.field_key === 'photo'">
-            <VCol cols="12">
-            <VCardText class="d-flex">
-              <!-- 👉 Avatar -->
-              <VAvatar
-                rounded
-                size="100"
-                class="me-6"
-                :image="
-                  form.profile_picture
-                    ? form.profile_picture
-                    : accountDataLocal.avatarImg
-                "
-              />
-
-              <!-- 👉 Upload Photo -->
-              <div class="d-flex flex-column justify-center gap-4">
-                <div class="d-flex flex-wrap gap-4">
-                  <VBtn
-                    color="primary"
-                    size="small"
-                    @click="(refInputEl[0] || refInputEl).click()"
-                  >
-                    <VIcon icon="tabler-cloud-upload" class="d-sm-none" />
-                    <span class="d-none d-sm-block">Upload new photo</span>
-                  </VBtn>
-
-                  <input
-                    ref="refInputEl"
-                    type="file"
-                    name="file"
-                    accept=".jpeg,.png,.jpg,GIF"
-                    hidden
-                    @input="changeAvatar"
-                  />
-
-                  <VBtn
-                    type="reset"
-                    size="small"
-                    color="secondary"
-                    variant="tonal"
-                    @click="resetAvatar"
-                  >
-                    <span class="d-none d-sm-block">Reset</span>
-                    <VIcon icon="tabler-refresh" class="d-sm-none" />
-                  </VBtn>
-                </div>
-
-                <p class="text-body-1 mb-0">
-                  Allowed JPG, GIF or PNG. Max size of 800K
-                </p>
-              </div>
-            </VCardText>
+        <VRow
+          v-for="(fieldsGroup, groupName) in groupedFields"
+          :key="groupName"
+        >
+          <VCol cols="12">
+            <h3>{{ groupName }}</h3>
+            <VDivider class="mb-3" />
           </VCol>
 
-          </template>
+          <VCol
+            v-for="field in fieldsGroup"
+            :key="field.field_key"
+            :cols="field.field_key === 'photo' ? 12 : 4"
+          >
+            <!-- Profile Picture Upload -->
+            <template v-if="field.field_key === 'photo'">
+              <VCol cols="12">
+                <VCardText class="d-flex">
+                  <VAvatar
+                    rounded
+                    size="100"
+                    class="me-6"
+                    :image="form.profile_picture || accountDataLocal.avatarImg"
+                  />
+                  <div class="d-flex flex-column justify-center gap-4">
+                    <div class="d-flex flex-wrap gap-4">
+                      <VBtn
+                        color="primary"
+                        size="small"
+                        @click="(refInputEl[0] || refInputEl).click()"
+                      >
+                        <VIcon icon="tabler-cloud-upload" class="d-sm-none" />
+                        <span class="d-none d-sm-block">Upload new photo</span>
+                      </VBtn>
+                      <input
+                        ref="refInputEl"
+                        type="file"
+                        name="file"
+                        accept=".jpeg,.png,.jpg,GIF"
+                        hidden
+                        @input="changeAvatar"
+                      />
+                      <VBtn
+                        type="reset"
+                        size="small"
+                        color="secondary"
+                        variant="tonal"
+                        @click="resetAvatar"
+                      >
+                        <span class="d-none d-sm-block">Reset</span>
+                        <VIcon icon="tabler-refresh" class="d-sm-none" />
+                      </VBtn>
+                    </div>
+                    <p class="text-body-1 mb-0">
+                      Allowed JPG, GIF or PNG. Max size of 800K
+                    </p>
+                  </div>
+                </VCardText>
+              </VCol>
+            </template>
+
             <!-- Date Picker -->
-            <template v-else-if="field.field_key === 'date_of_birth'">
+            <template v-else-if="field.input_type === 'date'">
               <AppDateTimePicker
                 :rules="[requiredValidator]"
                 v-model="form[field.field_key]"
@@ -146,7 +149,7 @@ onMounted(fetchFieldValidations);
             </template>
 
             <!-- Gender Selection -->
-            <template v-else-if="field.field_key === 'gender'">
+            <template v-else-if="field.input_type === 'dropdown'">
               <AppSelect
                 v-model="form[field.field_key]"
                 :rules="[requiredValidator]"
@@ -156,7 +159,27 @@ onMounted(fetchFieldValidations);
                   { title: 'Female', value: 'Female' },
                 ]"
                 placeholder="field.field_name"
+              />
+            </template>
 
+            <!-- Gender Selection -->
+            <template v-else-if="field.input_type === 'textarea'">
+              <AppTextarea
+                v-model="form[field.field_key]"
+                :rules="[requiredValidator]"
+                :label="field.field_name"
+                :placeholder="field.field_name"
+                rows="2"
+              />
+            </template>
+
+            <!-- Toggle (Switch) -->
+            <template v-else-if="field.input_type === 'toggle'">
+              <VSwitch
+                v-model="form[field.field_key]"
+                :label="field.field_name"
+                color="primary"
+                inset
               />
             </template>
 
@@ -170,9 +193,10 @@ onMounted(fetchFieldValidations);
               />
             </template>
           </VCol>
+        </VRow>
 
-
-          <!-- 👉 Submit and Cancel -->
+        <!-- Submit Button -->
+        <VRow>
           <VCol cols="12">
             <VBtn type="submit" class="me-3"> Submit </VBtn>
           </VCol>
@@ -181,5 +205,3 @@ onMounted(fetchFieldValidations);
     </VCardText>
   </VCard>
 </template>
-
-<style lang="scss"></style>

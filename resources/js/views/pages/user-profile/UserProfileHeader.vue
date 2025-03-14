@@ -92,7 +92,9 @@ const resolveStatus = statusMsg => {
             </span>
           </div>
 
-          <VBtn prepend-icon="tabler-bell"> Notifications </VBtn>
+          <div class="notification">
+    <VIcon icon="tabler-bell" />
+  </div>
         </div>
       </div>
     </VCardText>
@@ -107,5 +109,12 @@ const resolveStatus = statusMsg => {
   .v-img__img {
     border-radius: 0.125rem;
   }
+}
+.notification {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Adjust spacing between icon and text */
+  font-size: 16px; /* Adjust text size */
+  color: #333; /* Adjust text color */
 }
 </style>

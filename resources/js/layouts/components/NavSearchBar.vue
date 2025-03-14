@@ -27,7 +27,17 @@ const fetchUsers = async () => {
   }
 };
 
-watch(searchQuery, fetchUsers);
+
+watch(searchQuery, (newVal) => {
+  // Automatically open menu when typing
+  if (newVal) {
+    isSearchActive.value = true
+  }
+  fetchUsers()
+})
+
+// Add immediate option to watch to handle initial state
+watch(searchQuery, fetchUsers, { immediate: true })
 
 const clearSearch = () => {
   searchQuery.value = "";
@@ -46,7 +56,6 @@ const redirectToUserProfile = (user) => {
       v-model="isSearchActive"
       :close-on-content-click="false"
       location="bottom"
-      transition="scale-transition"
       offset-y
       :max-width="600"
       class="mx-auto"
@@ -79,10 +88,11 @@ const redirectToUserProfile = (user) => {
             <template v-else>
               <div v-if="users.length > 0">
                 <VList>
-                  <VListItem
+                  <RouterLink
                     v-for="user in users"
                     :key="user.id"
-                    @click="redirectToUserProfile(user)"
+                    @click="isSearchActive = false"
+
                   >
                     <div class="d-flex align-center gap-x-3">
                       <VAvatar
@@ -110,7 +120,7 @@ const redirectToUserProfile = (user) => {
                         </div>
                       </div>
                     </div>
-                  </VListItem>
+                  </RouterLink>
                 </VList>
 
                 <div
@@ -124,15 +134,30 @@ const redirectToUserProfile = (user) => {
               <!-- If no users found, display suggestion buttons -->
               <div v-else class="text-center py-4">
                 <RouterLink :to="{ name: 'member-create-prospect' }">
-                  <VBtn color="primary" class="mx-2">Create Prospect</VBtn>
+                  <VBtn
+                    @click="isSearchActive = false"
+                    color="primary"
+                    class="mx-2"
+                    >Create Prospect</VBtn
+                  >
                 </RouterLink>
 
                 <RouterLink :to="{ name: 'member-create-tria;' }">
-                  <VBtn color="primary" class="mx-2">Book Trial</VBtn>
+                  <VBtn
+                    @click="isSearchActive = false"
+                    color="primary"
+                    class="mx-2"
+                    >Book Trial</VBtn
+                  >
                 </RouterLink>
 
                 <RouterLink :to="{ name: 'member-create-membership' }">
-                  <VBtn color="primary" class="mx-2">Buy New Membership</VBtn>
+                  <VBtn
+                    @click="isSearchActive = false"
+                    color="primary"
+                    class="mx-2"
+                    >Buy New Membership</VBtn
+                  >
                 </RouterLink>
               </div>
             </template>
@@ -162,7 +187,7 @@ const redirectToUserProfile = (user) => {
   .v-list-item {
     min-height: 64px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: none;
 
     &:hover {
       background-color: rgba(var(--v-theme-primary), 0.04);
@@ -173,7 +198,6 @@ const redirectToUserProfile = (user) => {
 .v-menu__content {
   overflow: visible;
   contain: none;
-  transform-origin: center top;
 }
 
 .v-field__prepend-inner {

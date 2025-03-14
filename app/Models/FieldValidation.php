@@ -13,6 +13,8 @@ class FieldValidation extends Model
         'prospect',
         'trial',
         'membership',
+        'group',
+        'input_type'
     ];
 
 }
