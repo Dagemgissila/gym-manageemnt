@@ -1,68 +1,67 @@
 <script setup>
 import axiosAdmin from "@/composables/axios/axiosAdmin";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { toast } from "vue3-toastify";
 
 // 👉 Data Table Options
 const itemsPerPage = ref(10);
 const page = ref(1);
-
 const selectedRows = ref([]);
-
-// 👉 Users Data
 const field_validation_items = ref([]);
-const total = ref(0);
 
-// 👉 Updated Headers for membershipship Items Table
+// 👉 Table Headers
 const headers = [
-  { title: "Field Name", key: "field_name" }, // Foreign key reference
+  { title: "Field Name", key: "field_name" ,width: "400px" },
   { title: "Prospect", key: "prospect" },
   { title: "Trial", key: "trial" },
   { title: "Member", key: "membership" },
 ];
 
-
-function fetchFilds(){
+// 👉 Fetch Fields Data
+const fetchFields = () => {
   axiosAdmin
     .get("/field-validations")
     .then((response) => {
-      field_validation_items.value = response; // Make sure to access `.data`
+      field_validation_items.value = response; // Ensure you access `.data`
     })
     .catch((error) => {
       console.error("Error fetching field validations:", error);
     });
-}
+};
 
-onMounted(() => {
-  fetchFilds();
+// 👉 Group Data by `group` Column
+const groupedFields = computed(() => {
+  const groups = {};
+  field_validation_items.value.forEach((item) => {
+    if (!groups[item.group]) {
+      groups[item.group] = [];
+    }
+    groups[item.group].push(item);
+  });
+  return groups;
 });
 
-
-// Handle form submission
+// 👉 Handle Form Submission
 const handleSubmit = () => {
-  console.log("Form submitted:", field_validation_items.value);
-
-  // Send the updated data to the backend
   axiosAdmin
     .patch("/field-validations/bulk-update", field_validation_items.value)
     .then((response) => {
-
       toast(response.message, {
-      theme: "colored",
-      type: "success",
-      position: "top-right",
-      dangerouslyHTMLString: true,
-    });
-  fetchFilds();
-
-      console.log("Update successful:", response);
+        theme: "colored",
+        type: "success",
+        position: "top-right",
+        dangerouslyHTMLString: true,
+      });
+      fetchFields();
     })
     .catch((error) => {
       console.error("Error updating field validations:", error);
     });
 };
 
-
+onMounted(() => {
+  fetchFields();
+});
 </script>
 
 <template>
@@ -81,67 +80,71 @@ const handleSubmit = () => {
       </VCardText>
       <VDivider />
 
-      <!-- SECTION datatable -->
-      <VDataTableServer
-        v-model:model-value="selectedRows"
-        v-model:page="page"
-        :items="field_validation_items"
-        :headers="headers"
-        :items-length="-1"
-        class="text-no-wrap"
-        :items-per-page="-1"
-        hide-default-footer
-      >
-        <!-- Session-Based membershipship -->
-        <template #item.prospect="{ item }">
-          <div class="text-body-2">
-            <VCol cols="12">
-              <div class="demo-space-x">
-                <VSwitch
-                  v-model="item.prospect"
-                  true-value="YES"
-                  false-value="NO"
-                />
-              </div>
-            </VCol>
-          </div>
-        </template>
+      <!-- Grouped Data Table -->
+      <div v-for="(items, group) in groupedFields" :key="group">
+        <VCardItem class="pb-4">
+        <VCardTitle>{{ group }}</VCardTitle>
+      </VCardItem>
+        <VDataTableServer
+          v-model:model-value="selectedRows"
+          v-model:page="page"
+          :items="items"
+          :headers="headers"
+          :items-length="-1"
+          class="text-no-wrap"
+          :items-per-page="-1"
+          hide-default-footer
+          
+        >
+          <!-- Session-Based membershipship -->
+          <template #item.prospect="{ item }">
+            <div class="text-body-2">
+              <VCol cols="12">
+                <div class="demo-space-x">
+                  <VSwitch
+                    v-model="item.prospect"
+                    true-value="YES"
+                    false-value="NO"
+                  />
+                </div>
+              </VCol>
+            </div>
+          </template>
 
-        <!-- Live membershipship -->
-        <template #item.trial="{ item }">
-          <div class="text-body-2">
-            <VCol cols="12">
-              <div class="demo-space-x">
-                <VSwitch
-                  v-model="item.trial"
-                  true-value="YES"
-                  false-value="NO"
-                />
-              </div>
-            </VCol>
-          </div>
-        </template>
+          <!-- Live membershipship -->
+          <template #item.trial="{ item }">
+            <div class="text-body-2">
+              <VCol cols="12">
+                <div class="demo-space-x">
+                  <VSwitch
+                    v-model="item.trial"
+                    true-value="YES"
+                    false-value="NO"
+                  />
+                </div>
+              </VCol>
+            </div>
+          </template>
 
-        <!-- Live membershipship -->
-        <template #item.membership="{ item }">
-          <div class="text-body-2">
-            <VCol cols="12">
-              <div class="demo-space-x">
-                <VSwitch
-                  v-model="item.membership"
-                  true-value="YES"
-                  false-value="NO"
-                />
-              </div>
-            </VCol>
-          </div>
-        </template>
-      </VDataTableServer>
-      <!-- SECTION -->
+          <!-- Live membershipship -->
+          <template #item.membership="{ item }">
+            <div class="text-body-2">
+              <VCol cols="12">
+                <div class="demo-space-x">
+                  <VSwitch
+                    v-model="item.membership"
+                    true-value="YES"
+                    false-value="NO"
+                  />
+                </div>
+              </VCol>
+            </div>
+          </template>
+        </VDataTableServer>
+      </div>
 
-
-            <!-- Submit Button -->
-            <VCardText class="d-flex justify-center">
+      <!-- Submit Button -->
+      <VCardText class="d-flex justify-center">
         <VBtn color="primary" @click="handleSubmit"> Submit </VBtn>
       </VCardText>
       <!-- SECTION -->
