@@ -1,20 +1,20 @@
 <script setup>
-import { layoutConfig } from '@layouts'
+import { layoutConfig } from "@layouts";
 import {
   VerticalNavGroup,
   VerticalNavLink,
   VerticalNavSectionTitle,
-} from '@layouts/components'
-import { useLayoutConfigStore } from '@layouts/stores/config'
-import { injectionKeyIsVerticalNavHovered } from '@layouts/symbols'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { VNodeRenderer } from './VNodeRenderer'
+} from "@layouts/components";
+import { useLayoutConfigStore } from "@layouts/stores/config";
+import { injectionKeyIsVerticalNavHovered } from "@layouts/symbols";
+import { PerfectScrollbar } from "vue3-perfect-scrollbar";
+import { VNodeRenderer } from "./VNodeRenderer";
 
 const props = defineProps({
   tag: {
     type: null,
     required: false,
-    default: 'aside',
+    default: "aside",
   },
   navItems: {
     type: null,
@@ -28,41 +28,79 @@ const props = defineProps({
     type: Function,
     required: true,
   },
-})
+});
 
-const refNav = ref()
-const isHovered = useElementHover(refNav)
+const refNav = ref();
+const isHovered = useElementHover(refNav);
 
-provide(injectionKeyIsVerticalNavHovered, isHovered)
+provide(injectionKeyIsVerticalNavHovered, isHovered);
 
-const configStore = useLayoutConfigStore()
+const configStore = useLayoutConfigStore();
 
-const resolveNavItemComponent = item => {
-  if ('heading' in item)
-    return VerticalNavSectionTitle
-  if ('children' in item)
-    return VerticalNavGroup
-  
-  return VerticalNavLink
-}
+const resolveNavItemComponent = (item) => {
+  if ("heading" in item) return VerticalNavSectionTitle;
+  if ("children" in item) return VerticalNavGroup;
+
+  return VerticalNavLink;
+};
 
 /*ℹ️ Close overlay side when route is changed
 Close overlay vertical nav when link is clicked
 */
-const route = useRoute()
+const route = useRoute();
 
-watch(() => route.name, () => {
-  props.toggleIsOverlayNavActive(false)
-})
+watch(
+  () => route.name,
+  () => {
+    props.toggleIsOverlayNavActive(false);
+  }
+);
 
-const isVerticalNavScrolled = ref(false)
-const updateIsVerticalNavScrolled = val => isVerticalNavScrolled.value = val
+const isVerticalNavScrolled = ref(false);
+const updateIsVerticalNavScrolled = (val) =>
+  (isVerticalNavScrolled.value = val);
 
-const handleNavScroll = evt => {
-  isVerticalNavScrolled.value = evt.target.scrollTop > 0
-}
+const handleNavScroll = (evt) => {
+  isVerticalNavScrolled.value = evt.target.scrollTop > 0;
+};
 
-const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
+const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered);
+
+const searchQuery = ref("");
+const isSearchFocused = ref(false);
+
+// Recursive function to flatten nav items
+const flattenNavItems = (items) => {
+  let result = [];
+  items.forEach((item) => {
+    if (item.children && Array.isArray(item.children)) {
+      // Optionally, you can also include the parent item if needed:
+      // result.push(item);
+      result = result.concat(flattenNavItems(item.children));
+    } else {
+      result.push(item);
+    }
+  });
+  return result;
+};
+
+const searchResults = computed(() => {
+  if (!searchQuery.value) return [];
+  const lowerQuery = searchQuery.value.toLowerCase();
+  // Flatten the nav items from all levels
+  const flatItems = flattenNavItems(props.navItems);
+  return flatItems.filter((item) =>
+    item.title && item.title.toLowerCase().includes(lowerQuery)
+  );
+});
+
+
+// Close search when clicking a result
+const closeSearch = () => {
+  searchQuery.value = '';
+  isSearchFocused.value = false;
+};
+
 </script>
 
 <template>
@@ -74,26 +112,20 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
     :class="[
       {
         'overlay-nav': configStore.isLessThanOverlayNavBreakpoint,
-        'hovered': isHovered,
-        'visible': isOverlayNavActive,
-        'scrolled': isVerticalNavScrolled,
+        hovered: isHovered,
+        visible: isOverlayNavActive,
+        scrolled: isVerticalNavScrolled,
       },
     ]"
   >
     <!-- 👉 Header -->
     <div class="nav-header">
       <slot name="nav-header">
-        <RouterLink
-          to="/"
-          class="app-logo app-title-wrapper"
-        >
+        <RouterLink to="/" class="app-logo app-title-wrapper">
           <VNodeRenderer :nodes="layoutConfig.app.logo" />
 
           <Transition name="vertical-nav-app-title">
-            <h1
-              v-show="!hideTitleAndIcon"
-              class="app-logo-title"
-            >
+            <h1 v-show="!hideTitleAndIcon" class="app-logo-title">
               {{ layoutConfig.app.title }}
             </h1>
           </Transition>
@@ -107,7 +139,10 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
             class="d-none nav-unpin"
             :class="configStore.isVerticalNavCollapsed && 'd-lg-block'"
             v-bind="layoutConfig.icons.verticalNavUnPinned"
-            @click="configStore.isVerticalNavCollapsed = !configStore.isVerticalNavCollapsed"
+            @click="
+              configStore.isVerticalNavCollapsed =
+                !configStore.isVerticalNavCollapsed
+            "
           />
           <Component
             :is="layoutConfig.app.iconRenderer || 'div'"
@@ -115,7 +150,10 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
             class="d-none nav-pin"
             :class="!configStore.isVerticalNavCollapsed && 'd-lg-block'"
             v-bind="layoutConfig.icons.verticalNavPinned"
-            @click="configStore.isVerticalNavCollapsed = !configStore.isVerticalNavCollapsed"
+            @click="
+              configStore.isVerticalNavCollapsed =
+                !configStore.isVerticalNavCollapsed
+            "
           />
           <Component
             :is="layoutConfig.app.iconRenderer || 'div'"
@@ -140,6 +178,35 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
         :options="{ wheelPropagation: false }"
         @ps-scroll-y="handleNavScroll"
       >
+        <!-- ======= NEW: Search Input with Vuetify styling ======= -->
+        <div class="nav-search-container">
+          <v-text-field
+            v-model="searchQuery"
+            placeholder="Search..."
+            hide-details
+            solo
+            flat
+            clearable
+            dense
+            class="search-input"
+            @focus="isSearchFocused = true"
+        @blur="isSearchFocused = false"
+
+          />
+          <!-- Search popup: small popup below the search input -->
+          <div v-if="searchQuery && searchResults.length " class="search-popup">
+          
+            <Component
+          v-for="(item, index) in searchResults"
+          :key="`search-${index}`"
+          :is="resolveNavItemComponent(item)"
+          :item="item"
+          @click="closeSearch"
+        />
+          
+          </div>
+        </div>
+
         <Component
           :is="resolveNavItemComponent(item)"
           v-for="(item, index) in navItems"
@@ -245,5 +312,45 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
 
     transition: transform 0.25s ease-in-out;
   }
+}
+/* Container for search input and popup */
+.nav-search-container {
+  position: relative;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Popup styling for search results */
+.search-popup {
+  position: absolute;
+  top: calc(100% + 4px); // small gap below input
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  max-height: 250px;
+  overflow-y: auto;
+  border-radius: 4px;
+  padding: 0.5rem 0;
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+.search-link {
+  color: inherit;
+  text-decoration: none;
+  display: block;
 }
 </style>
