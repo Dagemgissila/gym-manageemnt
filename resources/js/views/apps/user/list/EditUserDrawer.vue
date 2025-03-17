@@ -156,7 +156,7 @@ const handleDrawerModelValueUpdate = (val) => {
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <!-- 👉 Full name -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="selectedUser.first_name"
                   :rules="[
@@ -168,7 +168,7 @@ const handleDrawerModelValueUpdate = (val) => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="selectedUser.last_name"
                   :rules="[
@@ -233,7 +233,7 @@ const handleDrawerModelValueUpdate = (val) => {
                 </VCardText>
               </VCol>
               <!-- 👉 Email -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="selectedUser.email"
                   :rules="[
@@ -247,7 +247,7 @@ const handleDrawerModelValueUpdate = (val) => {
               </VCol>
 
               <!-- 👉 company -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="selectedUser.mobile_number"
                   :rules="[
@@ -259,7 +259,7 @@ const handleDrawerModelValueUpdate = (val) => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppDateTimePicker
                   v-model="selectedUser.date_of_birth"
                   :rules="[
@@ -272,7 +272,7 @@ const handleDrawerModelValueUpdate = (val) => {
               </VCol>
 
               <!-- 👉 Role -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppSelect
                   v-model="selectedUser.gender"
                   label="Gender"
@@ -285,7 +285,7 @@ const handleDrawerModelValueUpdate = (val) => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="selectedUser.address"
                   :rules="[requiredValidator, serverErrorValidator('address')]"
@@ -294,7 +294,7 @@ const handleDrawerModelValueUpdate = (val) => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="selectedUser.assigned_location"
                   :rules="[
@@ -306,7 +306,7 @@ const handleDrawerModelValueUpdate = (val) => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppDateTimePicker
                   v-model="selectedUser.hire_date"
                   :rules="[
@@ -318,7 +318,7 @@ const handleDrawerModelValueUpdate = (val) => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="selectedUser.salary"
                   :rules="[requiredValidator, serverErrorValidator('salary')]"
@@ -328,7 +328,7 @@ const handleDrawerModelValueUpdate = (val) => {
               </VCol>
 
               <!-- 👉 Plan -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="selectedUser.emergency_contact_name"
                   label="Emergency Contact Name"
@@ -337,7 +337,7 @@ const handleDrawerModelValueUpdate = (val) => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="selectedUser.emergency_contact_phone"
                   label="Emergency Contact Number"
@@ -347,7 +347,7 @@ const handleDrawerModelValueUpdate = (val) => {
               </VCol>
 
               <!-- 👉 Role -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppSelect
                   v-model="selectedUser.role"
                   label="Select Role"
@@ -357,7 +357,7 @@ const handleDrawerModelValueUpdate = (val) => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <VSwitch
                   v-model="selectedUser.status"
                   :label="`User Status`"

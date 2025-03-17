@@ -183,7 +183,7 @@ const removeSelectedDay = (index) => {
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <!-- 👉 Membership Name -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="membership_name" :rules="[
                   requiredValidator,
                   serverErrorValidator('membership_name'),
@@ -191,7 +191,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Membership Type -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppSelect v-model="membership_type" :items="membership_types" :rules="[
                   requiredValidator,
                   serverErrorValidator('membership_type_id'),
@@ -200,7 +200,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Accessible Days -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="accessible_days" :rules="[
                   requiredValidator,
                   integerValidator,
@@ -209,7 +209,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Sessions  -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="sessions" :rules="[
                   requiredValidator,
                   integerValidator,
@@ -218,7 +218,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Membership Duration (Days) -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="duration_days" :rules="[
                   requiredValidator,
                   integerValidator,
@@ -227,7 +227,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Membership Price -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="price" :rules="[
                   requiredValidator,
                   decimalValidator,
@@ -236,7 +236,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Suspend Based On -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="suspend_based_on_balance" :rules="[
                   requiredValidator,
                   integerValidator,
@@ -245,7 +245,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Suspend After -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="suspend_after" :rules="[
                   integerValidator,
                   decimalValidator,
@@ -253,22 +253,22 @@ const removeSelectedDay = (index) => {
                 ]" label="Suspend After" placeholder="Suspeend After" />
               </VCol>
 
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <VSwitch v-model="discount_available" :label="`Discount Available?`" />
               </VCol>
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <VSwitch v-model="installment_available" :label="`Installment Option?`" />
               </VCol>
 
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <VSwitch v-model="gym_access" :label="`Includes Gym Access?`" />
               </VCol>
 
-              <VCol cols="4" v-if="showLinkAccess">
+              <VCol cols="12" md="4" v-if="showLinkAccess">
                 <VSwitch v-model="link_access_to_booked_appts" :label="`Link Access to Booked Appts?`" />
               </VCol>
 
-              <VCol cols="4" v-if="gym_access">
+              <VCol cols="12" md="4" v-if="gym_access">
                 <AddDayTimeRestrication v-model:is-dialog-visible="isCardAddDialogVisible" :selectedDays="selectedDays"
                   @date-time-restriction="dateTimeRestriction" />
 
@@ -280,7 +280,7 @@ const removeSelectedDay = (index) => {
         
 
               <!-- 👉 Suspend Based On -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="upgradable_limit" :rules="[
                   requiredValidator,
                   integerValidator,
@@ -288,13 +288,13 @@ const removeSelectedDay = (index) => {
                 ]" label="Upgrade Limit" placeholder="Upgrade Limit" />
               </VCol>
               <!-- 👉 Total Free Freeze Weeks Allowed -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="free_freezes_allowed" :rules="[requiredValidator, integerValidator]"
                   label="Total Free Freeze Weeks Allowed" placeholder="Total Free Freeze Weeks Allowed" />
               </VCol>
 
               <!-- 👉 Maximum Freeze Duration (Weeks) -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField v-model="freeze_duration_max_weeks" :rules="[
                   requiredValidator,
                   integerValidator,
@@ -303,7 +303,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Paid Freeze Allowed -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppSelect v-model="paid_freeze_allowed" :rules="[
                   requiredValidator,
                   serverErrorValidator('paid_freeze_allowed'),
@@ -312,7 +312,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Status -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <VSwitch v-model="status" :label="`Status`" />
               </VCol>
 

@@ -89,7 +89,8 @@ onMounted(fetchFieldValidations);
           <VCol
             v-for="field in fieldsGroup"
             :key="field.field_key"
-            :cols="field.field_key === 'photo' ? 12 : 4"
+            cols="12"
+            :md="field.field_key === 'photo' ? 12 : 4"
           >
             <!-- Profile Picture Upload -->
             <template v-if="field.field_key === 'photo'">

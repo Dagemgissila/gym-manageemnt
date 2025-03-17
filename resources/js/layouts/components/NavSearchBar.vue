@@ -27,17 +27,16 @@ const fetchUsers = async () => {
   }
 };
 
-
 watch(searchQuery, (newVal) => {
   // Automatically open menu when typing
   if (newVal) {
-    isSearchActive.value = true
+    isSearchActive.value = true;
   }
-  fetchUsers()
-})
+  fetchUsers();
+});
 
 // Add immediate option to watch to handle initial state
-watch(searchQuery, fetchUsers, { immediate: true })
+watch(searchQuery, fetchUsers, { immediate: true });
 
 const clearSearch = () => {
   searchQuery.value = "";
@@ -71,7 +70,6 @@ const redirectToUserProfile = (user) => {
           dense
           hide-details
           single-line
-          style="min-width: 400px"
           class="no-border"
           @click:clear="clearSearch"
           @click="Shepherd.activeTour?.cancel()"
@@ -92,7 +90,6 @@ const redirectToUserProfile = (user) => {
                     v-for="user in users"
                     :key="user.id"
                     @click="isSearchActive = false"
-
                   >
                     <div class="d-flex align-center gap-x-3">
                       <VAvatar
@@ -132,32 +129,38 @@ const redirectToUserProfile = (user) => {
               </div>
 
               <!-- If no users found, display suggestion buttons -->
-              <div v-else class="text-center py-4">
+              <!-- Replace the existing buttons div with this -->
+              <div
+                class="d-flex flex-column flex-md-row gap-2 justify-center py-4"
+              >
                 <RouterLink :to="{ name: 'member-create-prospect' }">
                   <VBtn
                     @click="isSearchActive = false"
                     color="primary"
-                    class="mx-2"
-                    >Create Prospect</VBtn
+                    class="w-100 w-md-auto"
                   >
+                    Create Prospect
+                  </VBtn>
                 </RouterLink>
 
-                <RouterLink :to="{ name: 'member-create-tria;' }">
+                <RouterLink :to="{ name: 'member-create-trial;' }">
                   <VBtn
                     @click="isSearchActive = false"
                     color="primary"
-                    class="mx-2"
-                    >Book Trial</VBtn
+                    class="w-100 w-md-auto"
                   >
+                    Book Trial
+                  </VBtn>
                 </RouterLink>
 
                 <RouterLink :to="{ name: 'member-create-membership' }">
                   <VBtn
                     @click="isSearchActive = false"
                     color="primary"
-                    class="mx-2"
-                    >Buy New Membership</VBtn
+                    class="w-100 w-md-auto"
                   >
+                    Buy New Membership
+                  </VBtn>
                 </RouterLink>
               </div>
             </template>
@@ -179,6 +182,7 @@ const redirectToUserProfile = (user) => {
   margin-top: 4px;
   max-height: 60vh;
   overflow-y: auto;
+  overflow-x: auto;
 
   .v-card-text {
     padding: 0.5rem !important;

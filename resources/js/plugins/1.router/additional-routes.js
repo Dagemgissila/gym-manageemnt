@@ -60,7 +60,7 @@ export const routes = [
   },
   {
     path: "/members/create-trial",
-    name: "member-create-tria;",
+    name: "member-create-trial;",
     component: trial,
     meta:{
       requireAuth:true

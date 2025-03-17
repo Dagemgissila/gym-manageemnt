@@ -206,7 +206,7 @@ const removeSelectedDay = (index) => {
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <!-- 👉 Membership Name -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.membership_name"
                   :rules="[
@@ -219,7 +219,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- Membership Type -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppSelect
                   v-model="localMembership.membership_type_id"
                   :items="membership_types"
@@ -231,7 +231,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Accessible Days -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.accessible_days"
                   :rules="[
@@ -245,7 +245,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Sessions  -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.sessions"
                   :rules="[
@@ -259,7 +259,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Membership Duration (Days) -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.duration_days"
                   :rules="[
@@ -273,7 +273,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Membership Price -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.price"
                   :rules="[
@@ -287,7 +287,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Suspend Based On -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.suspend_based_on_balance"
                   :rules="[
@@ -301,7 +301,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Suspend After -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.suspend_after"
                   :rules="[
@@ -314,7 +314,7 @@ const removeSelectedDay = (index) => {
                 />
               </VCol>
 
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <VSwitch
                   v-model="localMembership.discount_available"
                   :label="`Discount Available?`"
@@ -322,7 +322,7 @@ const removeSelectedDay = (index) => {
                   :false-value="false"
                 />
               </VCol>
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <VSwitch
                   v-model="localMembership.installment_available"
                   :label="`Installment Option?`"
@@ -331,7 +331,7 @@ const removeSelectedDay = (index) => {
                 />
               </VCol>
 
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <VSwitch
                   v-model="localMembership.gym_access"
                   :true-value="true"
@@ -341,7 +341,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
 
-              <VCol cols="4" v-if="localMembership.gym_access">
+              <VCol cols="12" md="4" v-if="localMembership.gym_access">
                 <EditDayTimeRestriction v-model:is-dialog-visible="isCardAddDialogVisible" :selectedDays="localMembership.selected_days"
                   @date-time-restriction="dateTimeRestriction" />
 
@@ -350,7 +350,7 @@ const removeSelectedDay = (index) => {
                 </VBtn>
               </VCol>
 
-              <VCol cols="4" v-if="showLinkAccess">
+              <VCol cols="12" md="4" v-if="showLinkAccess">
                 <VSwitch
                   v-model="localMembership.link_access_to_booked_appts"
                   :label="`Link Access to Booked Appts?`"
@@ -360,7 +360,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Suspend Based On -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.upgradable_limit"
                   :rules="[
@@ -373,7 +373,7 @@ const removeSelectedDay = (index) => {
                 />
               </VCol>
               <!-- 👉 Total Free Freeze Weeks Allowed -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.free_freezes_allowed"
                   :rules="[requiredValidator, integerValidator]"
@@ -383,7 +383,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Maximum Freeze Duration (Weeks) -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppTextField
                   v-model="localMembership.freeze_duration_max_weeks"
                   :rules="[
@@ -397,7 +397,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Paid Freeze Allowed -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <AppSelect
                   v-model="localMembership.paid_freeze_allowed"
                   :rules="[
@@ -413,7 +413,7 @@ const removeSelectedDay = (index) => {
               </VCol>
 
               <!-- 👉 Status -->
-              <VCol cols="4">
+              <VCol cols="12" md="4">
                 <VSwitch
                   v-model="localMembership.status"
                   :true-value="true"

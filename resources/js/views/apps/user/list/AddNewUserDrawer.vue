@@ -143,7 +143,7 @@ onMounted(() => {
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <!-- 👉 Full name -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="form.first_name"
                   :rules="[
@@ -155,7 +155,7 @@ onMounted(() => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="form.last_name"
                   :rules="[
@@ -221,7 +221,7 @@ onMounted(() => {
                 </VCardText>
               </VCol>
               <!-- 👉 Email -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="form.email"
                   :rules="[
@@ -236,7 +236,7 @@ onMounted(() => {
               </VCol>
 
               <!-- 👉 company -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="form.mobile_number"
                   :rules="[
@@ -248,7 +248,7 @@ onMounted(() => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppDateTimePicker
                   v-model="form.date_of_birth"
                   :rules="[
@@ -261,7 +261,7 @@ onMounted(() => {
               </VCol>
 
               <!-- 👉 Role -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppSelect
                   v-model="form.gender"
                   label="Gender"
@@ -274,7 +274,7 @@ onMounted(() => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="form.address"
                   :rules="[requiredValidator, serverErrorValidator('address')]"
@@ -283,7 +283,7 @@ onMounted(() => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="form.assigned_location"
                   :rules="[requiredValidator, serverErrorValidator('location')]"
@@ -292,7 +292,7 @@ onMounted(() => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppDateTimePicker
                   v-model="form.hire_date"
                   :rules="[
@@ -304,7 +304,7 @@ onMounted(() => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="form.salary"
                   :rules="[
@@ -317,7 +317,7 @@ onMounted(() => {
               </VCol>
 
               <!-- 👉 Plan -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="form.emergency_contact_name"
                   label="Emergency Contact Name"
@@ -329,7 +329,7 @@ onMounted(() => {
                 />
               </VCol>
 
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="form.emergency_contact_phone"
                   label="Emergency Contact Number"
@@ -342,7 +342,7 @@ onMounted(() => {
               </VCol>
 
               <!-- 👉 Role -->
-              <VCol cols="6">
+              <VCol cols="12" md="6">
                 <AppSelect
                   v-model="form.role"
                   label="Select Role"
