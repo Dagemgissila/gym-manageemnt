@@ -1,8 +1,13 @@
 <script setup>
 import axiosAdmin from "@/composables/axios/axiosAdmin";
+import common from "@/composables/common";
 import AddPublicRule from "@/views/apps/public-variable/AddPublicRule.vue";
 import EditPublicRule from "@/views/apps/public-variable/EditPublicRule.vue";
 import { onMounted, ref } from "vue";
+
+
+const {permsArray}=common();
+
 
 // 👉 Data Table Options
 const itemsPerPage = ref(10);
@@ -123,6 +128,7 @@ onMounted(()=>{
           <VBtn
             prepend-icon="tabler-plus"
             @click="isAddPublicRuleVisible = true"
+            v-if="permsArray.includes('public_rule_create') || permsArray.includes('admin')"
           >
             Add Public Rule
           </VBtn>
@@ -154,8 +160,8 @@ onMounted(()=>{
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <template v-if="item">
-            <IconBtn @click="fetchPublicRuleById(item.id)">
+          <template v-if="item" >
+            <IconBtn v-if="permsArray.includes('public_rule_edit') || permsArray.includes('admin')"  @click="fetchPublicRuleById(item.id)">
               <VIcon icon="tabler-pencil" />
             </IconBtn>
           </template>

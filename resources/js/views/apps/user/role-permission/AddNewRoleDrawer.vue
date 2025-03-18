@@ -24,7 +24,7 @@
                   v-model="role_name"
                   :rules="[requiredValidator]"
                   label="Role Name"
-                  placeholder="user"
+                  placeholder="Admin"
                 />
               </VCol>
               <VCol cols="12">
@@ -172,6 +172,39 @@
                         <VCheckbox
                           v-model="checkedPermissions"
                           :value="permissions['membership_item_delete']"
+                          label="Delete"
+                        />
+                      </td>
+                    </tr>
+
+                    <!-- PublicRule Type -->
+                    <tr>
+                      <td>Public Rule</td>
+                      <td>
+                        <VCheckbox
+                          v-model="checkedPermissions"
+                          :value="permissions['public_rule_view']"
+                          label="View"
+                        />
+                      </td>
+                      <td>
+                        <VCheckbox
+                          v-model="checkedPermissions"
+                          :value="permissions['public_rule_create']"
+                          label="Add"
+                        />
+                      </td>
+                      <td>
+                        <VCheckbox
+                          v-model="checkedPermissions"
+                          :value="permissions['public_rule_edit']"
+                          label="Edit"
+                        />
+                      </td>
+                      <td>
+                        <VCheckbox
+                          v-model="checkedPermissions"
+                          :value="permissions['public_rule_delete']"
                           label="Delete"
                         />
                       </td>

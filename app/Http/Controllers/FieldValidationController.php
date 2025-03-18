@@ -10,6 +10,15 @@ use Log;
 
 class FieldValidationController extends Controller
 {
+
+
+    public function __construct()
+    {
+        // Apply middleware for permissions
+        $this->middleware('permission:field_validation_view', ['only' => ['index']]);
+        $this->middleware('permission:field_validation_update', ['only' => ['bulkUpdate']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

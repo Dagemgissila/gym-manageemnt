@@ -10,6 +10,15 @@ use Illuminate\Http\Request;
 
 class PublicRuleController extends Controller
 {
+    public function __construct()
+    {
+        // Apply middleware for permissions
+        $this->middleware('permission:public_rule_view', ['only' => ['index']]);
+        $this->middleware('permission:public_rule_create', ['only' => ['store']]);
+        $this->middleware('permission:public_rule_edit', ['only' => ['update']]);
+        $this->middleware('permission:public_rule_delete', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -28,15 +28,15 @@ const fetchUsers = async () => {
 };
 
 watch(searchQuery, (newVal) => {
-  // Automatically open menu when typing
   if (newVal) {
     isSearchActive.value = true;
+    fetchUsers();
   }
-  fetchUsers();
 });
 
-// Add immediate option to watch to handle initial state
-watch(searchQuery, fetchUsers, { immediate: true });
+
+// // Add immediate option to watch to handle initial state
+// watch(searchQuery, fetchUsers, { immediate: true });
 
 const clearSearch = () => {
   searchQuery.value = "";

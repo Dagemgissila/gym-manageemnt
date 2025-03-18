@@ -1,5 +1,4 @@
 export default [
-    { heading: 'Settings' },
     {
       title: 'Settings',
       icon: { icon: 'tabler-settings' }, // Settings icon
@@ -7,7 +6,7 @@ export default [
         { 
           title: 'Public Rule', 
           to: 'settings-public-rule', 
-          permission: 'users_view',
+          permission: 'public_rule_view',
           icon: { icon: 'tabler-settings-cog' } // Updated for system-wide settings
         },
         { 
@@ -21,7 +20,7 @@ export default [
           title: 'Variable Fields', 
           icon: { icon: 'tabler-users' }, // Updated Membership icon
           to: 'settings-variable-field', 
-          permission: 'users_view' 
+          permission: 'field_validation_view' 
         },
         {
           title: 'Membership',

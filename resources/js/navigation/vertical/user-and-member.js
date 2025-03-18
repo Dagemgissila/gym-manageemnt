@@ -1,5 +1,4 @@
 export default [
-  { heading: 'Users Management' },
   {
     title: 'Users',
     icon: { icon: 'tabler-users' }, // Single user icon
@@ -16,7 +15,6 @@ export default [
       },
     ],
   },
-  { heading: 'Members Management' },
   {
     title: 'Members',
     icon: { icon: 'tabler-users' }, // Multiple users icon

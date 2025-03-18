@@ -327,6 +327,7 @@ const closeSearch = () => {
   left: 0;
   right: 0;
   background: #fff;
+  color: black;
   border: 1px solid #e0e0e0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
   z-index: 10;

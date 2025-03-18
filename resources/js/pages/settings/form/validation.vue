@@ -1,7 +1,10 @@
 <script setup>
 import axiosAdmin from "@/composables/axios/axiosAdmin";
+import common from "@/composables/common";
 import { computed, onMounted, ref } from "vue";
 import { toast } from "vue3-toastify";
+
+const {permsArray}=common();
 
 // 👉 Data Table Options
 const itemsPerPage = ref(10);
@@ -145,7 +148,7 @@ onMounted(() => {
 
       <!-- Submit Button -->
       <VCardText class="d-flex justify-center">
-        <VBtn color="primary" @click="handleSubmit"> Submit </VBtn>
+        <VBtn v-if="permsArray.includes('membership_item_edit') || permsArray.includes('admin')" color="primary" @click="handleSubmit"> Update </VBtn>
       </VCardText>
       <!-- SECTION -->
     </VCard>
