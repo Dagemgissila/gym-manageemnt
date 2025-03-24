@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FieldContentController;
 use App\Http\Controllers\FieldValidationController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MembershipItemController;
 use App\Http\Controllers\MembershipTypeController;
 use App\Http\Controllers\PublicRuleController;
@@ -26,6 +27,12 @@ Route::middleware(["api.check.auth"])->group(function () {
 
    //users
    Route::apiResource('users', UserController::class);
+   Route::apiResource('members', MemberController::class);
+   Route::post('/create-member', [MemberController::class, 'create_member']);
+   Route::post('create-trial', [MemberController::class, 'create_trial']);
+   Route::post('create-prospectl', [MemberController::class, 'create_prospect']);
+
+
    Route::apiResource('membership-types', MembershipTypeController::class);
    Route::apiResource('membership-items', MembershipItemController::class);
    Route::apiResource('public-rules', PublicRuleController::class);

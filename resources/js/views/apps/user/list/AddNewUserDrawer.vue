@@ -74,7 +74,6 @@ const onSubmit = () => {
 
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      console.log("Form data:", JSON.parse(JSON.stringify(form.value)));
       axiosAdmin
         .post("/users", JSON.parse(JSON.stringify(form.value)))
         .then((response) => {

@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->enum('membership', YesNo::getValues())->default(YesNo::NO);
             $table->string('group')->nullable(); // New column for grouping
             $table->string('input_type')->nullable(); // New column for input type
+            $table->boolean("is_multiple")->default(0);
+            $table->foreignId('field_content_id')->nullable()->constrained('field_contents')->onDelete('set null');
             $table->timestamps();
         });
     }

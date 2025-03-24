@@ -23,6 +23,8 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Personal Information",
                 "input_type" => "text",
+                'is_multiple' => 0,
+                'field_content_id' => null
             ],
             [
                 "field_name" => "Last Name",
@@ -32,6 +34,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Personal Information",
                 "input_type" => "text",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Gender",
@@ -41,6 +46,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Personal Information",
                 "input_type" => "icon_select", // Icons will be provided by Ali
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Date of Birth",
@@ -50,15 +58,21 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Personal Information",
                 "input_type" => "date",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Profile Picture",
                 "field_key" => "photo",
-                "prospect" => "YES",
-                "trial" => "YES",
-                "membership" => "YES",
+                "prospect" => "NO",
+                "trial" => "NO",
+                "membership" => "NO",
                 "group" => "Personal Information",
                 "input_type" => "file",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Lead Source",
@@ -68,6 +82,8 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Personal Information",
                 "input_type" => "dropdown",
+                'is_multiple' => 1,
+                'field_content_id' => 1
             ],
             [
                 "field_name" => "Interested In",
@@ -77,6 +93,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Personal Information",
                 "input_type" => "dropdown",
+                'is_multiple' => 1,
+                'field_content_id' => 5
+
             ],
 
             [
@@ -87,6 +106,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Contact Information",
                 "input_type" => "tel",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Email Address",
@@ -96,6 +118,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Contact Information",
                 "input_type" => "email",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Location",
@@ -105,6 +130,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Contact Information",
                 "input_type" => "dropdown",
+                'is_multiple' => 0,
+                'field_content_id' => 3
+
             ],
             [
                 "field_name" => "Preferred Contact Method",
@@ -114,6 +142,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Contact Information",
                 "input_type" => "dropdown",
+                'is_multiple' => 1,
+                'field_content_id' => 4
+
             ],
 
             // Fitness & Preferences
@@ -125,6 +156,8 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Fitness & Preferences",
                 "input_type" => "dropdown",
+                'is_multiple' => 1,
+                'field_content_id' => 2
             ],
             [
                 "field_name" => "Preferred Workout Time",
@@ -134,6 +167,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Fitness & Preferences",
                 "input_type" => "dropdown",
+                'is_multiple' => 1,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Notes",
@@ -143,6 +179,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Fitness & Preferences",
                 "input_type" => "textarea",
+                'is_multiple' => 1,
+                'field_content_id' => null
+
             ],
 
             // Medical Information
@@ -154,6 +193,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Medical Information",
                 "input_type" => "toggle",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Medical Notes",
@@ -163,6 +205,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Medical Information",
                 "input_type" => "textarea",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Emergency Contact Name",
@@ -172,6 +217,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Medical Information",
                 "input_type" => "text",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
             [
                 "field_name" => "Emergency Contact Mobile",
@@ -181,6 +229,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Medical Information",
                 "input_type" => "tel",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
 
             // Other
@@ -192,6 +243,9 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Other",
                 "input_type" => "toggle",
+                'is_multiple' => 0,
+                'field_content_id' => null
+
             ],
         ]);
     }

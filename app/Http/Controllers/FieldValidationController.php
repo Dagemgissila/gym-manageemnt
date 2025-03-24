@@ -24,10 +24,10 @@ class FieldValidationController extends Controller
      */
     public function index()
     {
-        $fields = FieldValidation::all();
+        $fields = FieldValidation::with('fieldContent.variableFields')->get();
+
         return response()->json($fields);
     }
-
     /**
      * Store a newly created resource in storage.
      */

@@ -8,6 +8,7 @@ const accountData = {
   avatarImg: avatar1,
 };
 
+const refVForm = ref();
 const fields = ref([]);
 const form = ref({
   profile_picture: "",
@@ -48,7 +49,11 @@ const fetchFieldValidations = async () => {
 
     fields.value.forEach((field) => {
       if (!form.value.hasOwnProperty(field.field_key)) {
-        form.value[field.field_key] = "";
+        if (field.input_type === "dropdown" && field.multiple) {
+          form.value[field.field_key] = []; 
+        } else {
+          form.value[field.field_key] = null;
+        }
       }
     });
   } catch (error) {
@@ -66,6 +71,29 @@ const groupedFields = computed(() => {
 });
 
 onMounted(fetchFieldValidations);
+
+
+
+
+const onSubmit = () => {
+  clearAllServerErrors();
+
+  refVForm.value?.validate().then(({ valid }) => {
+    console.log("hi");
+    if (valid) {
+      axiosAdmin
+        .post("/create-prospect", form.value)
+        .then((response) => {
+     
+        })
+        .catch((error) => {
+          handleServerErrors(error);
+          refVForm.value?.validate();
+        });
+    }
+  });
+};
+
 </script>
 
 <template>
@@ -76,7 +104,7 @@ onMounted(fetchFieldValidations);
     <VDivider />
 
     <VCardText>
-      <VForm ref="refForm">
+      <VForm ref="refVForm" @submit.prevent="onSubmit">
         <VRow
           v-for="(fieldsGroup, groupName) in groupedFields"
           :key="groupName"
@@ -91,7 +119,6 @@ onMounted(fetchFieldValidations);
             :key="field.field_key"
             cols="12"
             :md="field.field_key === 'photo' ? 12 : 4"
-
           >
             <!-- Profile Picture Upload -->
             <template v-if="field.field_key === 'photo'">
@@ -143,24 +170,30 @@ onMounted(fetchFieldValidations);
             <!-- Date Picker -->
             <template v-else-if="field.input_type === 'date'">
               <AppDateTimePicker
-                :rules="[requiredValidator]"
+                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
                 v-model="form[field.field_key]"
                 :label="field.field_name"
                 :placeholder="field.field_name"
               />
             </template>
 
-            <!-- Gender Selection -->
+            <!-- Dropdown Selection -->
             <template v-else-if="field.input_type === 'dropdown'">
               <AppSelect
                 v-model="form[field.field_key]"
-                :rules="[requiredValidator]"
+                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
                 :label="field.field_name"
-                :items="[
-                  { title: 'Male', value: 'Male' },
-                  { title: 'Female', value: 'Female' },
-                ]"
-                placeholder="field.field_name"
+                 :chips="field.is_multiple===1"
+                  :multiple="field.is_multiple===1"
+                 :closable-chips="field.is_multiple===1"
+                :items="
+                  field.field_content?.variable_fields.map((item) => ({
+                    title: item.value,
+                    value: item.value,
+                  }))
+                "
+                :placeholder="`Select ${field.field_name}`"
+
               />
             </template>
 
@@ -168,7 +201,7 @@ onMounted(fetchFieldValidations);
             <template v-else-if="field.input_type === 'textarea'">
               <AppTextarea
                 v-model="form[field.field_key]"
-                :rules="[requiredValidator]"
+                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
                 :label="field.field_name"
                 :placeholder="field.field_name"
                 rows="2"
@@ -188,7 +221,7 @@ onMounted(fetchFieldValidations);
             <!-- Default Text Input -->
             <template v-else>
               <AppTextField
-                :rules="[requiredValidator]"
+                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
                 v-model="form[field.field_key]"
                 :label="field.field_name"
                 :placeholder="field.field_name"

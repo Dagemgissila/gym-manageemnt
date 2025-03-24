@@ -14,7 +14,15 @@ class FieldValidation extends Model
         'trial',
         'membership',
         'group',
-        'input_type'
+        'input_type',
+        'is_multiple',
+        'field_content_id'
     ];
+
+
+    public function fieldContent()
+    {
+        return $this->belongsTo(FieldContent::class, 'field_content_id');
+    }
 
 }

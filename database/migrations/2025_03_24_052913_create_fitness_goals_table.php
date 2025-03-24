@@ -10,10 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('field_contents', function (Blueprint $table) {
+        Schema::create('fitness_goals', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('key')->unique();
+            $table->foreignId("member_id")->nullable()->constrained("members")->onDelete("cascade");
+            $table->string("fitness_goal")->nullable();
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('field_contents');
+        Schema::dropIfExists('fitness_goals');
     }
 };

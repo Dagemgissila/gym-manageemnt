@@ -14,13 +14,24 @@ class FieldContentSeeder extends Seeder
     {
         FieldContent::insert([
             [
-                "name" => "Source",
+                "name" => "Lead Source",
+                "key" => "lead_source"
             ],
             [
                 "name" => "Fitness Goal",
+                "key" => "fitness_goals"
             ],
             [
                 "name" => "Location",
+                "key" => "location"
+            ],
+            [
+                "name" => "Prefered Contact Method",
+                "key" => "preferred_contact_method"
+            ],
+            [
+                "name" => "Interested In",
+                "key" => "interested_in"
             ],
         ]);
     }

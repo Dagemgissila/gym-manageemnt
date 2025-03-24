@@ -12,7 +12,7 @@ const totalUsers = ref(0);
 const fetchUsers = async () => {
   try {
     isLoading.value = true;
-    const { data, meta } = await axiosAdmin.get("/users", {
+    const { data, meta } = await axiosAdmin.get("/members", {
       params: {
         q: searchQuery.value,
       },
@@ -63,7 +63,7 @@ const redirectToUserProfile = (user) => {
         <VTextField
           v-model="searchQuery"
           v-bind="props"
-          placeholder="Search users..."
+          placeholder="Search members..."
           prepend-inner-icon="tabler-search"
           clearable
           solo
@@ -120,17 +120,11 @@ const redirectToUserProfile = (user) => {
                   </RouterLink>
                 </VList>
 
-                <div
-                  v-if="totalUsers > users.length"
-                  class="text-caption text-disabled text-center mt-2"
-                >
-                  Showing {{ users.length }} of {{ totalUsers }} results
-                </div>
               </div>
 
-              <!-- If no users found, display suggestion buttons -->
-              <!-- Replace the existing buttons div with this -->
+    
               <div
+              v-else
                 class="d-flex flex-column flex-md-row gap-2 justify-center py-4"
               >
                 <RouterLink :to="{ name: 'member-create-prospect' }">

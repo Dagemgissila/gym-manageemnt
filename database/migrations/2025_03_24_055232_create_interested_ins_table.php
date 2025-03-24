@@ -10,10 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('field_contents', function (Blueprint $table) {
+        Schema::create('interested_ins', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('key')->unique();
+            $table->foreignId("member_id")->nullable()->constrained("members")->onDelete('cascade');
+            $table->string("interested_in")->nullable();
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('field_contents');
+        Schema::dropIfExists('interested_ins');
     }
 };
