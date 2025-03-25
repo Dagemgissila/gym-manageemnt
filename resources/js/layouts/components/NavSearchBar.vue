@@ -89,6 +89,7 @@ const redirectToUserProfile = (user) => {
                   <RouterLink
                     v-for="user in users"
                     :key="user.id"
+                    :to="{name:'member-details',params:{id:user.id}}"
                     @click="isSearchActive = false"
                   >
                     <div class="d-flex align-center gap-x-3">
@@ -106,7 +107,8 @@ const redirectToUserProfile = (user) => {
                       </VAvatar>
                       <div class="d-flex flex-column">
                         <RouterLink
-                          to=""
+                          :to="{name:'member-details',params:{id:user.id}}"
+                        
                           class="text-link font-weight-medium d-inline-block"
                           style="line-height: 1.375rem"
                         >
@@ -147,7 +149,7 @@ const redirectToUserProfile = (user) => {
                   </VBtn>
                 </RouterLink>
 
-                <RouterLink :to="{ name: 'member-create-membership' }">
+                <!-- <RouterLink :to="{ name: 'member-create-membership' }">
                   <VBtn
                     @click="isSearchActive = false"
                     color="primary"
@@ -155,7 +157,7 @@ const redirectToUserProfile = (user) => {
                   >
                     Buy New Membership
                   </VBtn>
-                </RouterLink>
+                </RouterLink> -->
               </div>
             </template>
           </div>

@@ -29,7 +29,7 @@ class Memberresource extends JsonResource
             'medical_condition' => $this->medical_condition,
             'medical_notes' => $this->medical_notes,
             'photo' => $this->photo,
-            'lead_sources' => $this->lead_sources,
+            'lead_source' => $this->lead_sources,
             'blacklisted' => (bool) $this->blacklisted,
             'last_contacted_at' => $this->last_contacted_at,
             'next_follow_up_at' => $this->next_follow_up_at,
@@ -39,6 +39,10 @@ class Memberresource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'fitness_goals' => $this->fitness_goals,
+            'preferred_workout_time' => $this->preferred_workout_time,
+            'preferred_contact_method' => $this->preferred_contact_method,
+            'interested_in' => $this->interested_in,
         ];
     }
 }

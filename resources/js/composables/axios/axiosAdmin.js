@@ -44,6 +44,8 @@ axiosAdmin.interceptors.response.use(
       console.error("Forbidden:", error.response.data.error);
     } else if (errorCode === 404) {
       console.error("Not Found:", error.response.data.error);
+      router.push({ name: "notfound" });
+
     } else if (errorCode === 405) {
       console.warn("Method Not Allowed:", error.response.data.error);
     }

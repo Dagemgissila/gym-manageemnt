@@ -26,7 +26,7 @@ class FieldContentSeeder extends Seeder
                 "key" => "location"
             ],
             [
-                "name" => "Prefered Contact Method",
+                "name" => "Preferred Contact Method",
                 "key" => "preferred_contact_method"
             ],
             [

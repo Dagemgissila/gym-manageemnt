@@ -1,8 +1,11 @@
-const MemberDetail = () => import("@/pages/members/details/index.vue");
-const ForbiddenComponent = () => import("@/pages/forbidden.vue");
 import membership from "@/pages/members/create/membership.vue";
 import prospect from "@/pages/members/create/prospect.vue";
 import trial from "@/pages/members/create/trial.vue";
+import MemberDetail from "@/pages/members/details/index.vue";
+import { computed } from "vue";
+const ForbiddenComponent = () => import("@/pages/forbidden.vue");
+const Notfound = () => import("@/pages/notfound.vue");
+
 // 👉 Redirects
 export const redirects = [
   // ℹ️ We are redirecting to different pages based on role.
@@ -12,9 +15,10 @@ export const redirects = [
     name: "index",
     redirect: (to) => {
       // TODO: Get type from backend
-      const userData = localStorage.getItem("gms_user");
+      const isLoggedIn = computed(() => store.getters["auth/isLoggedIn"]);
+      
       // const userRole = userData.roles
-      if (userData) return { name: "dashboards-crm" };
+      if (isLoggedIn) return { name: "dashboards-crm" };
 
       return { name: "login", query: to.query };
     },
@@ -40,7 +44,13 @@ export const redirects = [
     name: "forbidden",
     component: ForbiddenComponent,
   },
+  {
+    path: "/notfound",
+    name: "notfound",
+    component: Notfound,
+  },
 ];
+
 export const routes = [
   {
     path: "/members/details/:id",

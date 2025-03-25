@@ -28,6 +28,11 @@ return new class extends Migration {
             $table->text("medical_notes")->nullable();
             $table->text('photo')->nullable();
             $table->json('lead_sources')->nullable();
+            $table->json('interested_in')->nullable();
+            $table->json('fitness_goals')->nullable();
+            $table->json('preferred_workout_time')->nullable();
+            $table->json('preferred_contact_method')->nullable();
+
             $table->boolean("blacklisted")->default(0);
             $table->date("last_contacted_at")->nullable();
             $table->date("next_follow_up_at")->nullable();
@@ -36,7 +41,6 @@ return new class extends Migration {
             $table->text('biometric_data')->nullable();
 
             $table->enum("status", MemberStatus::getValues())->default(MemberStatus::PROSPECT);
-
 
 
             $table->timestamps();

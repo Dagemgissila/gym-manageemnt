@@ -32,6 +32,7 @@ declare module 'vue-router/auto-routes' {
     'members-create-trial': RouteRecordInfo<'members-create-trial', '/members/create/trial', Record<never, never>, Record<never, never>>,
     'members-details': RouteRecordInfo<'members-details', '/members/details', Record<never, never>, Record<never, never>>,
     'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
+    'notfound': RouteRecordInfo<'notfound', '/notfound', Record<never, never>, Record<never, never>>,
     'pages-account-settings-tab': RouteRecordInfo<'pages-account-settings-tab', '/pages/account-settings/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
     'pages-cards-card-actions': RouteRecordInfo<'pages-cards-card-actions', '/pages/cards/card-actions', Record<never, never>, Record<never, never>>,
     'pages-cards-card-advance': RouteRecordInfo<'pages-cards-card-advance', '/pages/cards/card-advance', Record<never, never>, Record<never, never>>,

@@ -45,31 +45,21 @@ class Member extends Model
         'last_membeship_item_id',
         'biometric_data',
         'status',
+        'interested_in',
+        'fitness_goals',
+        'preferred_workout_time',
+        'preferred_contact_method',
     ];
-
-    public function fitnessGoals()
-    {
-        return $this->hasMany(FitnessGoal::class);
-    }
-
-    public function workoutTimes()
-    {
-        return $this->hasMany(PreferedWorkoutTime::class);
-    }
-
-    public function contactMethods()
-    {
-        return $this->hasMany(PreferedContactMethod::class);
-    }
-
-    public function interests()
-    {
-        return $this->hasMany(InterestedIn::class);
-    }
 
 
     protected $casts = [
         'lead_sources' => 'array',
+        'interested_in' => 'array',
+        'fitness_goals' => 'array',
+        'preferred_workout_time' => 'array',
+        'preferred_contact_method' => 'array',
     ];
+
+
 
 }

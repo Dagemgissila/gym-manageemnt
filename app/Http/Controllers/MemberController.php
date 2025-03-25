@@ -27,170 +27,13 @@ class MemberController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function create_member(CreateMemberRequest $request)
-    {
-        $validated = $request->validated();
-
-        $fitnessGoals = $validated['fitness_goals'] ?? [];
-        $preferredContactMethods = $validated['preferred_contact_method'] ?? [];
-        $preferredWorkOutTimes = $validated['prefered_workout_times'] ?? [];
-        $interestedIn = $validated['interested_in'] ?? [];
-        $leadSources = $validated['lead_source'] ?? [];
-
-        unset(
-            $validated['fitness_goals'],
-            $validated['preferred_contact_method'],
-            $validated['prefered_workout_times'],
-            $validated['interested_in'],
-            $validated['lead_source']
-        );
-
-        $validated['lead_sources'] = $leadSources;
-        $validated['status'] = MemberStatus::LIVE_MEMBER;
-
-
-        // Create the member
-        $member = Member::create($validated);
-
-        if (!empty($fitnessGoals)) {
-            $member->fitnessGoals()->createMany(
-                array_map(fn($goal) => ['fitness_goal' => $goal], $fitnessGoals)
-            );
-        }
-        if (!empty($preferredContactMethods)) {
-            $member->contactMethods()->createMany(
-                array_map(fn($method) => ['prefered_contact_method' => $method], $preferredContactMethods)
-            );
-        }
-
-        if (!empty($preferredWorkOutTimes)) {
-            $member->workoutTimes()->createMany(
-                array_map(fn($time) => ['prefered_workout_time' => $time], $preferredWorkOutTimes)
-            );
-        }
-
-        // Create interests
-        if (!empty($interestedIn)) {
-            $member->interests()->createMany(
-                array_map(fn($interest) => ['interested_in' => $interest], $interestedIn)
-            );
-        }
-
-        Log::info("Member created successfully", ['member_id' => $member->id]);
-    }
-
-    public function create_trial(CreateTrialRequest $request)
-    {
-        $validated = $request->validated();
-
-        $fitnessGoals = $validated['fitness_goals'] ?? [];
-        $preferredContactMethods = $validated['preferred_contact_method'] ?? [];
-        $preferredWorkOutTimes = $validated['prefered_workout_times'] ?? [];
-        $interestedIn = $validated['interested_in'] ?? [];
-        $leadSources = $validated['lead_source'] ?? [];
-
-        unset(
-            $validated['fitness_goals'],
-            $validated['preferred_contact_method'],
-            $validated['prefered_workout_times'],
-            $validated['interested_in'],
-            $validated['lead_source']
-        );
-
-        $validated['lead_sources'] = $leadSources;
-        $validated['status'] = MemberStatus::TRIAL;
-
-
-        // Create the member
-        $member = Member::create($validated);
-
-        if (!empty($fitnessGoals)) {
-            $member->fitnessGoals()->createMany(
-                array_map(fn($goal) => ['fitness_goal' => $goal], $fitnessGoals)
-            );
-        }
-        if (!empty($preferredContactMethods)) {
-            $member->contactMethods()->createMany(
-                array_map(fn($method) => ['prefered_contact_method' => $method], $preferredContactMethods)
-            );
-        }
-
-        if (!empty($preferredWorkOutTimes)) {
-            $member->workoutTimes()->createMany(
-                array_map(fn($time) => ['prefered_workout_time' => $time], $preferredWorkOutTimes)
-            );
-        }
-
-        // Create interests
-        if (!empty($interestedIn)) {
-            $member->interests()->createMany(
-                array_map(fn($interest) => ['interested_in' => $interest], $interestedIn)
-            );
-        }
-
-        Log::info("Member created successfully", ['member_id' => $member->id]);
-    }
-
-
-    public function create_prospect(CreateProspectRequest $request)
-    {
-        $validated = $request->validated();
-
-        $fitnessGoals = $validated['fitness_goals'] ?? [];
-        $preferredContactMethods = $validated['preferred_contact_method'] ?? [];
-        $preferredWorkOutTimes = $validated['prefered_workout_times'] ?? [];
-        $interestedIn = $validated['interested_in'] ?? [];
-        $leadSources = $validated['lead_source'] ?? [];
-
-        unset(
-            $validated['fitness_goals'],
-            $validated['preferred_contact_method'],
-            $validated['prefered_workout_times'],
-            $validated['interested_in'],
-            $validated['lead_source']
-        );
-
-        $validated['lead_sources'] = $leadSources;
-        $validated['status'] = MemberStatus::PROSPECT;
-
-
-        // Create the member
-        $member = Member::create($validated);
-
-        if (!empty($fitnessGoals)) {
-            $member->fitnessGoals()->createMany(
-                array_map(fn($goal) => ['fitness_goal' => $goal], $fitnessGoals)
-            );
-        }
-        if (!empty($preferredContactMethods)) {
-            $member->contactMethods()->createMany(
-                array_map(fn($method) => ['prefered_contact_method' => $method], $preferredContactMethods)
-            );
-        }
-
-        if (!empty($preferredWorkOutTimes)) {
-            $member->workoutTimes()->createMany(
-                array_map(fn($time) => ['prefered_workout_time' => $time], $preferredWorkOutTimes)
-            );
-        }
-
-        // Create interests
-        if (!empty($interestedIn)) {
-            $member->interests()->createMany(
-                array_map(fn($interest) => ['interested_in' => $interest], $interestedIn)
-            );
-        }
-
-        Log::info("Member created successfully", ['member_id' => $member->id]);
-    }
-
 
     /**
      * Display the specified resource.
      */
     public function show(Member $member)
     {
-        //
+        return new Memberresource($member);
     }
 
     /**
@@ -208,4 +51,119 @@ class MemberController extends Controller
     {
         //
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    public function create_member(CreateMemberRequest $request)
+    {
+        $validated = $request->validated();
+        $fitnessGoals = $validated['fitness_goals'] ?? [];
+        $preferredContactMethods = $validated['preferred_contact_method'] ?? [];
+        $preferredWorkOutTimes = $validated['preferred_workout_times'] ?? [];
+        $interestedIn = $validated['interested_in'] ?? [];
+        $leadSources = $validated['lead_source'] ?? [];
+
+        unset(
+            $validated['fitness_goals'],
+            $validated['preferred_contact_method'],
+            $validated['preferred_workout_times'],
+            $validated['interested_in'],
+            $validated['lead_source']
+        );
+
+        $validated['lead_sources'] = $leadSources;
+        $validated['fitness_goals'] = $fitnessGoals;
+        $validated['preferred_contact_method'] = $preferredContactMethods;
+        $validated['preferred_workout_times'] = $preferredWorkOutTimes;
+        $validated['interested_in'] = $interestedIn;
+
+
+        $validated['status'] = MemberStatus::LIVE_MEMBER;
+
+
+        // Create the member
+        $member = Member::create($validated);
+
+        Log::info("Member created successfully", ['member_id' => $member->id]);
+    }
+
+    public function create_trial(CreateTrialRequest $request)
+    {
+        $validated = $request->validated();
+        Log::info($validated);
+        $fitnessGoals = $validated['fitness_goals'] ?? [];
+        $preferredContactMethods = $validated['preferred_contact_method'] ?? [];
+        $preferredWorkOutTimes = $validated['preferred_workout_times'] ?? [];
+        $interestedIn = $validated['interested_in'] ?? [];
+        $leadSources = $validated['lead_source'] ?? [];
+
+        unset(
+            $validated['fitness_goals'],
+            $validated['preferred_contact_method'],
+            $validated['preferred_workout_times'],
+            $validated['interested_in'],
+            $validated['lead_source']
+        );
+
+        $validated['lead_sources'] = $leadSources;
+        $validated['fitness_goals'] = $fitnessGoals;
+        $validated['preferred_contact_method'] = $preferredContactMethods;
+        $validated['preferred_workout_times'] = $preferredWorkOutTimes;
+        $validated['interested_in'] = $interestedIn;
+
+
+
+        $validated['status'] = MemberStatus::TRIAL;
+
+
+        // Create the member
+        $member = Member::create($validated);
+
+
+        Log::info("Member created successfully", ['member_id' => $member->id]);
+    }
+
+
+    public function create_prospect(CreateProspectRequest $request)
+    {
+        $validated = $request->validated();
+        $fitnessGoals = $validated['fitness_goals'] ?? [];
+        $preferredContactMethods = $validated['preferred_contact_method'] ?? [];
+        $preferredWorkOutTimes = $validated['preferred_workout_times'] ?? [];
+        $interestedIn = $validated['interested_in'] ?? [];
+        $leadSources = $validated['lead_source'] ?? [];
+
+        unset(
+            $validated['fitness_goals'],
+            $validated['preferred_contact_method'],
+            $validated['preferred_workout_times'],
+            $validated['interested_in'],
+            $validated['lead_source']
+        );
+
+        $validated['lead_sources'] = $leadSources;
+        $validated['fitness_goals'] = $fitnessGoals;
+        $validated['preferred_contact_method'] = $preferredContactMethods;
+        $validated['preferred_workout_times'] = $preferredWorkOutTimes;
+        $validated['interested_in'] = $interestedIn;
+
+
+        $validated['status'] = MemberStatus::PROSPECT;
+
+        // Create the member
+        $member = Member::create($validated);
+
+
+        Log::info("Member created successfully", ['member_id' => $member->id]);
+    }
+
 }

@@ -7,6 +7,13 @@ import ViewUserDetail from "@/views/apps/user/list/ViewUserDetail.vue";
 
 import { onMounted, ref } from "vue";
 
+
+definePage({
+  meta:{
+    requireAuth:true,
+  }
+})
+
 // 👉 Search and Filters
 const searchQuery = ref("");
 const selectedRole = ref();

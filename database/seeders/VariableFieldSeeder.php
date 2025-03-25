@@ -79,7 +79,7 @@ class VariableFieldSeeder extends Seeder
                 "updated_at" => now(),
             ],
             [
-                "field_content_id" => $fieldContents['Prefered Contact Method']->id ?? null,
+                "field_content_id" => $fieldContents['Preferred Contact Method']->id ?? null,
                 "value" => ContactMethod::PHONE,
                 "status" => false,
                 "created_at" => now(),
@@ -95,21 +95,21 @@ class VariableFieldSeeder extends Seeder
 
             //contact method
             [
-                "field_content_id" => $fieldContents['Prefered Contact Method']->id ?? null,
+                "field_content_id" => $fieldContents['Preferred Contact Method']->id ?? null,
                 "value" => ContactMethod::EMAIL,
                 "status" => false,
                 "created_at" => now(),
                 "updated_at" => now(),
             ],
             [
-                "field_content_id" => $fieldContents['Prefered Contact Method']->id ?? null,
+                "field_content_id" => $fieldContents['Preferred Contact Method']->id ?? null,
                 "value" => ContactMethod::WHATSUP,
                 "status" => false,
                 "created_at" => now(),
                 "updated_at" => now(),
             ],
             [
-                "field_content_id" => $fieldContents['Prefered Contact Method']->id ?? null,
+                "field_content_id" => $fieldContents['Preferred Contact Method']->id ?? null,
                 "value" => ContactMethod::SMS,
                 "status" => false,
                 "created_at" => now(),
