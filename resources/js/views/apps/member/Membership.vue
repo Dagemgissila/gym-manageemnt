@@ -73,10 +73,7 @@ const fetchFieldValidations = async () => {
         }
       }
 
-          // Populate from member_detail if value exists
-          if (props.member_detail[field.field_key] !== undefined) {
-        form.value[field.field_key] = props.member_detail[field.field_key];
-      }
+
     });
   } catch (error) {
     console.error("Error fetching fields:", error);
@@ -222,7 +219,6 @@ const onSubmit = () => {
 
             <!-- Gender Selection -->
             <template v-else-if="field.input_type === 'textarea'">
-            <pre>{{ field }}</pre>
               <AppTextarea
                 v-model="form[field.field_key]"
                 :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
