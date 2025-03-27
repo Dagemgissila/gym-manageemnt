@@ -3,6 +3,7 @@ import { requiredValidator } from "@/@core/utils/validators";
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import avatar1 from "@images/avatars/avatar-1.png";
 import { computed, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 
 const accountData = {
@@ -11,6 +12,8 @@ const accountData = {
 
 const refForm = ref();
 const fields = ref([]);
+const router = useRouter();
+
 const form = ref({
   profile_picture: "",
   date_of_birth: null,
@@ -85,6 +88,7 @@ const onSubmit = () => {
       axiosAdmin
         .post("/create-prospect", form.value)
         .then((response) => {
+          const member_id=response.member_id;
           toast("Prospect created successfully", {
             theme: "colored",
             type: "success",
@@ -96,6 +100,7 @@ const onSubmit = () => {
             refForm.value?.resetValidation();
             form.value={};
           });
+          router.push({name:'member-details',params:{id:member_id}})
         })
         .catch((error) => {
           handleServerErrors(error);

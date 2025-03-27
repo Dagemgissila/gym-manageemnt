@@ -7,6 +7,13 @@ if (error.value) {
   if (data.value) profileHeaderData.value = data.value;
 }
 
+
+defineProps({
+  member_detail:{
+    type:Object,
+    required:true
+  }
+})
 const emit = defineEmits(["update-tab"]);
 
 // Map each clickable field to a tab index (adjust these as needed)
@@ -25,9 +32,9 @@ const resolveStatus = (statusMsg) => {
       text: "Member",
       color: "success",
     };
-  if (statusMsg === "Suspended")
+  if (statusMsg === "prospect")
     return {
-      text: "Suspended",
+      text: "Prospect",
       color: "error",
     };
 };
@@ -50,11 +57,11 @@ const resolveStatus = (statusMsg) => {
       <div class="user-profile-info w-100 mt-16 pt-6 pt-sm-0 mt-sm-0">
         <div class="mb-2">
           <h4 class="text-h5 text-center text-sm-start font-weight-medium mb-2">
-            Dagem Gissila
+            {{ member_detail.first_name + " " + member_detail.last_name }}
           </h4>
 
           <VChip
-            v-bind="resolveStatus('Suspended')"
+            v-bind="resolveStatus(member_detail.status)"
             density="default"
             label
             size="small"

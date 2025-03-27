@@ -143,8 +143,13 @@ class MemberController extends Controller
         // Create the member
         $member = Member::create($validated);
 
+        // Return success response
+        return response()->json([
+            'message' => 'Member created successfully',
+            'member_id' => $member->id
+        ], 200);
 
-        Log::info("Member created successfully", ['member_id' => $member->id]);
+
     }
 
 
@@ -178,7 +183,11 @@ class MemberController extends Controller
         $member = Member::create($validated);
 
 
-        Log::info("Member created successfully", ['member_id' => $member->id]);
+        // Return success response
+        return response()->json([
+            'message' => 'Member created successfully',
+            'member_id' => $member->id
+        ], 200);
     }
 
 }

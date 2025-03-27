@@ -104,6 +104,7 @@ const onSubmit = () => {
     
         })
         .catch((error) => {
+          handleServerErrors(error);
           refVForm.value?.validate();
         });
     }

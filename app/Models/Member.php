@@ -47,6 +47,7 @@ class Member extends Model
         'status',
         'interested_in',
         'fitness_goals',
+        'notes',
         'preferred_workout_time',
         'preferred_contact_method',
     ];

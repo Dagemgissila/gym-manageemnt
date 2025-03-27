@@ -77,8 +77,8 @@ const checkFieldValidation = async () => {
 
 
 
-function updateStatus(){
-  allFieldsFilled.value=!allFieldsFilled.value;
+function updateStatus() {
+  allFieldsFilled.value = !allFieldsFilled.value;
 }
 
 onMounted(() => {
@@ -93,8 +93,10 @@ onMounted(() => {
     <div class="d-flex flex-column justify-space-between gap-4 mb-6">
       <!-- Customer Profile -->
       <div class="customer-profile">
-        <UserProfileHeader @update-tab="selectMoreTab" />
+        <UserProfileHeader @update-tab="selectMoreTab" :member_detail="member_detail" />
       </div>
+
+
       <!-- Tab List -->
       <div class="flex-grow-1 d-flex justify-space-between">
         <div class="d-flex">
@@ -149,8 +151,7 @@ onMounted(() => {
 
         <!-- add new membership  -->
         <VWindowItem :value="9">
-          <Membership v-if="!allFieldsFilled" :member_detail="member_detail"
-          @redirect-to-buy-membership="updateStatus"
+          <Membership v-if="!allFieldsFilled" :member_detail="member_detail" @redirect-to-buy-membership="updateStatus"
             :required_fields="requiredMembershipFields" />
           <AddNewMembership v-else :member_detail="member_detail" />
         </VWindowItem>

@@ -30,6 +30,8 @@ return new class extends Migration {
             $table->json('lead_sources')->nullable();
             $table->json('interested_in')->nullable();
             $table->json('fitness_goals')->nullable();
+            $table->text("notes")->nullable();
+
             $table->json('preferred_workout_time')->nullable();
             $table->json('preferred_contact_method')->nullable();
 

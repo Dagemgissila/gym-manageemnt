@@ -28,6 +28,7 @@ class Memberresource extends JsonResource
             'emergency_contact_mobile' => $this->emergency_contact_mobile,
             'medical_condition' => $this->medical_condition,
             'medical_notes' => $this->medical_notes,
+            'notes' => $this->notes,
             'photo' => $this->photo,
             'lead_source' => $this->lead_sources,
             'blacklisted' => (bool) $this->blacklisted,

@@ -35,7 +35,7 @@ class MembershipItem extends Model
     protected $searchable = ['membership_name'];
 
     // Filters that can be applied
-    protected $allowedFilters = [''];
+    protected $allowedFilters = ['membership_type_id'];
 
     // Default sorting field
     protected $defaultSortField = 'id';
