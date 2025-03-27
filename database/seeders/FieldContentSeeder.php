@@ -29,9 +29,14 @@ class FieldContentSeeder extends Seeder
                 "name" => "Preferred Contact Method",
                 "key" => "preferred_contact_method"
             ],
+
             [
                 "name" => "Interested In",
                 "key" => "interested_in"
+            ],
+            [
+                "name" => "Preferred Workout Time",
+                "key" => "preferred_workout_time"
             ],
         ]);
     }

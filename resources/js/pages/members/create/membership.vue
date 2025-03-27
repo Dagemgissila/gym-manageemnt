@@ -8,7 +8,7 @@ const accountData = {
   avatarImg: avatar1,
 };
 
-const refVForm = ref();
+const refForm = ref();
 const fields = ref([]);
 const form = ref({
   profile_picture: "",
@@ -78,7 +78,7 @@ onMounted(fetchFieldValidations);
 const onSubmit = () => {
   clearAllServerErrors();
 
-  refVForm.value?.validate().then(({ valid }) => {
+  refForm.value?.validate().then(({ valid }) => {
     console.log("hi");
     if (valid) {
       axiosAdmin
@@ -88,7 +88,7 @@ const onSubmit = () => {
         })
         .catch((error) => {
           handleServerErrors(error);
-          refVForm.value?.validate();
+          refForm.value?.validate();
         });
     }
   });
@@ -104,7 +104,7 @@ const onSubmit = () => {
     <VDivider />
 
     <VCardText>
-      <VForm ref="refVForm" @submit.prevent="onSubmit">
+      <VForm ref="refForm" @submit.prevent="onSubmit">
         <VRow
           v-for="(fieldsGroup, groupName) in groupedFields"
           :key="groupName"

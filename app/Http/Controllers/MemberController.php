@@ -6,6 +6,7 @@ use App\Enums\MemberStatus;
 use App\Http\Requests\CreateMemberRequest;
 use App\Http\Requests\CreateProspectRequest;
 use App\Http\Requests\CreateTrialRequest;
+use App\Http\Requests\UpdateMemberRequest;
 use App\Http\Resources\Memberresource;
 use App\Models\Member;
 use Illuminate\Http\Request;
@@ -55,6 +56,20 @@ class MemberController extends Controller
 
 
 
+    public function UpdateMemberMembership(UpdateMemberRequest $request, $id)
+    {
+        $member = Member::findOrFail($id);
+        $validated = $request->validated();
+        $member->update($validated);
+
+        Log::info("Member updated successfully", ['member_id' => $member->id]);
+
+        // Return success response
+        return response()->json([
+            'message' => 'Member membership updated successfully',
+            'member' => $member
+        ], 200);
+    }
 
 
 

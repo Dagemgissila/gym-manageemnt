@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->date("date_of_birth")->nullable();
             $table->string('emergency_contact_name')->nullable();
             $table->string('emergency_contact_mobile')->nullable();
-            $table->enum("medical_condition", YesNo::getValues())->default(YesNo::NO);
+            $table->boolean("medical_condition")->default(0);
             $table->text("medical_notes")->nullable();
             $table->text('photo')->nullable();
             $table->json('lead_sources')->nullable();

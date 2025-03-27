@@ -168,7 +168,7 @@ class FieldValidationSeeder extends Seeder
                 "group" => "Fitness & Preferences",
                 "input_type" => "dropdown",
                 'is_multiple' => 1,
-                'field_content_id' => null
+                'field_content_id' => 6
 
             ],
             [

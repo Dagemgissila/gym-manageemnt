@@ -3,6 +3,7 @@ import axiosAdmin from "@/composables/axios/axiosAdmin";
 import avatar1 from "@images/avatars/avatar-1.png";
 import { onMounted } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
+import { toast } from "vue3-toastify";
 const accountData = {
   avatarImg: avatar1,
 };
@@ -77,6 +78,12 @@ const onSubmit = () => {
       axiosAdmin
         .post("/users", JSON.parse(JSON.stringify(form.value)))
         .then((response) => {
+          toast("User created successfully", {
+            theme: "colored",
+            type: "success",
+            position: "top-right",
+            dangerouslyHTMLString: true,
+          });
           emit("userData", {
             user_added: true,
           });
@@ -104,7 +111,7 @@ const fetchRoles = async () => {
     const response = await axiosAdmin.get("/roles");
 
     roles.value = response.data.map((role) => ({
-      title: role.name, 
+      title: role.name,
       value: role.name,
     }));
   } catch (error) {
@@ -118,20 +125,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <VNavigationDrawer
-    data-allow-mismatch
-    temporary
-    :width="900"
-    location="end"
-    class="scrollable-content"
-    :model-value="props.isDrawerOpen"
-    @update:model-value="handleDrawerModelValueUpdate"
-  >
+  <VNavigationDrawer data-allow-mismatch temporary :width="900" location="end" class="scrollable-content"
+    :model-value="props.isDrawerOpen" @update:model-value="handleDrawerModelValueUpdate">
     <!-- 👉 Title -->
-    <AppDrawerHeaderSection
-      title="Add New User"
-      @cancel="closeNavigationDrawer"
-    />
+    <AppDrawerHeaderSection title="Add New User" @cancel="closeNavigationDrawer" />
 
     <VDivider />
 
@@ -143,71 +140,39 @@ onMounted(() => {
             <VRow>
               <!-- 👉 Full name -->
               <VCol cols="12" md="6">
-                <AppTextField
-                  v-model="form.first_name"
-                  :rules="[
-                    requiredValidator,
-                    serverErrorValidator('first_name'),
-                  ]"
-                  label="First Name"
-                  placeholder="John Doe"
-                />
+                <AppTextField v-model="form.first_name" :rules="[
+                  requiredValidator,
+                  serverErrorValidator('first_name'),
+                ]" label="First Name" placeholder="John Doe" />
               </VCol>
 
               <VCol cols="12" md="6">
-                <AppTextField
-                  v-model="form.last_name"
-                  :rules="[
-                    requiredValidator,
-                    serverErrorValidator('last_name'),
-                  ]"
-                  label="Last Name"
-                  placeholder="John Doe"
-                />
+                <AppTextField v-model="form.last_name" :rules="[
+                  requiredValidator,
+                  serverErrorValidator('last_name'),
+                ]" label="Last Name" placeholder="John Doe" />
               </VCol>
 
               <VCol cols="12">
                 <VCardText class="d-flex">
                   <!-- 👉 Avatar -->
-                  <VAvatar
-                    rounded
-                    size="100"
-                    class="me-6"
-                    :image="
-                      form.profile_picture
-                        ? form.profile_picture
-                        : accountDataLocal.avatarImg
-                    "
-                  />
+                  <VAvatar rounded size="100" class="me-6" :image="form.profile_picture
+                      ? form.profile_picture
+                      : accountDataLocal.avatarImg
+                    " />
 
                   <!-- 👉 Upload Photo -->
                   <div class="d-flex flex-column justify-center gap-4">
                     <div class="d-flex flex-wrap gap-4">
-                      <VBtn
-                        color="primary"
-                        size="small"
-                        @click="refInputEl?.click()"
-                      >
+                      <VBtn color="primary" size="small" @click="refInputEl?.click()">
                         <VIcon icon="tabler-cloud-upload" class="d-sm-none" />
                         <span class="d-none d-sm-block">Upload new photo</span>
                       </VBtn>
 
-                      <input
-                        ref="refInputEl"
-                        type="file"
-                        name="file"
-                        accept=".jpeg,.png,.jpg,GIF"
-                        hidden
-                        @input="changeAvatar"
-                      />
+                      <input ref="refInputEl" type="file" name="file" accept=".jpeg,.png,.jpg,GIF" hidden
+                        @input="changeAvatar" />
 
-                      <VBtn
-                        type="reset"
-                        size="small"
-                        color="secondary"
-                        variant="tonal"
-                        @click="resetAvatar"
-                      >
+                      <VBtn type="reset" size="small" color="secondary" variant="tonal" @click="resetAvatar">
                         <span class="d-none d-sm-block">Reset</span>
                         <VIcon icon="tabler-refresh" class="d-sm-none" />
                       </VBtn>
@@ -221,134 +186,83 @@ onMounted(() => {
               </VCol>
               <!-- 👉 Email -->
               <VCol cols="12" md="6">
-                <AppTextField
-                  v-model="form.email"
-                  :rules="[
-                    requiredValidator,
-                    emailValidator,
-                    serverErrorValidator('email'),
-                  ]"
-                  label="Email"
-                  placeholder="johndoe@email.com"
-                  @update:model-value="clearServerError('email')"
-                />
+                <AppTextField v-model="form.email" :rules="[
+                  requiredValidator,
+                  emailValidator,
+                  serverErrorValidator('email'),
+                ]" label="Email" placeholder="johndoe@email.com" @update:model-value="clearServerError('email')" />
               </VCol>
 
               <!-- 👉 company -->
               <VCol cols="12" md="6">
-                <AppTextField
-                  v-model="form.mobile_number"
-                  :rules="[
-                    requiredValidator,
-                    serverErrorValidator('mobile_number'),
-                  ]"
-                  label="Mobile Number"
-                  placeholder="+1-541-754-3010"
-                />
+                <AppTextField v-model="form.mobile_number" :rules="[
+                  requiredValidator,
+                  serverErrorValidator('mobile_number'),
+                ]" label="Mobile Number" placeholder="+1-541-754-3010" />
               </VCol>
 
               <VCol cols="12" md="6">
-                <AppDateTimePicker
-                  v-model="form.date_of_birth"
-                  :rules="[
-                    requiredValidator,
-                    serverErrorValidator('date_of_birth'),
-                  ]"
-                  label="Date of Birth"
-                  placeholder="Select date"
-                />
+                <AppDateTimePicker v-model="form.date_of_birth" :rules="[
+                  requiredValidator,
+                  serverErrorValidator('date_of_birth'),
+                ]" label="Date of Birth" placeholder="Select date" />
               </VCol>
 
               <!-- 👉 Role -->
               <VCol cols="12" md="6">
-                <AppSelect
-                  v-model="form.gender"
-                  label="Gender"
-                  placeholder="Gender"
-                  :rules="[requiredValidator, serverErrorValidator('gender')]"
-                  :items="[
+                <AppSelect v-model="form.gender" label="Gender" placeholder="Gender"
+                  :rules="[requiredValidator, serverErrorValidator('gender')]" :items="[
                     { title: 'Male', value: 'Male' },
                     { title: 'Female', value: 'Female' },
-                  ]"
-                />
+                  ]" />
               </VCol>
 
               <VCol cols="12" md="6">
-                <AppTextField
-                  v-model="form.address"
-                  :rules="[requiredValidator, serverErrorValidator('address')]"
-                  label="Address"
-                  placeholder="Address"
-                />
+                <AppTextField v-model="form.address" :rules="[requiredValidator, serverErrorValidator('address')]"
+                  label="Address" placeholder="Address" />
               </VCol>
 
               <VCol cols="12" md="6">
-                <AppTextField
-                  v-model="form.assigned_location"
-                  :rules="[requiredValidator, serverErrorValidator('location')]"
-                  label="Assigned Location"
-                  placeholder=""
-                />
+                <AppTextField v-model="form.assigned_location"
+                  :rules="[requiredValidator, serverErrorValidator('location')]" label="Assigned Location"
+                  placeholder="" />
               </VCol>
 
               <VCol cols="12" md="6">
-                <AppDateTimePicker
-                  v-model="form.hire_date"
-                  :rules="[
-                    requiredValidator,
-                    serverErrorValidator('hire_date'),
-                  ]"
-                  label="Hire Date"
-                  placeholder="Select date"
-                />
+                <AppDateTimePicker v-model="form.hire_date" :rules="[
+                  requiredValidator,
+                  serverErrorValidator('hire_date'),
+                ]" label="Hire Date" placeholder="Select date" />
               </VCol>
 
               <VCol cols="12" md="6">
-                <AppTextField
-                  v-model="form.salary"
-                  :rules="[
-                    requiredValidator,
-                    serverErrorValidator('hire_date'),
-                  ]"
-                  label="Salary"
-                  placeholder="$1000"
-                />
+                <AppTextField v-model="form.salary" :rules="[
+                  requiredValidator,
+                  serverErrorValidator('hire_date'),
+                ]" label="Salary" placeholder="$1000" />
               </VCol>
 
               <!-- 👉 Plan -->
               <VCol cols="12" md="6">
-                <AppTextField
-                  v-model="form.emergency_contact_name"
-                  label="Emergency Contact Name"
-                  placeholder="Emergency Contact Name"
-                  :rules="[
+                <AppTextField v-model="form.emergency_contact_name" label="Emergency Contact Name"
+                  placeholder="Emergency Contact Name" :rules="[
                     requiredValidator,
                     serverErrorValidator('hire_date'),
-                  ]"
-                />
+                  ]" />
               </VCol>
 
               <VCol cols="12" md="6">
-                <AppTextField
-                  v-model="form.emergency_contact_phone"
-                  label="Emergency Contact Number"
-                  placeholder="Emergency Contact Number"
-                  :rules="[
+                <AppTextField v-model="form.emergency_contact_phone" label="Emergency Contact Number"
+                  placeholder="Emergency Contact Number" :rules="[
                     requiredValidator,
                     serverErrorValidator('emergency_contact_phone'),
-                  ]"
-                />
+                  ]" />
               </VCol>
 
               <!-- 👉 Role -->
               <VCol cols="12" md="6">
-                <AppSelect
-                  v-model="form.role"
-                  label="Select Role"
-                  :rules="[requiredValidator, serverErrorValidator('role')]"
-                  :items="roles"
-                  placeholder="Select Role"
-                />
+                <AppSelect v-model="form.role" label="Select Role"
+                  :rules="[requiredValidator, serverErrorValidator('role')]" :items="roles" placeholder="Select Role" />
               </VCol>
 
               <VCol cols="6">
@@ -358,12 +272,7 @@ onMounted(() => {
               <!-- 👉 Submit and Cancel -->
               <VCol cols="12">
                 <VBtn type="submit" class="me-3"> Submit </VBtn>
-                <VBtn
-                  type="reset"
-                  variant="tonal"
-                  color="error"
-                  @click="closeNavigationDrawer"
-                >
+                <VBtn type="reset" variant="tonal" color="error" @click="closeNavigationDrawer">
                   Cancel
                 </VBtn>
               </VCol>

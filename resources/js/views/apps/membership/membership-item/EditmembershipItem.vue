@@ -2,6 +2,7 @@
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { computed, onMounted, ref, watch } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
+import { toast } from "vue3-toastify";
 import EditDayTimeRestriction from "./dialog/EditDayTimeRestriction.vue";
 // Props and Emits
 const props = defineProps({
@@ -150,6 +151,12 @@ const onSubmit = () => {
       axiosAdmin
         .patch(`/membership-items/${localMembership.value.id}`, payload)
         .then(function (response) {
+          toast("Membership Item updated successfully", {
+        theme: "colored",
+        type: "success",
+        position: "top-right",
+        dangerouslyHTMLString: true,
+      });
           emit("membershipItemData", {
             value: true,
           });

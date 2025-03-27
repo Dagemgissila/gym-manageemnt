@@ -2,6 +2,7 @@
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { onMounted, ref, watch } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
+import { toast } from "vue3-toastify";
 import AddDayTimeRestrication from "./dialog/AddDayTimeRestrication.vue";
 // Props and Emits
 const props = defineProps({
@@ -102,7 +103,7 @@ const onSubmit = () => {
         suspend_after: suspend_after.value,
         accessible_days: accessible_days.value,
         sessions: sessions.value,
-        selected_days: selectedDays.value, 
+        selected_days: selectedDays.value,
       };
 
       console.log(formattedMembershipItemData);
@@ -110,6 +111,12 @@ const onSubmit = () => {
       axiosAdmin
         .post("/membership-items", formattedMembershipItemData)
         .then(function (response) {
+          toast("Membership Item created successfully", {
+            theme: "colored",
+            type: "success",
+            position: "top-right",
+            dangerouslyHTMLString: true,
+          });
           emit("membershipItemData", {
             value: true,
           });
@@ -121,7 +128,7 @@ const onSubmit = () => {
             discount_available.value = false; // Reset to false
             installment_available.value = false; // Reset to false
             gym_access.value = true; // Reset to false
-            status.value=true;
+            status.value = true;
             selectedDays.value = []; // 
           });
         })
@@ -277,7 +284,7 @@ const removeSelectedDay = (index) => {
                 </VBtn>
               </VCol>
 
-        
+
 
               <!-- 👉 Suspend Based On -->
               <VCol cols="12" md="4">

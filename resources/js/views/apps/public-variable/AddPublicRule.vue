@@ -3,6 +3,7 @@ import { handleServerErrors } from "@/@core/utils/validators";
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { ref } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
+import { toast } from "vue3-toastify";
 // Props and Emits
 const props = defineProps({
   isDrawerOpen: {
@@ -60,6 +61,12 @@ const onSubmit = () => {
         })
 
         .then((response) => {
+          toast("Rule created successfully", {
+        theme: "colored",
+        type: "success",
+        position: "top-right",
+        dangerouslyHTMLString: true,
+      });
           emit("publicRuleData", {
             value: true,
           });

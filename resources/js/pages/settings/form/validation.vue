@@ -49,7 +49,7 @@ const handleSubmit = () => {
   axiosAdmin
     .patch("/field-validations/bulk-update", field_validation_items.value)
     .then((response) => {
-      toast(response.message, {
+      toast("User created successfully", {
         theme: "colored",
         type: "success",
         position: "top-right",
@@ -58,7 +58,12 @@ const handleSubmit = () => {
       fetchFields();
     })
     .catch((error) => {
-      console.error("Error updating field validations:", error);
+      toast(error, {
+        theme: "colored",
+        type: "error",
+        position: "top-right",
+        dangerouslyHTMLString: true,
+      });
     });
 };
 

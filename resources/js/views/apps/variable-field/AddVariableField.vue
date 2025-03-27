@@ -3,7 +3,7 @@ import { handleServerErrors } from "@/@core/utils/validators";
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { onMounted, ref } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
-
+import { toast } from "vue3-toastify";
 const props = defineProps({
   isDrawerOpen: {
     type: Boolean,
@@ -99,6 +99,12 @@ const onSubmit = () => {
       axiosAdmin
         .post("/variable-fields", payload)
         .then((response) => {
+          toast("Variable Field created successfully", {
+        theme: "colored",
+        type: "success",
+        position: "top-right",
+        dangerouslyHTMLString: true,
+      });
           emit("publicRuleData", { value: true });
           closeNavigationDrawer();
         })

@@ -9,8 +9,13 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  required_fields:{
+    type:Object,
+    required:true
+  }
 })
 
+const emit=defineEmits("redirectToBuyMembership");
 const accountData = {
   avatarImg: avatar1,
 };
@@ -58,26 +63,18 @@ const resetAvatar = () => {
   }
 };
 
-// Fetch and initialize fields
+// initialize fields
 const fetchFieldValidations = async () => {
-  try {
-    const response = await axiosAdmin.get("/field-validations");
-    fields.value = response.filter((field) => field.membership === "YES");
-
+    fields.value=props.required_fields;
     fields.value.forEach((field) => {
       if (!form.value.hasOwnProperty(field.field_key)) {
         if (field.input_type === "dropdown" && field.multiple) {
-          form.value[field.field_key] = []; // Ensure empty array for multi-select
+          form.value[field.field_key] = []; 
         } else {
-          form.value[field.field_key] = null; // Use null instead of empty string
+          form.value[field.field_key] = null; 
         }
       }
-
-
     });
-  } catch (error) {
-    console.error("Error fetching fields:", error);
-  }
 };
 
 // Group fields by 'group' dynamically
@@ -92,21 +89,21 @@ const groupedFields = computed(() => {
 onMounted(fetchFieldValidations);
 
 
-
-
 const onSubmit = () => {
   clearAllServerErrors();
 
   refVForm.value?.validate().then(({ valid }) => {
-    console.log("hi");
     if (valid) {
       axiosAdmin
-        .post("/create-member", form.value)
+        .patch(`/update-member-membership/${props.member_detail.id}`, form.value)
         .then((response) => {
-     
+          console.log(response)
+          emit("redirectToBuyMembership", {
+            value: true,
+          });
+    
         })
         .catch((error) => {
-          handleServerErrors(error);
           refVForm.value?.validate();
         });
     }

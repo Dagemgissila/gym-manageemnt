@@ -42,8 +42,6 @@ const fetchvariable = async () => {
         status:selectedStatus.value
       },
     });
-
-
     public_rules.value = response.data;
     total.value = response.meta.total;
   } catch (error) {
@@ -58,8 +56,6 @@ const fetchvariable = async () => {
 const fetchFields = async () => {
   try {
     const response = await axiosAdmin.get("/field-contents",);
-
-
     field_contents.value = response.data.map((name) => ({
       title:  name.name,
       value: name.id,
@@ -102,7 +98,6 @@ watch([page, itemsPerPage, sortBy, orderBy, searchQuery,selectedField,selectedSt
 
 
 
-
 onMounted(()=>{
   fetchvariable();
   fetchFields();
@@ -120,7 +115,6 @@ const status = [
   <section>
     <VCard class="mb-6">
       <VDivider />
-{{}}
       <VCardText>
         <VRow>
           <!-- 👉 Select Role -->

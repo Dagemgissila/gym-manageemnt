@@ -109,12 +109,13 @@ class VariableFieldSeeder extends Seeder
                 "updated_at" => now(),
             ],
             [
-                "field_content_id" => $fieldContents['Preferred Contact Method']->id ?? null,
-                "value" => ContactMethod::SMS,
+                "field_content_id" => $fieldContents['Preferred Workout Time']->id ?? null,
+                "value" => "11 PM",
                 "status" => false,
                 "created_at" => now(),
                 "updated_at" => now(),
             ],
+            //preffered workut time
 
             //interested in
 

@@ -4,7 +4,7 @@ import common from "@/composables/common";
 import AddNewRoleDrawer from "@/views/apps/user/role-permission/AddNewRoleDrawer.vue";
 import EditRoleDrawer from "@/views/apps/user/role-permission/EditRoleDrawer.vue";
 import { onMounted, ref } from "vue";
-
+import { toast } from "vue3-toastify";
 // 👉 Data Table Options
 const itemsPerPage = ref(10);
 const page = ref(1);
@@ -88,6 +88,12 @@ const addNewRole = async (roleData) => {
   axiosAdmin
     .post("/add-role-permissions", formattedRoleData)
     .then(function (response) {
+      toast("Role created successfully", {
+        theme: "colored",
+        type: "success",
+        position: "top-right",
+        dangerouslyHTMLString: true,
+      });
       fetchRoles();
     })
     .catch(function (error) {
@@ -125,6 +131,12 @@ const updateRole = async (roleData) => {
   axiosAdmin
     .patch("/edit-role-permissions", formattedRoleData)
     .then(function (response) {
+      toast("Role updated successfully", {
+        theme: "colored",
+        type: "success",
+        position: "top-right",
+        dangerouslyHTMLString: true,
+      });
       // Refetch User
       fetchRoles();
     })

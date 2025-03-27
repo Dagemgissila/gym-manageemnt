@@ -28,9 +28,10 @@ Route::middleware(["api.check.auth"])->group(function () {
    //users
    Route::apiResource('users', UserController::class);
    Route::apiResource('members', MemberController::class);
+   Route::patch('/update-member-membership/{id}', [MemberController::class, "UpdateMemberMembership"]);
    Route::post('/create-member', [MemberController::class, 'create_member']);
    Route::post('create-trial', [MemberController::class, 'create_trial']);
-   Route::post('create-prospectl', [MemberController::class, 'create_prospect']);
+   Route::post('create-prospect', [MemberController::class, 'create_prospect']);
 
 
    Route::apiResource('membership-types', MembershipTypeController::class);

@@ -2,6 +2,7 @@
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import avatar1 from "@images/avatars/avatar-1.png";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
+import { toast } from "vue3-toastify";
 const accountData = {
   avatarImg: avatar1,
 };
@@ -99,6 +100,12 @@ const onSubmit = () => {
             refForm.value?.reset();
             refForm.value?.resetValidation();
           });
+          toast("User Updated successfully", {
+        theme: "colored",
+        type: "success",
+        position: "top-right",
+        dangerouslyHTMLString: true,
+      });
         })
         .catch((error) => {
           handleServerErrors(error);

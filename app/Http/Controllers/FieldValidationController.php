@@ -25,6 +25,7 @@ class FieldValidationController extends Controller
     public function index()
     {
         $fields = FieldValidation::with('fieldContent.variableFields')->get();
+        Log::info($fields);
 
         return response()->json($fields);
     }

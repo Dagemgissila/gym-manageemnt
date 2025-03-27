@@ -3,12 +3,13 @@ import { requiredValidator } from "@/@core/utils/validators";
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import avatar1 from "@images/avatars/avatar-1.png";
 import { computed, onMounted, ref } from "vue";
+import { toast } from "vue3-toastify";
 
 const accountData = {
   avatarImg: avatar1,
 };
 
-const refVForm = ref();
+const refForm = ref();
 const fields = ref([]);
 const form = ref({
   profile_picture: "",
@@ -78,17 +79,27 @@ onMounted(fetchFieldValidations);
 const onSubmit = () => {
   clearAllServerErrors();
 
-  refVForm.value?.validate().then(({ valid }) => {
+  refForm.value?.validate().then(({ valid }) => {
     console.log("hi");
     if (valid) {
       axiosAdmin
         .post("/create-prospect", form.value)
         .then((response) => {
-     
+          toast("Prospect created successfully", {
+            theme: "colored",
+            type: "success",
+            position: "top-right",
+            dangerouslyHTMLString: true,
+          });
+          nextTick(() => {
+            refForm.value?.reset();
+            refForm.value?.resetValidation();
+            form.value={};
+          });
         })
         .catch((error) => {
           handleServerErrors(error);
-          refVForm.value?.validate();
+          refForm.value?.validate();
         });
     }
   });
@@ -104,7 +115,7 @@ const onSubmit = () => {
     <VDivider />
 
     <VCardText>
-      <VForm ref="refVForm" @submit.prevent="onSubmit">
+      <VForm ref="refForm" @submit.prevent="onSubmit">
         <VRow
           v-for="(fieldsGroup, groupName) in groupedFields"
           :key="groupName"
