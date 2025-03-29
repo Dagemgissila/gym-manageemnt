@@ -81,6 +81,7 @@ const selectedRole = ref({});
 const addNewRole = async (roleData) => {
   const formattedRoleData = {
     role_name: roleData.role_name,
+    is_trainer:roleData.is_trainer,
     description: roleData.description,
     permissions: [...roleData.permissions], // Convert Proxy(Array) to plain array
   };
@@ -106,10 +107,12 @@ const addNewRole = async (roleData) => {
 const fetchRoleById = async (roleId) => {
   try {
     const { data } = await axiosAdmin.get(`/roles/${roleId}`); // Fetch role by ID
+    console.log(data)
     selectedRole.value = {
       id: data.id,
       role_name: data.role_name,
       name: data.name,
+      is_trainer:data.is_trainer,
       description: data.description,
       permissions: data.permissions, // Extract permission IDs
     };
@@ -124,6 +127,7 @@ const updateRole = async (roleData) => {
   const formattedRoleData = {
     id: roleData.id,
     role_name: roleData.role_name,
+    is_trainer:roleData.is_trainer,
     description: roleData.description,
     permissions: [...roleData.permissions], // Convert Proxy(Array) to plain array
   };

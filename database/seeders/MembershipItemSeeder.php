@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\MembershipFor;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Enums\MembershipItem;
@@ -27,6 +28,7 @@ class MembershipItemSeeder extends Seeder
                 'free_freezes_allowed' => 2,
                 'freeze_duration_max_weeks' => 2,
                 'paid_freeze_allowed' => YesNo::YES,
+                'membership_for' => MembershipFor::INDIVIDUAL,
                 'gym_access' => true,
                 'status' => 0,
                 "suspend_based_on_balance" => 1,
@@ -51,6 +53,7 @@ class MembershipItemSeeder extends Seeder
                 'free_freezes_allowed' => 3,
                 'freeze_duration_max_weeks' => 4,
                 'paid_freeze_allowed' => YesNo::NO,
+                'membership_for' => MembershipFor::GROUP,
                 'gym_access' => true,
                 'status' => 1,
                 "suspend_based_on_balance" => 1,

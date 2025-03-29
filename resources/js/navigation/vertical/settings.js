@@ -22,6 +22,12 @@ export default [
           to: 'settings-variable-field', 
           permission: 'field_validation_view' 
         },
+        { 
+          title: 'Currency', 
+          icon: { icon: 'tabler-users' }, // Updated Membership icon
+          to: 'settings-currency', 
+          permission: 'field_validation_view' 
+        },
         {
           title: 'Membership',
           icon: { icon: 'tabler-users' }, // Updated Membership icon

@@ -62,6 +62,7 @@ class RolePermissionController extends Controller
             'role_name' => 'required|string|unique:roles,name|max:255',
             'permissions' => 'array',
             'permissions.*' => 'integer|exists:permissions,id',
+            'is_trainer' => 'sometimes|boolean'
         ]);
 
         $role = Role::create([
@@ -83,6 +84,7 @@ class RolePermissionController extends Controller
         $role->update([
             'name' => $request->role_name,
             'description' => $request->description,
+            'is_trainer' => $request->is_trainer
         ]);
 
         // Sync permissions

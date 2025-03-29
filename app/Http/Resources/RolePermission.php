@@ -18,6 +18,7 @@ class RolePermission extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'is_trainer' => $this->is_trainer,
             'permissions' => PermissionResource::collection($this->permissions),
         ];
     }

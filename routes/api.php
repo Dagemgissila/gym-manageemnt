@@ -10,6 +10,7 @@ use App\Http\Controllers\PublicRuleController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VariableFieldsController;
+use App\Models\BaseCurrency;
 use App\Models\FieldValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,9 @@ Route::middleware(["api.check.auth"])->group(function () {
    Route::post('/create-member', [MemberController::class, 'create_member']);
    Route::post('create-trial', [MemberController::class, 'create_trial']);
    Route::post('create-prospect', [MemberController::class, 'create_prospect']);
+
+   //currency
+   Route::get('/base-currency', [BaseCurrency::class, "index"]);
 
 
    Route::apiResource('membership-types', MembershipTypeController::class);

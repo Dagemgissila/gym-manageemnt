@@ -27,6 +27,10 @@
                   placeholder="Admin"
                 />
               </VCol>
+
+              <VCol cols="12">
+                <VSwitch v-model="is_trainer" :label="`Is Trainer`" />
+              </VCol>
               <VCol cols="12">
                 <AppTextarea
                   v-model="description"
@@ -248,6 +252,7 @@ const emit = defineEmits(["update:isDrawerOpen", "roleData"]);
 const isFormValid = ref(false);
 const refForm = ref();
 const role_name = ref("");
+const is_trainer=ref(true);
 const description = ref("");
 
 const permissions = ref({});
@@ -281,6 +286,7 @@ const onSubmit = () => {
     if (valid) {
       emit("roleData", {
         role_name: role_name.value,
+        is_trainer:is_trainer.value,
         description: description.value,
         permissions: checkedPermissions.value,
       });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\MembershipFor;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\YesNo;
 use App\Enums\MembershipItem;
@@ -35,6 +36,7 @@ class StoreMembershipItemRequest extends FormRequest
             'free_freezes_allowed' => 'required|integer|min:0',
             'freeze_duration_max_weeks' => 'required|integer|min:0',
             'paid_freeze_allowed' => 'required|in:' . implode(',', YesNo::getValues()),
+            'membership_for' => 'required|in:' . implode(',', MembershipFor::getValues()),
             'gym_access' => 'sometimes|boolean',
             'status' => 'required|boolean',
             "suspend_based_on_balance" => 'required|numeric|min:0',

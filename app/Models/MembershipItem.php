@@ -20,6 +20,7 @@ class MembershipItem extends Model
         'installment_available',
         'free_freezes_allowed',
         'freeze_duration_max_weeks',
+        'membership_for',
         'paid_freeze_allowed',
         'gym_access',
         'status',

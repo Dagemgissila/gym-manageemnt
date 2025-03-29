@@ -13,7 +13,6 @@
     />
 
     <VDivider />
-
     <PerfectScrollbar :options="{ wheelPropagation: false }">
       <VCard flat>
         <VCardText>
@@ -25,6 +24,14 @@
                   :rules="[requiredValidator]"
                   label="Role Name"
                   placeholder="user"
+                />
+              </VCol>
+              <VCol cols="12">
+                <VSwitch
+                  v-model="is_trainer"
+                  :true-value="1"
+                  :false-value="0"
+                  :label="`Is Trainer`"
                 />
               </VCol>
               <VCol cols="12">
@@ -213,6 +220,7 @@ const emit = defineEmits(["update:isDrawerOpen", "updatedRoleData"]);
 const isFormValid = ref(false);
 const refForm = ref();
 const role_name = ref("");
+const is_trainer = ref(true);
 const description = ref("");
 
 const permissions = ref({});
@@ -246,11 +254,13 @@ watch(
     if (newRole && Object.keys(newRole).length > 0) {
       role_name.value = newRole.name || "";
       description.value = newRole.description || "";
+      is_trainer.value = newRole.is_trainer ?? 0;
       checkedPermissions.value = newRole.permissions.map(
         (permission) => permission.id
       );
     } else {
       checkedPermissions.value = [];
+      is_trainer.value = 0;
     }
   },
   { deep: true, immediate: true }
@@ -259,10 +269,12 @@ watch(
 const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
+      console.log(is_trainer.value);
       emit("updatedRoleData", {
         id: props.selectedRole.id ?? null,
         role_name: role_name.value,
         description: description.value,
+        is_trainer: is_trainer.value,
         permissions: checkedPermissions.value,
       });
 

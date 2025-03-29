@@ -2,40 +2,41 @@
 
 namespace Database\Seeders;
 
-use App\Enums\RoleType;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use App\Enums\RoleType;
+use Illuminate\Database\Seeder;
+
 class RoleSeeder extends Seeder
 {
-	/**
-	 * Run the database seeds.
-	 */
 	public function run(): void
 	{
-		$adminRole = new Role();
-		$adminRole->name = RoleType::ADMIN;
-		$adminRole->description = 'Admin is allowed to manage everything of the app.';
-		$adminRole->guard_name = 'api';
-		$adminRole->save();
+		$adminRole = Role::create([
+			'name' => RoleType::ADMIN,
+			'description' => 'Admin is allowed to manage everything of the app.',
+			'is_trainer' => 0,
+			'guard_name' => 'api',
+		]);
 
-		$salesmaneRole = new Role();
-		$salesmaneRole->name = RoleType::STAFF;
-		$salesmaneRole->description = 'Staff is allowed to manage everything related to Staff.';
-		$adminRole->guard_name = 'api';
-		$salesmaneRole->save();
+		$staffRole = Role::create([
+			'name' => RoleType::STAFF,
+			'description' => 'Staff is allowed to manage everything related to Staff.',
+			'is_trainer' => 0,
+			'guard_name' => 'api',
+		]);
 
-		$salesmaneRole = new Role();
-		$salesmaneRole->name = RoleType::TRAINER;
-		$salesmaneRole->description = 'Trainer is allowed to manage everything related to Trainer.';
-		$adminRole->guard_name = 'api';
-		$salesmaneRole->save();
+		$trainerRole = Role::create([
+			'name' => RoleType::TRAINER,
+			'description' => 'Trainer is allowed to manage everything related to Trainer.',
+			'is_trainer' => 1,
+			'guard_name' => 'api',
+		]);
 
-		$salesmaneRole = new Role();
-		$salesmaneRole->name = RoleType::MEMBER;
-		$salesmaneRole->description = 'Member is allowed to manage everything related to Member.';
-		$adminRole->guard_name = 'api';
-		$salesmaneRole->save();
+		$memberRole = Role::create([
+			'name' => RoleType::MEMBER,
+			'description' => 'Member is allowed to manage everything related to Member.',
+			'is_trainer' => 0,
+			'guard_name' => 'api',
+		]);
 	}
 }
+

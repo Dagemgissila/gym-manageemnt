@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\MembershipFor;
 use App\Enums\MembershipItem;
 use App\Enums\YesNo;
 use Illuminate\Database\Migrations\Migration;
@@ -26,6 +27,7 @@ class CreateMembershipItemsTable extends Migration
             $table->integer('free_freezes_allowed');
             $table->integer('freeze_duration_max_weeks');
             $table->enum('paid_freeze_allowed', YesNo::getValues())->default(YesNo::YES);
+            $table->enum("membership_for", MembershipFor::getValues())->default(MembershipFor::INDIVIDUAL);
             $table->boolean('gym_access');
 
             //suspenssion

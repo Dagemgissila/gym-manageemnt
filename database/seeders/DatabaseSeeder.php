@@ -21,6 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(FieldContentSeeder::class);
         $this->call(VariableFieldSeeder::class);
         $this->call(FieldValidationSeeder::class);
-
+        $this->call(BaseCurrencySeeder::class);
     }
 }

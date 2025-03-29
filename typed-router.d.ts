@@ -43,6 +43,7 @@ declare module 'vue-router/auto-routes' {
     'pages-typography': RouteRecordInfo<'pages-typography', '/pages/typography', Record<never, never>, Record<never, never>>,
     'pages-user-profile-tab': RouteRecordInfo<'pages-user-profile-tab', '/pages/user-profile/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
     'register': RouteRecordInfo<'register', '/register', Record<never, never>, Record<never, never>>,
+    'settings-currency': RouteRecordInfo<'settings-currency', '/settings/currency', Record<never, never>, Record<never, never>>,
     'settings-form-validation': RouteRecordInfo<'settings-form-validation', '/settings/form/validation', Record<never, never>, Record<never, never>>,
     'settings-membership': RouteRecordInfo<'settings-membership', '/settings/membership', Record<never, never>, Record<never, never>>,
     'settings-membership-type': RouteRecordInfo<'settings-membership-type', '/settings/membership/type', Record<never, never>, Record<never, never>>,

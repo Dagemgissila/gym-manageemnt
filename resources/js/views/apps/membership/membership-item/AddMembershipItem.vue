@@ -39,6 +39,7 @@ const suspend_based_on_balance = ref();
 const accessible_days = ref();
 const sessions = ref();
 const link_access_to_booked_appts = ref();
+const membership_for=ref();
 
 
 const selectedDays = ref([]);
@@ -104,6 +105,7 @@ const onSubmit = () => {
         accessible_days: accessible_days.value,
         sessions: sessions.value,
         selected_days: selectedDays.value,
+        membership_for:membership_for.value
       };
 
       console.log(formattedMembershipItemData);
@@ -205,6 +207,21 @@ const removeSelectedDay = (index) => {
                 ]" item-title="membership_type" item-value="id" label="Membership Type"
                   placeholder="Select a membership type" />
               </VCol>
+
+
+              <VCol cols="12" md="4">
+                <AppSelect v-model="membership_for":rules="[
+                  requiredValidator,
+                  serverErrorValidator('membership_for'),
+                ]" 
+                :items="[
+                    { title: 'Individual', value: 'individual' },
+                    { title: 'Group', value: 'group' },
+                  ]" 
+                 label="Membership For"
+                  placeholder="Membership For" />
+              </VCol>
+
 
               <!-- 👉 Accessible Days -->
               <VCol cols="12" md="4">

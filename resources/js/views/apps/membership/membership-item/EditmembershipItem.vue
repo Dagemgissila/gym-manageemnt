@@ -39,7 +39,8 @@ const localMembership = ref({
   accessible_days: "",
   sessions: "",
   link_access_to_booked_appts: false,
-  selected_days:[]
+  selected_days:[],
+  membership_for:''
 });
 
 // Dropdown options
@@ -236,6 +237,21 @@ const removeSelectedDay = (index) => {
                   :rules="[requiredValidator]"
                 />
               </VCol>
+
+
+              <VCol cols="12" md="4">
+                <AppSelect v-model="localMembership.membership_for":rules="[
+                  requiredValidator,
+                  serverErrorValidator('membership_for'),
+                ]" 
+                :items="[
+                    { title: 'Individual', value: 'individual' },
+                    { title: 'Group', value: 'group' },
+                  ]" 
+                 label="Membership For"
+                  placeholder="Membership For" />
+              </VCol>
+
 
               <!-- 👉 Accessible Days -->
               <VCol cols="12" md="4">

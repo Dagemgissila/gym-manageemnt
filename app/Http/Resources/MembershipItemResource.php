@@ -28,6 +28,7 @@ class MembershipItemResource extends JsonResource
             'free_freezes_allowed' => $this->free_freezes_allowed,
             'freeze_duration_max_weeks' => $this->freeze_duration_max_weeks,
             'paid_freeze_allowed' => $this->paid_freeze_allowed,
+            'membership_for' => $this->membership_for,
             'gym_access' => $this->gym_access,
             'status' => $this->status,
             'created_at' => $this->created_at->toDateTimeString(),
