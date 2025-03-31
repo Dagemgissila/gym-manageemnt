@@ -1,12 +1,12 @@
 <script setup>
 import axiosAdmin from "@/composables/axios/axiosAdmin";
 import common from "@/composables/common";
-import AddPublicRule from "@/views/apps/public-variable/AddPublicRule.vue";
-import EditPublicRule from "@/views/apps/public-variable/EditPublicRule.vue";
 import { onMounted, ref } from "vue";
+import Create from "./create.vue";
+import Edit from "./Edit.vue";
 
 
-const {permsArray}=common();
+const { permsArray } = common();
 
 
 // 👉 Data Table Options
@@ -15,27 +15,27 @@ const page = ref(1);
 const sortBy = ref("id");
 const orderBy = ref("desc");
 const selectedRows = ref([]);
-const isAddPublicRuleVisible = ref(false);
-const EditPublicRuleVisible = ref(false);
-const selectedRule = ref({});
+const isCreateDialogVisible = ref(false);
+const isEditDialogVisible = ref(false);
+const selectedExchangeRate = ref({});
 const searchQuery = ref();
 
 // 👉 Users Data
-const public_rules = ref([]);
+const exchange_rate = ref([]);
 const total = ref(0);
 
 // 👉 Updated Headers for Membership Items Table
 const headers = [
-  { title: "Currency", key: "setting_rule" }, // Foreign key reference
-  { title: "Rate", key: "setting_value" },
-  { title: "Date", key: "status" },
+  { title: "Currency", key: "foreign_currency" }, // Foreign key reference
+  { title: "Rate", key: "exchange_rate" },
+  { title: "Date", key: "date" },
   { title: "Actions", key: "actions", sortable: false },
 ];
 
 // 👉 Fetch Role
-const fetchPublicRule = async () => {
+const fetchExchangeRate = async () => {
   try {
-    const response = await axiosAdmin.get("/public-rules", {
+    const response = await axiosAdmin.get("/exchange-rates", {
       params: {
         page: page.value,
         itemsPerPage: itemsPerPage.value,
@@ -43,8 +43,7 @@ const fetchPublicRule = async () => {
       },
     });
 
-
-    public_rules.value = response.data;
+    exchange_rate.value = response.data;
     total.value = response.meta.total;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -52,16 +51,17 @@ const fetchPublicRule = async () => {
 };
 
 
-const fetchPublicRuleById = async (id) => {
+const fetchExchangeRateById = async (id) => {
   try {
-    const { data } = await axiosAdmin.get(`public-rules/${id}`);
-    selectedRule.value = { // Corrected assignment syntax
+    const { data } = await axiosAdmin.get(`exchange-rates/${id}`);
+    selectedExchangeRate.value = { // Corrected assignment syntax
       id: data.id,
-      setting_rule: data.setting_rule,
-      setting_value: data.setting_value,
-      status: data.status
+      date: data.date,
+      base_currency_id: data.base_currency.id,
+      foreign_currency_id: data.foreign_currency.id, // Fixed here
+      exchange_rate: data.exchange_rate
     };
-    EditPublicRuleVisible.value=true
+    isEditDialogVisible.value = true
   } catch (error) {
     console.error("Error fetching public rule:", error);
   }
@@ -80,13 +80,11 @@ const updateOptions = (options) => {
 };
 
 // 👉 Watch for changes that require data refresh
-watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchPublicRule);
+watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchExchangeRate);
 
 
-
-
-onMounted(()=>{
-  fetchPublicRule();
+onMounted(() => {
+  fetchExchangeRate();
 })
 
 </script>
@@ -98,38 +96,26 @@ onMounted(()=>{
 
       <VCardText class="d-flex flex-wrap gap-4">
         <div class="me-3 d-flex gap-3">
-          <AppSelect
-            :model-value="itemsPerPage"
-            :items="[
-              { value: 10, title: '10' },
-              { value: 25, title: '25' },
-              { value: 50, title: '50' },
-              { value: 100, title: '100' },
-              { value: -1, title: 'All' },
-            ]"
-            style="inline-size: 6.25rem"
-            @update:model-value="itemsPerPage = parseInt($event, 10)"
-          />
+          <AppSelect :model-value="itemsPerPage" :items="[
+            { value: 10, title: '10' },
+            { value: 25, title: '25' },
+            { value: 50, title: '50' },
+            { value: 100, title: '100' },
+            { value: -1, title: 'All' },
+          ]" style="inline-size: 6.25rem" @update:model-value="itemsPerPage = parseInt($event, 10)" />
         </div>
         <VSpacer />
 
         <div class="app-user-search-filter d-flex align-center flex-wrap gap-4">
           <div class="d-flex align-center">
             <!-- 👉 Search  -->
-            <AppTextField
-              v-model="searchQuery"
-              placeholder="Search Exchange Rate "
-              style="inline-size: 200px"
-              class="me-3"
-            />
+            <AppTextField v-model="searchQuery" placeholder="Search Exchange Rate " style="inline-size: 200px"
+              class="me-3" />
           </div>
 
           <!-- 👉 Add user button -->
-          <VBtn
-            prepend-icon="tabler-plus"
-            @click="isAddPublicRuleVisible = true"
-            v-if="permsArray.includes('public_rule_create') || permsArray.includes('admin')"
-          >
+          <VBtn prepend-icon="tabler-plus" @click="isCreateDialogVisible = true"
+            v-if="permsArray.includes('public_rule_create') || permsArray.includes('admin')">
             Add Exchange Rate
           </VBtn>
         </div>
@@ -138,30 +124,30 @@ onMounted(()=>{
       <VDivider />
 
       <!-- SECTION datatable -->
-      <VDataTableServer
-        v-model:items-per-page="itemsPerPage"
-        v-model:model-value="selectedRows"
-        v-model:page="page"
-        :items="public_rules"
-        item-value="id"
-        :items-length="total"
-        :headers="headers"
-        class="text-no-wrap"
-        show-select
-        @update:options="updateOptions"
-      >
-        <!-- Status -->
-        <template #item.status="{ item }">
+      <VDataTableServer v-model:items-per-page="itemsPerPage" v-model:model-value="selectedRows" v-model:page="page"
+        :items="exchange_rate" item-value="id" :items-length="total" :headers="headers" class="text-no-wrap" show-select
+        @update:options="updateOptions">
+
+        <!-- Exchnage Rate -->
+        <template #item.foreign_currency="{ item }">
           <div class="text-body-2">
-            {{ item.status ? "Active" : "Inactive" }}
+            {{ ` ${item.foreign_currency.code} - ${item.foreign_currency.name}` }}
+          </div>
+        </template>
+        <!-- Exchnage Rate -->
+        <template #item.exchange_rate="{ item }">
+          <div class="text-body-2">
+            {{ `1 ${item.base_currency.code} = ${item.exchange_rate} ${item.foreign_currency.code}` }}
           </div>
         </template>
 
 
+
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <template v-if="item" >
-            <IconBtn v-if="permsArray.includes('public_rule_edit') || permsArray.includes('admin')"  @click="fetchPublicRuleById(item.id)">
+          <template v-if="item">
+            <IconBtn v-if="permsArray.includes('public_rule_edit') || permsArray.includes('admin')"
+              @click="fetchExchangeRateById(item.id)">
               <VIcon icon="tabler-pencil" />
             </IconBtn>
           </template>
@@ -169,26 +155,20 @@ onMounted(()=>{
 
         <!-- pagination -->
         <template #bottom>
-          <TablePagination
-            v-model:page="page"
-            :items-per-page="itemsPerPage"
-            :total-items="total"
-          />
+          <TablePagination v-model:page="page" :items-per-page="itemsPerPage" :total-items="total" />
         </template>
       </VDataTableServer>
       <!-- SECTION -->
     </VCard>
-    <!-- Add User Drawer -->
-    <AddPublicRule
-      v-model:is-drawer-open="isAddPublicRuleVisible"
-      @public-rule-data="fetchPublicRule"
-    />
+
+    <Create 
+    v-model:is-dialog-visible="isCreateDialogVisible"
+     @foreign-exchange-rate="fetchExchangeRate" />
 
     <!-- Add User Drawer -->
-    <EditPublicRule
-      v-model:is-drawer-open="EditPublicRuleVisible"
-      :selectedRule="selectedRule"
-      @publicRuleData="fetchPublicRule"
-    />
+    <Edit
+      v-model:is-dialog-visible="isEditDialogVisible" 
+      :selectedExchangeRate="selectedExchangeRate"
+      @foreign-exchange-rate="fetchExchangeRate" />
   </section>
 </template>

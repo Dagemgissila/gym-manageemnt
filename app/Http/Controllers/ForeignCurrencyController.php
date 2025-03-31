@@ -4,16 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreForeignCurrencyRequest;
 use App\Http\Requests\UpdateForeignCurrencyRequest;
+use App\Http\Resources\ForeignCurrencyresource;
 use App\Models\ForeignCurrency;
+use Illuminate\Http\Request;
 
 class ForeignCurrencyController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = ForeignCurrency::query()->filter($request->all());
+        $foreign_currencys = $query->paginateResults($request->all());
+
+        return ForeignCurrencyresource::collection($foreign_currencys);
     }
 
     /**
@@ -21,7 +26,10 @@ class ForeignCurrencyController extends Controller
      */
     public function store(StoreForeignCurrencyRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $foreign_currency = ForeignCurrency::create($validated);
+
+        return new ForeignCurrencyresource($foreign_currency);
     }
 
     /**
@@ -29,7 +37,7 @@ class ForeignCurrencyController extends Controller
      */
     public function show(ForeignCurrency $foreignCurrency)
     {
-        //
+        return new ForeignCurrencyresource($foreignCurrency);
     }
 
     /**
@@ -37,7 +45,10 @@ class ForeignCurrencyController extends Controller
      */
     public function update(UpdateForeignCurrencyRequest $request, ForeignCurrency $foreignCurrency)
     {
-        //
+        $validated = $request->validated();
+
+        $foreignCurrency->update($validated);
+        return new ForeignCurrencyresource($foreignCurrency);
     }
 
     /**

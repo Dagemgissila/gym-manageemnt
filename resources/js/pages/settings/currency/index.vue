@@ -2,7 +2,6 @@
 import BaseCurrency from '@/views/apps/currency/BaseCurrency.vue'
 import ExchangeRate from "@/views/apps/currency/ExchangeRate/index.vue"
 import ForeignCurrency from "@/views/apps/currency/ForeignCurrency/index.vue"
-const route = useRoute('apps-user-view-id')
 const userTab = ref(null)
 
 const tabs = [
@@ -20,11 +19,10 @@ const tabs = [
   }
 ]
 
-const { data: userData } = await useApi(`/apps/users/${ route.params.id }`)
 </script>
 
 <template>
-  <VRow v-if="userData">
+  <VRow>
 
 
     <VCol

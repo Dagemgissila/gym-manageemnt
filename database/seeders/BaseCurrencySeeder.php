@@ -17,7 +17,7 @@ class BaseCurrencySeeder extends Seeder
             "code" => "USD",
             "name" => "US DOLLAR",
             "symbol" => "$",
-            "decima_place" => 2
+            "decimal_place" => 2
         ]);
     }
 }

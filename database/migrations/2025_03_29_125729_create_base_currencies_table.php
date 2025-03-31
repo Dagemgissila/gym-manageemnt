@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string("code");
             $table->string("name");
             $table->string("symbol");
-            $table->string("decima_place");
+            $table->string("decimal_place");
             $table->timestamps();
         });
     }

@@ -11,7 +11,7 @@ class UpdateExchangeRateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateExchangeRateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "date" => ["required", "date"],
+            "base_currency_id" => ["required", "exists:base_currencies,id"], // corrected table name
+            "foreign_currency_id" => ["required", "exists:foreign_currencies,id"],
+            "exchange_rate" => ["required"]
         ];
     }
 }

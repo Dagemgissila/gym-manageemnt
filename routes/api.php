@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\BaseCurrencyController;
+use App\Http\Controllers\ExchangeRateController;
 use App\Http\Controllers\FieldContentController;
 use App\Http\Controllers\FieldValidationController;
+use App\Http\Controllers\ForeignCurrencyController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MembershipItemController;
 use App\Http\Controllers\MembershipTypeController;
@@ -10,9 +13,6 @@ use App\Http\Controllers\PublicRuleController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VariableFieldsController;
-use App\Models\BaseCurrency;
-use App\Models\FieldValidation;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -35,7 +35,10 @@ Route::middleware(["api.check.auth"])->group(function () {
    Route::post('create-prospect', [MemberController::class, 'create_prospect']);
 
    //currency
-   Route::get('/base-currency', [BaseCurrency::class, "index"]);
+   Route::get('/base-currency', [BaseCurrencyController::class, "index"]);
+   Route::put('/base-currency/{baseCurrency}', [BaseCurrencyController::class, "update"]);
+   Route::apiResource('/foreign-currencies', ForeignCurrencyController::class);
+   Route::apiResource('/exchange-rates', ExchangeRateController::class);
 
 
    Route::apiResource('membership-types', MembershipTypeController::class);

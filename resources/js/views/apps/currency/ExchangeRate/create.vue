@@ -1,220 +1,176 @@
 <script setup>
+import { decimalValidator } from "@/@core/utils/validators";
+import axiosAdmin from "@/composables/axios/axiosAdmin";
+import { computed, ref } from "vue";
+import { toast } from "vue3-toastify";
+const isFormValid = ref(false);
+const refForm = ref();
+const foreign_currencies = ref([]);
+const base_currency = ref();
 const props = defineProps({
-  userData: {
-    type: Object,
-    required: false,
-    default: () => ({
-      id: 0,
-      fullName: '',
-      company: '',
-      role: '',
-      username: '',
-      country: '',
-      contact: '',
-      email: '',
-      currentPlan: '',
-      status: '',
-      avatar: '',
-      taskDone: null,
-      projectDone: null,
-      taxId: '',
-      language: '',
-    }),
-  },
   isDialogVisible: {
     type: Boolean,
     required: true,
   },
-})
+});
 
-const emit = defineEmits([
-  'submit',
-  'update:isDialogVisible',
-])
+const emit = defineEmits(["update:isDialogVisible", "foreignCurrency"]);
 
-const userData = ref(structuredClone(toRaw(props.userData)))
-const isUseAsBillingAddress = ref(false)
 
-watch(() => props, () => {
-  userData.value = structuredClone(toRaw(props.userData))
-})
+const form = ref({
+  date: new Date().toISOString().split("T")[0],
+  base_currency_id: "",
+  foreign_currency_id: "",
+  exchange_rate: "",
+});
 
-const onFormSubmit = () => {
-  emit('update:isDialogVisible', false)
-  emit('submit', userData.value)
+const selectedForeignCurrency = computed(() => {
+  const currency = foreign_currencies.value.find((currency) => currency.id == form.value.foreign_currency_id);
+  return currency ? currency.code : null;
+});
+
+
+const onSubmit = () => {
+  clearAllServerErrors();
+
+  refForm.value?.validate().then(({ valid }) => {
+    if (valid) {
+      axiosAdmin
+        .post("/exchange-rates", form.value)
+        .then((response) => {
+          toast("Exchange Rate Added successfully!", {
+            theme: "colored",
+            type: "success",
+            position: "top-right",
+            dangerouslyHTMLString: true,
+          });
+
+          emit("update:isDialogVisible", false);
+          emit("foreignExchangeRate", true);
+
+          nextTick(() => {
+            refForm.value?.reset();
+            refForm.value?.resetValidation();
+          });
+        })
+        .catch((error) => {
+          handleServerErrors(error);
+          // Trigger re-validation to show server errors
+          refForm.value?.validate();
+        });
+    }
+  });
+};
+
+
+// 👉 Fetch Role
+const fetchForeignCurrency = async () => {
+  try {
+    const response = await axiosAdmin.get("/foreign-currencies", {
+      params: {
+        itemsPerPage: -1,
+      },
+    });
+    foreign_currencies.value = response.data.map((currency) => ({
+      id: currency.id,
+      title: `${currency.name} - ${currency.code}`,
+      value: currency.id,
+      code: currency.code
+    }));
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
+};
+
+
+function getBaseCurrency() {
+  axiosAdmin
+    .get("/base-currency")
+    .then((response) => {
+      console.log(response);
+      const data = response.data;
+      base_currency.value = data[Object.keys(data)[0]]; // Get the first item
+      form.value.base_currency_id = base_currency.value.id;
+
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
-const onFormReset = () => {
-  userData.value = structuredClone(toRaw(props.userData))
-  emit('update:isDialogVisible', false)
-}
 
-const dialogModelValueUpdate = val => {
-  emit('update:isDialogVisible', val)
-}
+onMounted(() => {
+  fetchForeignCurrency();
+  getBaseCurrency();
+});
+
+
 </script>
 
 <template>
-  <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 900"
-    :model-value="props.isDialogVisible"
-    @update:model-value="dialogModelValueUpdate"
-  >
-    <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+  <VDialog :width="$vuetify.display.smAndDown ? 'auto' : 900" :model-value="props.isDialogVisible"
+    @update:model-value="(val) => $emit('update:isDialogVisible', val)">
+    <!-- 👉 Dialog close btn -->
+    <DialogCloseBtn @click="$emit('update:isDialogVisible', false)" />
 
     <VCard class="pa-sm-10 pa-2">
+      <h2 class="h2 text-center mb-6">Add Exchange Rate</h2>
       <VCardText>
-        <!-- 👉 Title -->
-        <h4 class="text-h4 text-center mb-2">
-          Edit User Information
-        </h4>
-        <p class="text-body-1 text-center mb-6">
-          Updating user details will receive a privacy audit.
-        </p>
-
         <!-- 👉 Form -->
-        <VForm
-          class="mt-6"
-          @submit.prevent="onFormSubmit"
-        >
+        <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
+          <VRow align="center" class="exchange-rate-container">
+            <!-- Static text: "1 FORE =" -->
+
+
+          </VRow>
           <VRow>
-            <!-- 👉 First Name -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppTextField
-                v-model="userData.fullName.split(' ')[0]"
-                label="First Name"
-                placeholder="John"
-              />
+            <VCol cols="12" md="6">
+              <AppDateTimePicker v-model="form.date" :rules="[
+                requiredValidator,
+                serverErrorValidator('date'),
+              ]" label="Date " placeholder="Select date" />
             </VCol>
 
-            <!-- 👉 Last Name -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppTextField
-                v-model="userData.fullName.split(' ')[1]"
-                label="Last Name"
-                placeholder="Doe"
-              />
+
+            <!-- 👉 Role -->
+            <VCol cols="12" md="6">
+              <AppSelect v-model="form.foreign_currency_id" label="Select Foreign Currency"
+                :rules="[requiredValidator, serverErrorValidator('foreign_currencies')]" :items="foreign_currencies"
+                placeholder="Select Foreign Currency" />
             </VCol>
 
-            <!-- 👉 Username -->
-            <VCol cols="12">
-              <AppTextField
-                v-model="userData.username"
-                label="Username"
-                placeholder="john.doe.007"
-              />
+
+            <VCol cols="8" v-if="form.foreign_currency_id">
+              <VRow class="d-flex align-center justify-center">
+                <!-- Left Button: "1 FORE =" -->
+                <VCol cols="3" class="d-flex align-center justify-end">
+                  <VBtn variant="outlined" color="grey-darken-1" class="text-none">
+                    1 {{ base_currency.code }}
+                  </VBtn>
+                </VCol>
+
+                <!-- Exchange Rate Input -->
+                <VCol cols="6">
+                  <AppTextField v-model="form.exchange_rate" :rules="[
+                    requiredValidator,
+                    decimalValidator,
+                    serverErrorValidator('Exchange Rate')
+                  ]" placeholder="Exchange Rate" />
+                </VCol>
+
+                <!-- Right Static Text: "USD" -->
+                <VCol cols="3" class="d-flex align-center">
+                  <VBtn variant="outlined" color="grey-darken-1" class="text-none">
+                    {{ selectedForeignCurrency }}
+                  </VBtn>
+                </VCol>
+              </VRow>
             </VCol>
 
-            <!-- 👉 Billing Email -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppTextField
-                v-model="userData.email"
-                label="Email"
-                placeholder="johndoe@email.com"
-              />
-            </VCol>
-
-            <!-- 👉 Status -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppSelect
-                v-model="userData.status"
-                label="Status"
-                placeholder="Active"
-                :items="['Active', 'Inactive', 'Pending']"
-              />
-            </VCol>
-
-            <!-- 👉 Tax Id -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppTextField
-                v-model="userData.taxId"
-                label="Tax ID"
-                placeholder="123456789"
-              />
-            </VCol>
-
-            <!-- 👉 Contact -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppTextField
-                v-model="userData.contact"
-                label="Phone Number"
-                placeholder="+1 9876543210"
-              />
-            </VCol>
-
-            <!-- 👉 Language -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppSelect
-                v-model="userData.language"
-                closable-chips
-                chips
-                multiple
-                label="Language"
-                placeholder="English"
-                :items="['English', 'Spanish', 'French']"
-              />
-            </VCol>
-
-            <!-- 👉 Country -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppSelect
-                v-model="userData.country"
-                label="Country"
-                placeholder="United States"
-                :items="['United States', 'United Kingdom', 'France']"
-              />
-            </VCol>
-
-            <!-- 👉 Switch -->
-            <VCol cols="12">
-              <VSwitch
-                v-model="isUseAsBillingAddress"
-                density="compact"
-                label="Use as a billing address?"
-              />
-            </VCol>
 
             <!-- 👉 Submit and Cancel -->
-            <VCol
-              cols="12"
-              class="d-flex flex-wrap justify-center gap-4"
-            >
-              <VBtn type="submit">
-                Submit
-              </VBtn>
-
-              <VBtn
-                color="secondary"
-                variant="tonal"
-                @click="onFormReset"
-              >
-                Cancel
-              </VBtn>
+            <VCol cols="12">
+              <VBtn type="submit" class="me-3"> Create </VBtn>
             </VCol>
           </VRow>
         </VForm>

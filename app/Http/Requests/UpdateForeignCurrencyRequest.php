@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateForeignCurrencyRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateForeignCurrencyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,10 @@ class UpdateForeignCurrencyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "code" => ["required", "string", Rule::unique('foreign_currencies', 'code')->ignore($this->id)],
+            "name" => ["required", "string", Rule::unique('foreign_currencies', 'name')->ignore($this->id)],
+            "symbol" => ["required", "string", Rule::unique('foreign_currencies', 'symbol')->ignore($this->id)],
+            "decimal_place" => ["required", "integer"]
         ];
     }
 }

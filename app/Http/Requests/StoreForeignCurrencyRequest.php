@@ -11,7 +11,7 @@ class StoreForeignCurrencyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreForeignCurrencyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "code" => "required|string|unique:foreign_currencies,code",
+            "name" => "required|string|unique:foreign_currencies,name",
+            "symbol" => "required|string|unique:foreign_currencies,symbol",
+            "decimal_place" => "required|integer"
         ];
     }
 }
