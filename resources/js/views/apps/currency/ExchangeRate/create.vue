@@ -98,11 +98,10 @@ function getBaseCurrency() {
     });
 }
 
-
-onMounted(() => {
-  fetchForeignCurrency();
-  getBaseCurrency();
-});
+const fetchData = () => {
+    fetchForeignCurrency();
+    getBaseCurrency();
+};
 
 
 </script>
@@ -135,6 +134,7 @@ onMounted(() => {
             <!-- 👉 Role -->
             <VCol cols="12" md="6">
               <AppSelect v-model="form.foreign_currency_id" label="Select Foreign Currency"
+               @focus="fetchData"
                 :rules="[requiredValidator, serverErrorValidator('foreign_currencies')]" :items="foreign_currencies"
                 placeholder="Select Foreign Currency" />
             </VCol>

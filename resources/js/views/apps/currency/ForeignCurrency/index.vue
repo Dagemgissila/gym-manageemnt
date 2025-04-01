@@ -6,6 +6,11 @@ import { onMounted, ref } from "vue";
 import Edit from "./Edit.vue";
 
 
+
+const props = defineProps({
+  isActive: Boolean,
+});
+
 const {permsArray}=common();
 
 
@@ -44,8 +49,6 @@ const fetchForeignCurrency = async () => {
         q: searchQuery.value,
       },
     });
-
-
     foreign_currencies.value = response.data;
     total.value = response.meta.total;
   } catch (error) {
@@ -89,6 +92,13 @@ watch([page, itemsPerPage, sortBy, orderBy, searchQuery], fetchForeignCurrency);
 onMounted(()=>{
   fetchForeignCurrency();
 })
+
+
+watch(() => props.isActive, (active) => {
+  if (active) {
+    fetchForeignCurrency();
+  }
+}, { immediate: true });
 
 </script>
 

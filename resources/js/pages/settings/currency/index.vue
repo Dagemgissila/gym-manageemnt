@@ -52,15 +52,15 @@ const tabs = [
       >
 
       <VWindowItem>
-          <ExchangeRate />
+          <ExchangeRate :is-active="userTab === 0" />
         </VWindowItem>
         <VWindowItem>
-          <BaseCurrency />
+          <BaseCurrency :is-active="userTab === 1" />
         </VWindowItem>
 
 
         <VWindowItem>
-          <ForeignCurrency />
+          <ForeignCurrency :is-active="userTab === 2" />
         </VWindowItem>
 
 

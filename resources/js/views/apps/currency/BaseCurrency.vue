@@ -3,6 +3,12 @@ import axiosAdmin from "@/composables/axios/axiosAdmin";
 import { onMounted, ref, watch } from "vue";
 import { toast } from "vue3-toastify";
 
+
+const props = defineProps({
+  isActive: Boolean,
+});
+
+
 const isFormValid = ref(false);
 const refForm = ref();
 const base_currency = ref(null);
