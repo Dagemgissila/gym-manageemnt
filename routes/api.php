@@ -11,6 +11,7 @@ use App\Http\Controllers\MembershipItemController;
 use App\Http\Controllers\MembershipTypeController;
 use App\Http\Controllers\PublicRuleController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\TrainerControler;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VariableFieldsController;
 use Illuminate\Support\Facades\Route;
@@ -58,4 +59,5 @@ Route::middleware(["api.check.auth"])->group(function () {
    Route::get('/permissions', [RolePermissionController::class, 'permissions']);
    Route::post('/add-role-permissions', [RolePermissionController::class, 'addRolePermission']);
    Route::patch('/edit-role-permissions', [RolePermissionController::class, 'updateRolePermission']);
+   Route::get("/trainers", [TrainerControler::class, "index"]);
 });

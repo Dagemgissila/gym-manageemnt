@@ -40,7 +40,8 @@ const localMembership = ref({
   sessions: "",
   link_access_to_booked_appts: false,
   selected_days:[],
-  membership_for:''
+  membership_for:'',
+  validity:''
 });
 
 // Dropdown options
@@ -250,6 +251,21 @@ const removeSelectedDay = (index) => {
                   ]" 
                  label="Membership For"
                   placeholder="Membership For" />
+              </VCol>
+
+
+                            <!-- 👉 Validity -->
+                            <VCol cols="12" md="4">
+                <AppTextField
+                  v-model="localMembership.validity"
+                  :rules="[
+                    requiredValidator,
+                    integerValidator,
+                    serverErrorValidator('validity'),
+                  ]"
+                  label="Validity"
+                  placeholder="Validity"
+                />
               </VCol>
 
 

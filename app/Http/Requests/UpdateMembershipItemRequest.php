@@ -37,6 +37,7 @@ class UpdateMembershipItemRequest extends FormRequest
             'installment_available' => 'required|boolean',
             'free_freezes_allowed' => 'required|integer|min:0',
             'freeze_duration_max_weeks' => 'required|integer|min:0',
+            'validity' => 'required|integer|min:1',
             'paid_freeze_allowed' => 'required|in:' . implode(',', YesNo::getValues()),
             'membership_for' => 'required|in:' . implode(',', MembershipFor::getValues()),
             'gym_access' => 'required|boolean',
@@ -50,8 +51,6 @@ class UpdateMembershipItemRequest extends FormRequest
             'selected_days.*.day' => 'required|string', // Validate each day entry
             'selected_days.*.from_time' => 'required|string', // Change start_time to from_time
             'selected_days.*.to_time' => 'required|string', // Change end_time to to_time
-
-
         ];
     }
 }
