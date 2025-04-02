@@ -54,7 +54,7 @@ const fetchFieldValidations = async () => {
     fields.value.forEach((field) => {
       if (!form.value.hasOwnProperty(field.field_key)) {
         if (field.input_type === "dropdown" && field.multiple) {
-          form.value[field.field_key] = []; 
+          form.value[field.field_key] = [];
         } else {
           form.value[field.field_key] = null;
         }
@@ -76,9 +76,6 @@ const groupedFields = computed(() => {
 
 onMounted(fetchFieldValidations);
 
-
-
-
 const onSubmit = () => {
   clearAllServerErrors();
 
@@ -88,7 +85,7 @@ const onSubmit = () => {
       axiosAdmin
         .post("/create-prospect", form.value)
         .then((response) => {
-          const member_id=response.member_id;
+          const member_id = response.member_id;
           toast("Prospect created successfully", {
             theme: "colored",
             type: "success",
@@ -98,9 +95,9 @@ const onSubmit = () => {
           nextTick(() => {
             refForm.value?.reset();
             refForm.value?.resetValidation();
-            form.value={};
+            form.value = {};
           });
-          router.push({name:'member-details',params:{id:member_id}})
+          router.push({ name: "member-details", params: { id: member_id } });
         })
         .catch((error) => {
           handleServerErrors(error);
@@ -109,7 +106,6 @@ const onSubmit = () => {
     }
   });
 };
-
 </script>
 
 <template>
@@ -118,7 +114,6 @@ const onSubmit = () => {
       <VCardTitle>Prospect</VCardTitle>
     </VCardItem>
     <VDivider />
-
     <VCardText>
       <VForm ref="refForm" @submit.prevent="onSubmit">
         <VRow
@@ -186,7 +181,10 @@ const onSubmit = () => {
             <!-- Date Picker -->
             <template v-else-if="field.input_type === 'date'">
               <AppDateTimePicker
-                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
                 v-model="form[field.field_key]"
                 :label="field.field_name"
                 :placeholder="field.field_name"
@@ -197,11 +195,14 @@ const onSubmit = () => {
             <template v-else-if="field.input_type === 'dropdown'">
               <AppSelect
                 v-model="form[field.field_key]"
-                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
                 :label="field.field_name"
-                 :chips="field.is_multiple===1"
-                  :multiple="field.is_multiple===1"
-                 :closable-chips="field.is_multiple===1"
+                :chips="field.is_multiple === 1"
+                :multiple="field.is_multiple === 1"
+                :closable-chips="field.is_multiple === 1"
                 :items="
                   field.field_content?.variable_fields.map((item) => ({
                     title: item.value,
@@ -209,15 +210,34 @@ const onSubmit = () => {
                   }))
                 "
                 :placeholder="`Select ${field.field_name}`"
-
               />
             </template>
 
             <!-- Gender Selection -->
+            <template v-else-if="field.input_type === 'gender'">
+              <AppSelect
+                v-model="form[field.field_key]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
+                :label="field.field_name"
+                :items="[
+                  { title: 'Male', value: 'male' },
+                  { title: 'Female', value: 'female' },
+                ]"
+                :placeholder="`Select ${field.field_name}`"
+              />
+            </template>
+
+            <!-- text area Selection -->
             <template v-else-if="field.input_type === 'textarea'">
               <AppTextarea
                 v-model="form[field.field_key]"
-                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
                 :label="field.field_name"
                 :placeholder="field.field_name"
                 rows="2"
@@ -237,7 +257,10 @@ const onSubmit = () => {
             <!-- Default Text Input -->
             <template v-else>
               <AppTextField
-                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
                 v-model="form[field.field_key]"
                 :label="field.field_name"
                 :placeholder="field.field_name"

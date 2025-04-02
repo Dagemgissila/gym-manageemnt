@@ -95,8 +95,6 @@ onMounted(() => {
       <div class="customer-profile">
         <UserProfileHeader @update-tab="selectMoreTab" :member_detail="member_detail" />
       </div>
-
-
       <!-- Tab List -->
       <div class="flex-grow-1 d-flex justify-space-between">
         <div class="d-flex">

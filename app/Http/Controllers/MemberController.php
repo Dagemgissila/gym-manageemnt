@@ -85,14 +85,14 @@ class MemberController extends Controller
         $preferredContactMethods = $validated['preferred_contact_method'] ?? [];
         $preferredWorkOutTimes = $validated['preferred_workout_times'] ?? [];
         $interestedIn = $validated['interested_in'] ?? [];
-        $leadSources = $validated['lead_source'] ?? [];
+        $leadSources = $validated['lead_sources'] ?? [];
 
         unset(
             $validated['fitness_goals'],
             $validated['preferred_contact_method'],
             $validated['preferred_workout_times'],
             $validated['interested_in'],
-            $validated['lead_source']
+            $validated['lead_sources']
         );
 
         $validated['lead_sources'] = $leadSources;
@@ -119,14 +119,14 @@ class MemberController extends Controller
         $preferredContactMethods = $validated['preferred_contact_method'] ?? [];
         $preferredWorkOutTimes = $validated['preferred_workout_times'] ?? [];
         $interestedIn = $validated['interested_in'] ?? [];
-        $leadSources = $validated['lead_source'] ?? [];
+        $leadSources = $validated['lead_sources'] ?? [];
 
         unset(
             $validated['fitness_goals'],
             $validated['preferred_contact_method'],
             $validated['preferred_workout_times'],
             $validated['interested_in'],
-            $validated['lead_source']
+            $validated['lead_sources']
         );
 
         $validated['lead_sources'] = $leadSources;
@@ -160,17 +160,15 @@ class MemberController extends Controller
         $preferredContactMethods = $validated['preferred_contact_method'] ?? [];
         $preferredWorkOutTimes = $validated['preferred_workout_times'] ?? [];
         $interestedIn = $validated['interested_in'] ?? [];
-        $leadSources = $validated['lead_source'] ?? [];
+
 
         unset(
             $validated['fitness_goals'],
             $validated['preferred_contact_method'],
             $validated['preferred_workout_times'],
             $validated['interested_in'],
-            $validated['lead_source']
         );
 
-        $validated['lead_sources'] = $leadSources;
         $validated['fitness_goals'] = $fitnessGoals;
         $validated['preferred_contact_method'] = $preferredContactMethods;
         $validated['preferred_workout_times'] = $preferredWorkOutTimes;

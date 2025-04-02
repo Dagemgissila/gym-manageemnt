@@ -59,7 +59,7 @@ class UpdateMemberRequest extends FormRequest
                 case 'dropdown':
                     $rules[$field->field_key] = $field->is_multiple == 1 ? 'required|array' : 'required|string';
                     break;
-                case 'icon_select':
+                case 'gender':
                     $rules[$field->field_key] = 'required|in:male,female,other';
                     break;
                 default:

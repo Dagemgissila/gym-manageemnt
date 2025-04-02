@@ -132,7 +132,6 @@ const netCost = (item) => {
 watch(
   selected_membership_items,
   (items) => {
-    console.log("hi");
     form.value.selected_memberships = items.map((item) => ({
       id: item.id,
       membership_name: item.membership_name,
@@ -180,8 +179,6 @@ onMounted(() => {
         <VCardItem class="pb-4">
           <VCardTitle>Filter</VCardTitle>
         </VCardItem>
-
-        <pre>{{ trainers }}</pre>
         <VRow>
           <VCol cols="12" md="6">
             <AppTextField
@@ -236,6 +233,8 @@ onMounted(() => {
               <th>Discount</th>
               <th>Reason</th>
               <th>Net Cost</th>
+              <th>Trainer</th>
+
             </tr>
           </thead>
           <tbody>

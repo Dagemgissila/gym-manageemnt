@@ -15,7 +15,7 @@ class FieldContentSeeder extends Seeder
         FieldContent::insert([
             [
                 "name" => "Lead Source",
-                "key" => "lead_source"
+                "key" => "lead_sources"
             ],
             [
                 "name" => "Fitness Goal",

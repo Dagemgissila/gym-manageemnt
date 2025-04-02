@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string("mobile_number")->nullable();
             $table->string("email")->nullable()->unique();
             $table->string("location")->nullable();
-            $table->enum("gender", ["Male", "Female"])->nullable();
+            $table->enum("gender", ["male", "female"])->nullable();
             $table->date("date_of_birth")->nullable();
             $table->string('emergency_contact_name')->nullable();
             $table->string('emergency_contact_mobile')->nullable();

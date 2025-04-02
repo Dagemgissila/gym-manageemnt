@@ -45,7 +45,7 @@ class FieldValidationSeeder extends Seeder
                 "trial" => "YES",
                 "membership" => "YES",
                 "group" => "Personal Information",
-                "input_type" => "icon_select", // Icons will be provided by Ali
+                "input_type" => "gender", // Icons will be provided by Ali
                 'is_multiple' => 0,
                 'field_content_id' => null
 
@@ -76,7 +76,7 @@ class FieldValidationSeeder extends Seeder
             ],
             [
                 "field_name" => "Lead Source",
-                "field_key" => "lead_source",
+                "field_key" => "lead_sources",
                 "prospect" => "YES",
                 "trial" => "YES",
                 "membership" => "YES",
@@ -179,7 +179,7 @@ class FieldValidationSeeder extends Seeder
                 "membership" => "YES",
                 "group" => "Fitness & Preferences",
                 "input_type" => "textarea",
-                'is_multiple' => 1,
+                'is_multiple' => 0,
                 'field_content_id' => null
 
             ],

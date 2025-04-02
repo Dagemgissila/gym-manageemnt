@@ -9,13 +9,13 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  required_fields:{
-    type:Object,
-    required:true
-  }
-})
+  required_fields: {
+    type: Object,
+    required: true,
+  },
+});
 
-const emit=defineEmits("redirectToBuyMembership");
+const emit = defineEmits("redirectToBuyMembership");
 const accountData = {
   avatarImg: avatar1,
 };
@@ -27,7 +27,6 @@ const form = ref({
   date_of_birth: null,
 });
 
-
 watchEffect(() => {
   if (props.member_detail) {
     Object.keys(props.member_detail).forEach((key) => {
@@ -35,7 +34,6 @@ watchEffect(() => {
     });
   }
 });
-
 
 const accountDataLocal = ref(structuredClone(accountData));
 const refInputEl = ref();
@@ -65,16 +63,19 @@ const resetAvatar = () => {
 
 // initialize fields
 const fetchFieldValidations = async () => {
-    fields.value=props.required_fields;
-    fields.value.forEach((field) => {
-      if (!form.value.hasOwnProperty(field.field_key)) {
-        if (field.input_type === "dropdown" && field.multiple) {
-          form.value[field.field_key] = []; 
-        } else {
-          form.value[field.field_key] = null; 
-        }
+  fields.value = props.required_fields;
+  fields.value.forEach((field) => {
+    if (!form.value.hasOwnProperty(field.field_key)) {
+      if (
+        (field.input_type === "dropdown" || field.input_type === "gender") &&
+        field.multiple
+      ) {
+        form.value[field.field_key] = [];
+      } else {
+        form.value[field.field_key] = null;
       }
-    });
+    }
+  });
 };
 
 // Group fields by 'group' dynamically
@@ -88,20 +89,21 @@ const groupedFields = computed(() => {
 
 onMounted(fetchFieldValidations);
 
-
 const onSubmit = () => {
   clearAllServerErrors();
 
   refVForm.value?.validate().then(({ valid }) => {
     if (valid) {
       axiosAdmin
-        .patch(`/update-member-membership/${props.member_detail.id}`, form.value)
+        .patch(
+          `/update-member-membership/${props.member_detail.id}`,
+          form.value
+        )
         .then((response) => {
-          console.log(response)
+          console.log(response);
           emit("redirectToBuyMembership", {
             value: true,
           });
-    
         })
         .catch((error) => {
           handleServerErrors(error);
@@ -110,7 +112,6 @@ const onSubmit = () => {
     }
   });
 };
-
 </script>
 
 <template>
@@ -119,8 +120,6 @@ const onSubmit = () => {
       <VCardTitle>Membership</VCardTitle>
     </VCardItem>
     <VDivider />
-
-
     <VCardText>
       <VForm ref="refVForm" @submit.prevent="onSubmit">
         <VRow
@@ -188,7 +187,10 @@ const onSubmit = () => {
             <!-- Date Picker -->
             <template v-else-if="field.input_type === 'date'">
               <AppDateTimePicker
-                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
                 v-model="form[field.field_key]"
                 :label="field.field_name"
                 :placeholder="field.field_name"
@@ -199,11 +201,14 @@ const onSubmit = () => {
             <template v-else-if="field.input_type === 'dropdown'">
               <AppSelect
                 v-model="form[field.field_key]"
-                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
                 :label="field.field_name"
-                 :chips="field.is_multiple===1"
-                  :multiple="field.is_multiple===1"
-                 :closable-chips="field.is_multiple===1"
+                :chips="field.is_multiple === 1"
+                :multiple="field.is_multiple === 1"
+                :closable-chips="field.is_multiple === 1"
                 :items="
                   field.field_content?.variable_fields.map((item) => ({
                     title: item.value,
@@ -211,7 +216,23 @@ const onSubmit = () => {
                   }))
                 "
                 :placeholder="`Select ${field.field_name}`"
+              />
+            </template>
 
+            <!-- Gender Selection -->
+            <template v-else-if="field.input_type === 'gender'">
+              <AppSelect
+                v-model="form[field.field_key]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
+                :label="field.field_name"
+                :items="[
+                  { title: 'Male', value: 'male' },
+                  { title: 'Female', value: 'female' },
+                ]"
+                :placeholder="`Select ${field.field_name}`"
               />
             </template>
 
@@ -219,7 +240,10 @@ const onSubmit = () => {
             <template v-else-if="field.input_type === 'textarea'">
               <AppTextarea
                 v-model="form[field.field_key]"
-                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
                 :label="field.field_name"
                 :placeholder="field.field_name"
                 rows="2"
@@ -239,7 +263,10 @@ const onSubmit = () => {
             <!-- Default Text Input -->
             <template v-else>
               <AppTextField
-                :rules="[requiredValidator,serverErrorValidator(field.field_key)]"
+                :rules="[
+                  requiredValidator,
+                  serverErrorValidator(field.field_key),
+                ]"
                 v-model="form[field.field_key]"
                 :label="field.field_name"
                 :placeholder="field.field_name"

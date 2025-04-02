@@ -30,7 +30,7 @@ class Memberresource extends JsonResource
             'medical_notes' => $this->medical_notes,
             'notes' => $this->notes,
             'photo' => $this->photo,
-            'lead_source' => $this->lead_sources,
+            'lead_sources' => $this->lead_sources,
             'blacklisted' => (bool) $this->blacklisted,
             'last_contacted_at' => $this->last_contacted_at,
             'next_follow_up_at' => $this->next_follow_up_at,
