@@ -1,5 +1,4 @@
 <script setup>
-import LogisticsCardStatistics from '@/views/apps/logistics/LogisticsCardStatistics.vue';
 import { computed } from 'vue';
 import { useStore } from 'vuex/dist/vuex.cjs.js';
 definePage({
@@ -17,7 +16,8 @@ const isLogged=computed(()=>store.getters["auth/isLoggedIn"])
 
     <VCol cols="12"
     >
-      <LogisticsCardStatistics />
+
+    this is dashboard
     </VCol>
   
 

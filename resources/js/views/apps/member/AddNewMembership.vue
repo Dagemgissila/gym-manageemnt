@@ -1,19 +1,27 @@
 <script setup>
 import AppSelect from "@/@core/components/app-form-elements/AppSelect.vue";
-import { decimalValidator } from "@/@core/utils/validators";
+import { discountValidator } from "@/@core/utils/validators";
 import axiosAdmin from "@/composables/axios/axiosAdmin";
-import { onMounted, ref, watch } from "vue";
-
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { toast } from "vue3-toastify";
 // Form validation and ref
 const isFormValid = ref(false);
+const VisFormValid = ref(false);
 const refForm = ref();
+const VrefForm = ref();
+
 const membership_types = ref([]);
 const membership_items = ref([]);
 const searchQuery = ref();
 const isSearchActive = ref();
 const membership_type_id = ref();
 const selected_membership_items = ref([]);
-const trainers = ref([]);
+const trainers = ref({});
+const voucher_code = ref();
+const member_voucher = ref();
+const route = useRoute();
+const member_id = route.params.id;
 
 const itemsPerPage = ref(10);
 const page = ref(1);
@@ -32,6 +40,52 @@ const headers = [
 const form = ref({
   purchase_date: new Date(),
   selected_memberships: [],
+});
+
+const total_membership_amount = computed(() => {
+  return form.value.selected_memberships
+    .reduce((total, membership) => {
+      const base = parseFloat(membership.price) || 0;
+      const discount = parseFloat(membership.discount) || 0;
+      let net = 0;
+      if (membership.discount_type === "%") {
+        net = base - (base * discount) / 100;
+      } else {
+        net = base - discount;
+      }
+      return (total + net) - (member_voucher.value?.amount || 0);
+
+    }, 0)
+    .toFixed(2);
+});
+
+// Prepare trainer items with headers and dividers for grouping
+const groupedTrainerItems = computed(() => {
+  const items = [];
+
+  // Get all role names
+  const roles = Object.keys(trainers.value);
+  roles.forEach((role, index) => {
+    if (trainers.value[role] && trainers.value[role].length) {
+      // Add divider between groups (except before the first group)
+      if (index > 0) {
+        items.push({ type: "divider" });
+      }
+      items.push({
+        type: "header",
+        title: role.charAt(0).toUpperCase() + role.slice(1),
+      });
+      trainers.value[role].forEach((person) => {
+        items.push({
+          type: "item",
+          title: `${person.first_name} ${person.last_name}`,
+          value: person.id,
+        });
+      });
+    }
+  });
+
+  return items;
 });
 
 // Watch for filter changes
@@ -99,6 +153,7 @@ const selectedMembershipType = (id) => {
       discount_type: "$",
       discount: 0,
       discount_reason: "",
+      trainer_id: null,
       valid_from:
         selectedData.membership_type?.membership_overlap === 1
           ? today.toISOString().split("T")[0]
@@ -119,6 +174,10 @@ const removeSelectedMembershipType = (id) => {
   );
 };
 
+const removeVoucher = () => {
+  member_voucher.value = null;
+};
+
 const netCost = (item) => {
   const base = parseFloat(item.price) || 0;
   const discount = parseFloat(item.discount) || 0;
@@ -126,6 +185,21 @@ const netCost = (item) => {
   return item.discount_type === "%"
     ? (base - (base * discount) / 100).toFixed(2)
     : (base - discount).toFixed(2);
+};
+
+// Get trainer name by ID
+const getTrainerName = (id) => {
+  if (!id) return "";
+
+  // Search through all roles and trainers
+  for (const role in trainers.value) {
+    const found = trainers.value[role].find((person) => person.id === id);
+    if (found) {
+      return `${found.first_name} ${found.last_name}`;
+    }
+  }
+
+  return "";
 };
 
 // Update form data whenever selected items change
@@ -139,12 +213,49 @@ watch(
       discount: item.discount,
       discount_type: item.discount_type,
       discount_reason: item.discount_reason,
+      trainer_id: item.trainer_id,
       valid_from: item.valid_from,
       valid_to: item.valid_to,
     }));
   },
   { deep: true }
 );
+
+const voucherCode = () => {
+  clearAllServerErrors();
+
+  VrefForm.value?.validate().then(({ valid }) => {
+    if (valid) {
+      axiosAdmin
+        .get("/get-voucher", {
+          params: {
+            member_id: member_id,
+            voucher_code: voucher_code.value,
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          member_voucher.value = response.data;
+          nextTick(() => {
+            VrefForm.value?.reset();
+            VrefForm.value?.resetValidation();
+          });
+        })
+        .catch((error) => {
+          toast(error.data.voucher_error, {
+            theme: "colored",
+            type: "error",
+            position: "top-right",
+            dangerouslyHTMLString: true,
+          });
+          // Trigger re-validation to show server errors
+          VrefForm.value?.validate();
+        });
+    }
+  });
+};
+
+
 
 onMounted(() => {
   fetchMembershipType();
@@ -234,7 +345,6 @@ onMounted(() => {
               <th>Reason</th>
               <th>Net Cost</th>
               <th>Trainer</th>
-
             </tr>
           </thead>
           <tbody>
@@ -258,21 +368,129 @@ onMounted(() => {
               <td>
                 <AppTextField
                   v-model="item.discount"
-                  :rules="[decimalValidator]"
+                  :rules="[discountValidator]"
                 />
               </td>
               <td>
-                <AppTextField v-model="item.discount_reason" />
+                <AppTextField
+                  v-model="item.discount_reason"
+                  class="discount-reason"
+                />
               </td>
               <td>{{ netCost(item) }}</td>
+              <td>
+                <!-- Custom Trainer Selection with Manual Rendering -->
+                <VMenu>
+                  <template v-slot:activator="{ props }">
+                    <VTextField
+                      :model-value="getTrainerName(item.trainer_id)"
+                      readonly
+                      class="trainer-select"
+                      v-bind="props"
+                    />
+                  </template>
+
+                  <VList class="trainer-list">
+                    <template
+                      v-for="(groupItem, index) in groupedTrainerItems"
+                      :key="index"
+                    >
+                      <!-- Render header -->
+                      <VListSubheader v-if="groupItem.type === 'header'">
+                        {{ groupItem.title }}
+                      </VListSubheader>
+
+                      <!-- Render divider -->
+                      <VDivider v-else-if="groupItem.type === 'divider'" />
+
+                      <!-- Render trainer item -->
+                      <VListItem
+                        v-else
+                        :value="groupItem.value"
+                        :title="groupItem.title"
+                        @click="item.trainer_id = groupItem.value"
+                      />
+                    </template>
+                  </VList>
+                </VMenu>
+              </td>
             </tr>
+
             <tr v-if="!selected_membership_items.length">
-              <td colspan="9" class="text-center text-disabled">
+              <td colspan="10" class="text-center text-disabled">
                 No memberships selected
               </td>
             </tr>
           </tbody>
         </VTable>
+
+        <VRow class="d-flex flex-column align-end mt-6">
+          <VCol cols="12" md="4">
+
+
+              <VDivider />
+          <VTable>
+              <thead>
+                <tr>
+                  <th>Voucher ID</th>
+                  <th>Validity</th>
+                  <th>Amount</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="member_voucher">
+                  <td>{{ member_voucher.voucher_id }}</td>
+                  <td>{{ member_voucher.validity }}</td>
+                  <td>{{ member_voucher.amount }}</td>
+                  <td>
+                    <VBtn @click="removeVoucher()"  icon>
+  <VIcon icon="tabler-trash" />
+</VBtn>
+
+                  </td>
+                </tr>
+              </tbody>
+            </VTable>
+
+            </VCol>
+          <VCol cols="12" md="4">
+            <h3 class="text-h5 text-center mt-4">Voucher Code</h3>
+
+            <VCardText>
+              <VForm
+                ref="VrefForm"
+                v-model="VisFormValid"
+                @submit.prevent="voucherCode"
+              >
+                <VRow>
+                  <VCol cols="12">
+                    <AppTextField
+                      v-model="voucher_code"
+                      :rules="[requiredValidator]"
+                      label="Enter Voucher Code"
+                      placeholder="Enter Code"
+                      class="text-lg"
+                    />
+                  </VCol>
+
+                  <VCol cols="12" class="text-right">
+                    <VBtn type="submit" class="px-6 py-3">Apply</VBtn>
+                  </VCol>
+                </VRow>
+              </VForm>
+            </VCardText>
+          </VCol>
+        </VRow>
+
+        <VRow class="d-flex justify-end mt-6">
+          <!-- Total Membership Amount Section -->
+          <VCol cols="4" class="text-right">
+            <h3 class="text-h5 font-weight-bold mb-4">
+              Total Membership Amount : {{ total_membership_amount }}
+            </h3>
+          </VCol>
+        </VRow>
 
         <VRow>
           <VCol cols="12">
@@ -283,3 +501,15 @@ onMounted(() => {
     </VCardText>
   </VCard>
 </template>
+
+<style scoped>
+.trainer-select,
+.discount-reason {
+  min-width: 200px;
+}
+
+.trainer-list {
+  max-height: 350px;
+  overflow-y: auto;
+}
+</style>

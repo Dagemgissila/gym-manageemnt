@@ -13,7 +13,9 @@ class TrainerControler extends Controller
     {
         $roles = Role::where("is_trainer", 1)->get();
         $roleNames = $roles->pluck('name')->toArray();
-        $trainers = User::role($roleNames)->get();
+        $trainers = User::whereHas("roles", function ($query) use ($roleNames) {
+            $query->whereIn("name", $roleNames);
+        })->get();
 
         return UserResource::collection($trainers);
     }

@@ -369,6 +369,7 @@
     "serverErrors": true,
     "clearServerError": true,
     "handleServerErrors": true,
-    "clearAllServerErrors": true
+    "clearAllServerErrors": true,
+    "discountValidator": true
   }
 }

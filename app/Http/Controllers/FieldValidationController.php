@@ -25,7 +25,6 @@ class FieldValidationController extends Controller
     public function index()
     {
         $fields = FieldValidation::with('fieldContent.variableFields')->get();
-        Log::info($fields);
 
         return response()->json($fields);
     }
@@ -72,7 +71,6 @@ class FieldValidationController extends Controller
             '*.membership' => 'sometimes|string|in:YES,NO',
         ]);
 
-        Log::info('Validated Data:', $validatedData);
         foreach ($validatedData as $item) {
             $fieldValidation = FieldValidation::find($item['id']);
             if ($fieldValidation) {

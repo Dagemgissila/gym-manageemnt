@@ -91,6 +91,23 @@ export const decimalValidator = value => {
   return /^-?\d+(\.\d+)?$/.test(String(value)) || 'This field must be a decimal number'
 }
 
+export const discountValidator = value => {
+  // Allow empty values
+  if (value === null || value === undefined || value === '') return true;
+
+  // Convert string to number if it's a string
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  
+  // Check if conversion resulted in a valid number
+  if (isNaN(numValue)) return 'This field must be a valid number';
+  
+  // Check if it's positive
+  if (numValue < 0) return 'This field must be a positive number';
+  
+  return true;
+};
+
+
 
 // 👉 Regex Validator
 export const regexValidator = (value, regex) => {

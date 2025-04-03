@@ -14,7 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->string("voucher_id")->unique();
             $table->foreignId("member_id")->constrained("members")->onDelete("cascade");
+            $table->date("validity");
             $table->string("amount");
+            $table->text("comment");
             $table->timestamps();
         });
     }

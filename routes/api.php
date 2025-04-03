@@ -14,6 +14,7 @@ use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\TrainerControler;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VariableFieldsController;
+use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -51,6 +52,10 @@ Route::middleware(["api.check.auth"])->group(function () {
    Route::apiResource('variable-fields', VariableFieldsController::class);
    Route::get('/field-contents', [FieldContentController::class, "index"]);
 
+
+   //voucher
+   Route::apiResource('vouchers', VoucherController::class);
+   Route::get('/get-voucher', [VoucherController::class, "getVoucher"]);
 
    //role and permissions
    Route::get('/roles', [RolePermissionController::class, 'index']);
