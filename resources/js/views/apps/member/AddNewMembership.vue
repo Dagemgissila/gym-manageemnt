@@ -19,13 +19,19 @@ const membership_type_id = ref();
 const selected_membership_items = ref([]);
 const trainers = ref({});
 const voucher_code = ref();
-const member_voucher = ref();
+const member_voucher = ref(null);
 const route = useRoute();
 const member_id = route.params.id;
 
 const itemsPerPage = ref(10);
 const page = ref(1);
 const total = ref(0);
+
+const payment_methods = [
+  { title: "Cash", value: "cash" },
+  { title: "Wallet", value: "wallet" },
+  { title: "Whish", value: "whish" },
+];
 
 const headers = [
   { title: "Actions", key: "actions", sortable: false },
@@ -40,7 +46,55 @@ const headers = [
 const form = ref({
   purchase_date: new Date(),
   selected_memberships: [],
+  payment_method: [],
 });
+
+const selectedPayment = ref({
+  type: "",
+  amount: 0,
+});
+
+// Compute total paid amount
+const totalPaidAmount = computed(() => {
+  return form.value.payment_method.reduce(
+    (sum, payment) => sum + Number(payment.amount),
+    0
+  );
+});
+
+// Compute remaining balance
+const balance = computed(() => {
+  return total_membership_amount.value - totalPaidAmount.value;
+});
+
+// Function to add a payment method
+const addPayment = () => {
+  if (!selectedPayment.value.type || selectedPayment.value.amount <= 0) {
+    alert("Please select a payment method and enter a valid amount.");
+    return;
+  }
+
+  if (selectedPayment.value.amount > balance.value) {
+    alert(
+      `Amount exceeds remaining balance! You can only pay up to ${balance.value}`
+    );
+    return;
+  }
+
+  // Add payment if within the limit
+  form.value.payment_method.push({
+    type: selectedPayment.value.type,
+    amount: selectedPayment.value.amount,
+  });
+
+  // Reset input fields
+  selectedPayment.value = { type: "", amount: 0 };
+};
+
+// Function to remove a payment
+const removePayment = (index) => {
+  form.value.payment_method.splice(index, 1);
+};
 
 const total_membership_amount = computed(() => {
   return form.value.selected_memberships
@@ -53,8 +107,7 @@ const total_membership_amount = computed(() => {
       } else {
         net = base - discount;
       }
-      return (total + net) - (member_voucher.value?.amount || 0);
-
+      return total + net - (member_voucher.value?.amount || 0);
     }, 0)
     .toFixed(2);
 });
@@ -255,8 +308,6 @@ const voucherCode = () => {
   });
 };
 
-
-
 onMounted(() => {
   fetchMembershipType();
   fetchTrainer();
@@ -269,6 +320,7 @@ onMounted(() => {
       <VCardTitle>Add New Membership</VCardTitle>
     </VCardItem>
     <VDivider />
+
     <VCardText>
       <VForm ref="refForm" v-model="isFormValid">
         <!-- Purchase Date Field -->
@@ -426,10 +478,8 @@ onMounted(() => {
 
         <VRow class="d-flex flex-column align-end mt-6">
           <VCol cols="12" md="4">
-
-
-              <VDivider />
-          <VTable>
+            <VDivider />
+            <VTable v-if="member_voucher != null">
               <thead>
                 <tr>
                   <th>Voucher ID</th>
@@ -442,18 +492,16 @@ onMounted(() => {
                 <tr v-if="member_voucher">
                   <td>{{ member_voucher.voucher_id }}</td>
                   <td>{{ member_voucher.validity }}</td>
-                  <td>{{ member_voucher.amount }}</td>
+                  <td>$ {{ member_voucher.amount }}</td>
                   <td>
-                    <VBtn @click="removeVoucher()"  icon>
-  <VIcon icon="tabler-trash" />
-</VBtn>
-
+                    <VBtn @click="removeVoucher()" icon>
+                      <VIcon icon="tabler-trash" />
+                    </VBtn>
                   </td>
                 </tr>
               </tbody>
             </VTable>
-
-            </VCol>
+          </VCol>
           <VCol cols="12" md="4">
             <h3 class="text-h5 text-center mt-4">Voucher Code</h3>
 
@@ -492,11 +540,65 @@ onMounted(() => {
           </VCol>
         </VRow>
 
-        <VRow>
-          <VCol cols="12">
-            <VBtn type="submit" class="me-3">Submit</VBtn>
-          </VCol>
-        </VRow>
+        <VCard>
+          <VTable class="my-6">
+            <thead>
+              <tr>
+                <th>Payment Method</th>
+                <th>Amount</th>
+                <th>Balance</th>
+                <th>Net Payable Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <VCol cols="12" md="6">
+                    <AppSelect
+                      v-model="selectedPayment.type"
+                      :items="payment_methods"
+                      placeholder="Select type"
+                    />
+                  </VCol>
+                </td>
+                <td>
+                  <AppTextField
+                    v-model="selectedPayment.amount"
+                    type="number"
+                    placeholder="Enter amount"
+                  />
+                </td>
+                <td>{{ balance }}</td>
+                <td>{{ total_membership_amount }}</td>
+              </tr>
+            </tbody>
+          </VTable>
+
+          <!-- Add Payment Button -->
+          <VBtn @click="addPayment"> Add Payment </VBtn>
+
+          <!-- Display Added Payments -->
+          <VTable class="mt-4" v-if="form.payment_method.length">
+            <thead>
+              <tr>
+                <th>actions</th>
+                <th>Payment Method</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(payment, index) in form.payment_method" :key="index">
+                <td>
+                  <VBtn @click="removePayment(index)" icon variant="text">
+                    <VIcon icon="tabler-trash" />
+                  </VBtn>
+                </td>
+                <td>{{ payment.type }}</td>
+                <td>{{ payment.amount }}</td>
+              </tr>
+            </tbody>
+          </VTable>
+        </VCard>
       </VForm>
     </VCardText>
   </VCard>
